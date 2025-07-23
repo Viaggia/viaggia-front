@@ -6,7 +6,7 @@ function SearchSection() {
       <div className="container bg-dark bg-opacity-50 p-4 rounded">
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
 
-        <form className="row g-3">
+        <form className="row g-3 d-flex justify-content-center">
           {/* Destino */}
           <div className="col-md-2">
             <label className="form-label">Destino</label>
@@ -44,8 +44,8 @@ function SearchSection() {
           </div>
 
           {/* Botão de busca */}
-          <div className="col-6 text-center mt-3">
-            <button type="submit" className="btn btn-primary">Buscar</button>
+          <div className="col-md-1 d-flex align-items-end">
+          <button type="submit" className="btn btn-info botao-buscar-grande px-4">Buscar</button>
           </div>
         </form>
       </div>

@@ -28,7 +28,6 @@ function Header() {
             <li className="nav-item"><Link className="nav-link text-white" to="/register">Cadastrar</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/pacotes">Pacotes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/promocoes">Promoções</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/destinos">Destinos</Link></li>
           </ul>
         </div>
 

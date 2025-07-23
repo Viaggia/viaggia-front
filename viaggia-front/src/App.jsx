@@ -4,6 +4,7 @@ import Header from './components/Header/Header.jsx'
 import AppRoutes from './routes/Router/AppRoutes'
 import SearchSection from './components/Search/Search.jsx'
 import HospedagemCards from './components/cards/HospedagemCards.jsx'
+import Details from './pages/Details/Details.jsx'
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <SearchSection />
       <HospedagemCards />
       <AppRoutes />
+      <Details />
     </Router>
   )
 

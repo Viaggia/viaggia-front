@@ -1,9 +1,12 @@
+import Header from '../../components/Header/Header.jsx'
+import SearchSection from '../../components/Search/Search.jsx'
+import HospedagemCards from '../../components/cards/HospedagemCards.jsx'
+import Footer from '../../components/Footer/Footer.jsx'
 function Home() {
   return (
-    <div>
-      
-    </div>
+    <>
+      <Footer />
+    </>
   )
 }
-
 export default Home

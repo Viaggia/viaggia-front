@@ -1,58 +1,63 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { Link } from 'react-router-dom'
 
 const hospedagens = [
   {
     titulo: 'Praia dos Carneiros - PE',
-    imagem: '/img/',
+    imagem: '/img/hotelmar.jpg',
     preco: 'R$ 320',
   },
   {
     titulo: 'Maragogi - AL',
-    imagem: '/img/maragogi.jpg',
+    imagem: '/img/praia2.jpg',
     preco: 'R$ 280',
   },
   {
     titulo: 'Jericoacoara - CE',
-    imagem: '/img/jericoacoara.jpg',
+    imagem: '/img/hotelmar.jpg',
     preco: 'R$ 350',
   },
   {
     titulo: 'Porto de Galinhas - PE',
-    imagem: '/img/porto.jpg',
+    imagem: '/img/vistahotel.jpg',
     preco: 'R$ 300',
   },
   {
     titulo: 'Pipa - RN',
-    imagem: '/img/pipa.jpg',
+    imagem: '/img/praia2.jpg',
     preco: 'R$ 270',
   },
   {
     titulo: 'São Miguel do Gostoso - RN',
-    imagem: '/img/gostoso.jpg',
+    imagem: '/img/vistahotel.jpg',
     preco: 'R$ 290',
   },
   {
     titulo: 'Barra Grande - PI',
-    imagem: '/img/barra.jpg',
+    imagem: '/img/hotelquarto.jpg',
     preco: 'R$ 260',
   },
   {
     titulo: 'Canoa Quebrada - CE',
-    imagem: '/img/canoa.jpg',
+    imagem: '/img/hotelmar.jpg',
     preco: 'R$ 240',
   },
   {
     titulo: 'Praia do Forte - BA',
-    imagem: '/img/forte.jpg',
+    imagem: '/img/praia2.jpg',
     preco: 'R$ 310',
   },
 ]
 
 function HospedagemCards() {
+
   return (
-    <section className="container py-5">
-      <div className="row">
-        {hospedagens.map((item, index) => (
+    <>
+      <h2 className="text-center mb-4">Ofertas de hotel imperdíveis</h2>
+
+      <section className="container py-5">
+        <div className="row">
+          {hospedagens.map((item, index) => (
           <div className="col-md-4 mb-4" key={index}>
             <div className="card h-100 shadow-sm">
               <img src={item.imagem} className="card-img-top" alt={item.titulo} />
@@ -63,13 +68,16 @@ function HospedagemCards() {
                 <p className="text-muted" style={{ fontSize: '0.9rem' }}>
                   *Taxas e impostos não inclusos
                 </p>
-                <button className="btn btn-success w-100">Ver oferta</button>
+            <Link to="/details" className="btn btn-success w-100">Conferir oferta</Link>
+
               </div>
             </div>
           </div>
         ))}
       </div>
+      
     </section>
+    </>
   )
 }
 
