@@ -1,17 +1,41 @@
 import { Link } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { FaPlaneDeparture } from 'react-icons/fa'
 
 function Header() {
   return (
-    <header className="navbar">
-      <nav>
-        <ul className="nav-list">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/search">Search</Link></li>
-          <li><Link to="/details">Details</Link></li>
-          <li><Link to="/payment">Payment</Link></li>
-          <li><Link to="/login">Login</Link></li>
-          <li><Link to="/register">Register</Link></li>
-        </ul>
+    <header>
+     <nav className="navbar navbar-expand-lg navbar-dark bg-viaggia px-4">
+        <Link to="/" className="navbar-brand d-flex align-items-center text-white">
+          <FaPlaneDeparture className="me-2" />
+          <strong>Viaggia</strong>
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
+          <ul className="navbar-nav">
+            <li className="nav-item"><Link className="nav-link text-white" to="/">Home</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/search">Buscar</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/details">Detalhes</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/payment">Pagamento</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/register">Cadastrar</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/pacotes">Pacotes</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/promocoes">Promoções</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/destinos">Destinos</Link></li>
+          </ul>
+        </div>
+
+        {/* Botão de Login no canto direito */}
+        <div className="d-flex ms-auto">
+          <Link to="/login" className="btn btn-outline-light">Login</Link>
+        </div>
       </nav>
     </header>
   )
