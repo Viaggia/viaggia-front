@@ -7,17 +7,23 @@ import HospedagemCards from './components/cards/HospedagemCards'
 import Details from './pages/Details/Details.jsx'
 
 
+
 function App() {
+
+
   return (
-    <Router>
+    <>
+      <Router>
       <Header />
       <SearchSection />
       <HospedagemCards />
       <AppRoutes />
       <Details />
     </Router>
+    </>
   )
 
 
 }
+
 export default App
