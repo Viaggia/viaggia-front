@@ -1,0 +1,24 @@
+{
+  "name": "viaggia-front",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Viaggia/viaggia-front.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Viaggia/viaggia-front/issues"
+  },
+  "homepage": "https://github.com/Viaggia/viaggia-front#readme",
+  "description": "",
+  "dependencies": {
+    "vite": "^7.0.5"
+  }
+}
