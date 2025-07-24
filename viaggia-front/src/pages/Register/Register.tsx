@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-function Register() {
-  return (
-    <div>
-      <h1>Register</h1>
-      <p>Create your account to start your journey with Viaggia!</p>
-    </div>
-=======
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Register.css'
 
@@ -62,7 +54,6 @@ function Register() {
     </div>
           
   </div>
->>>>>>> 2f9dfc5be039df7a8bad215ee67acc02b451ad8c
   )
 }
 

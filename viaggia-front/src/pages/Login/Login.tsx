@@ -1,26 +1,3 @@
-<<<<<<< HEAD
-function Login() {
-  return (
-    <div>
-      <h1>Login</h1>
-      <p>Sign in to your Viaggia account</p>
-      <form>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" required />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" required />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
-  )
-}
-
-export default Login
-=======
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Login.css';
 
@@ -78,4 +55,3 @@ function Login() {
 }
 
 export default Login;
->>>>>>> 2f9dfc5be039df7a8bad215ee67acc02b451ad8c
