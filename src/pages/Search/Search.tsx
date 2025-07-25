@@ -1,53 +1,30 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import HotelCards from '../../components/cards/HotelCard/HotelCard';
+import FiltersSection from '../../components/Filters/FiltersSection/FiltersSection';
+
+
 
 function SearchSection() {
   return (
-    <section className="search-section text-white py-5" style={{ backgroundImage: 'url(/public/img/imgnav.jpg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="container bg-dark bg-opacity-50 p-4 rounded">
-        <h2 className="mb-4 text-center">Escolha seu destino</h2>
-
-        <form className="row g-3 d-flex justify-content-center">
-          {/* Destino */}
-          <div className="col-md-2">
-            <label className="form-label">Destino</label>
-            <input type="text" className="form-control" placeholder="Digite o destino" />
-          </div>
-
-          {/* Data de Check-in */}
-          <div className="col-md-2">
-            <label className="form-label">Check-in</label>
-            <input type="date" className="form-control" />
-          </div>
-
-          {/* Data de Check-out */}
-          <div className="col-md-2">
-            <label className="form-label">Check-out</label>
-            <input type="date" className="form-control" />
-          </div>
-
-          {/* Adultos */}
-          <div className="col-md-1">
-            <label className="form-label">Adultos</label>
-            <input type="number" className="form-control" min="1" defaultValue={1} />
-          </div>
-
-          {/* Crianças */}
-          <div className="col-md-1">
-            <label className="form-label">Crianças</label>
-            <input type="number" className="form-control" min="0" defaultValue={0} />
-          </div>
-
-          {/* Quartos */}
-          <div className="col-md-1">
-            <label className="form-label">Quartos</label>
-            <input type="number" className="form-control" min="1" defaultValue={1} />
-          </div>
-
-          {/* Botão de busca */}
-          <div className="col-md-1 d-flex align-items-end">
-          <button type="submit" className="btn btn-info botao-buscar-grande px-4">Buscar</button>
-          </div>
-        </form>
+    <section
+      className="container-fluid text-white py-5"
+      style={{
+        backgroundImage: "url(/img/imgnav.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="row">
+        <div className="col-md-3 px-4">
+          <FiltersSection />
+         
+          <hr className="my-4 text-white" />
+        </div>
+         <div className="col-md-9 px-4">
+        
+          <HotelCards />
+          <hr className="my-4 text-white" />
+        </div>
       </div>
     </section>
   )
