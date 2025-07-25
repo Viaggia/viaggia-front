@@ -1,6 +1,18 @@
 import { Payment } from "./Payment"
 import { Reservation } from "./Reservation"
-import { UserRole } from "./UserRole"
+
+export interface Role {
+  id: number
+  name: string
+  userRoles: UserRole[]
+}
+
+export interface UserRole {
+  userId: number
+  roleId: number
+  user: User
+  role: Role
+}
 
 export interface User {
   id: number
@@ -30,4 +42,40 @@ export interface User {
   userRoles: UserRole[]
   reservations: Reservation[]
   payments: Payment[]
+}
+
+export interface CreateClientDTO {
+  name: string
+  email: string
+  phoneNumber: string
+  password: string
+  cpf: string
+  addressStreet?: string
+  addressCity?: string
+  addressState?: string
+  addressZipCode?: string
+}
+
+export interface CreateAttendantDTO {
+  name: string
+  employerCompanyName: string
+  employeeId: string
+  email: string
+  phoneNumber: string
+  password: string
+}
+
+export interface CreateServiceProviderDTO {
+  responsibleName: string
+  companyName: string
+  cnpj: string
+  companyLegalName: string
+  email: string
+  phoneNumber: string
+  password: string
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
 }

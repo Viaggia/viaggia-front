@@ -1,5 +1,4 @@
 import { Media } from './Media'
-import { PackageDate } from './PackageDate'
 import { Reservation } from './Reservation'
 
 export interface Package {
@@ -12,4 +11,12 @@ export interface Package {
   medias: Media[]
   packageDates: PackageDate[]
   reservations?: Reservation[]
+}
+
+export interface PackageDate {
+  packageDateId: number
+  startDate: string
+  endDate: string  
+  packageId: number
+  isActive: boolean
 }
