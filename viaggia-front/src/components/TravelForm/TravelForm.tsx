@@ -1,12 +1,6 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
-
-function SearchSection() {
-  return (
-    <section className="search-section text-white py-5" style={{ backgroundImage: 'url(/public/img/imgnav.jpg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="container bg-dark bg-opacity-50 p-4 rounded">
-        <h2 className="mb-4 text-center">Escolha seu destino</h2>
-
-        <form className="row g-3 d-flex justify-content-center">
+export default function TravelForm() {
+    return (
+         <form className="row g-3 d-flex justify-content-center">
           {/* Destino */}
           <div className="col-md-2">
             <label className="form-label">Destino</label>
@@ -48,9 +42,5 @@ function SearchSection() {
           <button type="submit" className="btn btn-info botao-buscar-grande px-4">Buscar</button>
           </div>
         </form>
-      </div>
-    </section>
-  )
+    )
 }
-
-export default SearchSection
