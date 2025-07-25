@@ -5,7 +5,7 @@ import Register from '../../pages/Register/Register'
 import NotFound from '../../pages/NotFound/NotFound'
 import Details from '../../pages/Details/Details'
 import Payment from '../../pages/Payment/Payment'
-import Search from '../../components/Search/Search'
+import Search from '../../pages/Search/Search'
 
 function AppRoutes() {
   return (
