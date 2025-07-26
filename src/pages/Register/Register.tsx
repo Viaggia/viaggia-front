@@ -27,8 +27,12 @@ function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const { name, email, password, cpf, phoneNumber } = formData
+    const payload = { name, email, password, cpf, phoneNumber }
+
     try {
-      const response = await register(formData)
+      const response = await register(payload)
       console.log('Cadastro realizado com sucesso:', response)
       alert('Cadastro realizado com sucesso!')
       navigate('/login')
@@ -37,6 +41,7 @@ function Register() {
       alert('Erro ao cadastrar. Verifique os dados e tente novamente.')
     }
   }
+
 
   return (
     <div>

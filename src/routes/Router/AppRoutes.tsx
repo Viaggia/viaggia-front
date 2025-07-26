@@ -6,6 +6,7 @@ import NotFound from '../../pages/NotFound/NotFound'
 import Details from '../../pages/Details/Details'
 import Payment from '../../pages/Payment/Payment'
 import Search from '../../pages/Search/Search'
+import Profile from '../../pages/Profile/Profile'
 
 function AppRoutes() {
   return (
@@ -17,6 +18,7 @@ function AppRoutes() {
       <Route path="/details" element={<Details />} />
       <Route path="/payment" element={<Payment />} />
       <Route path="*" element={<NotFound />} />
+      <Route path="/perfil" element={<Profile />} />
     </Routes>
   )
 }

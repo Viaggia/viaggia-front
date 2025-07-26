@@ -20,7 +20,7 @@ export interface User {
   email: string
   password: string
   phoneNumber: string
-  createDate: string
+  createDate: string // ou Date, dependendo de como o backend envia
   isActive: boolean
 
   // CLIENT
@@ -39,6 +39,7 @@ export interface User {
   employerCompanyName?: string
   employeeId?: string
 
+  // Relacionamentos
   userRoles: UserRole[]
   reservations: Reservation[]
   payments: Payment[]
