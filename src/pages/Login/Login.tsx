@@ -1,28 +1,68 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { login } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext'
+import { getUserIdFromToken } from '../../utils/jwt';
+import { getUserById } from '../../services/userService';
 
 function Login() {
 
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const { setUser } = useAuth()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await login({ email, password })
+      localStorage.setItem('token', response.token)
+      console.log('Login realizado com sucesso!, token: ', response.token)
+
+
+      const userId = getUserIdFromToken(response.token)
+      console.log("userId: ", userId)
+      if (userId) {
+        const user = await getUserById(userId)
+        setUser(user) // Atualiza o contexto
+      }
+
+
+      navigate('/')
+    } catch (error) {
+      console.error('Erro no login:', error)
+      alert('Email ou senha incorretos.')
+    }
+  }
+
   return (
     <div>
-      <header className="header-login">
-        <div className="logo-area">
-          <h1 className="name-header">Viaggia</h1>
-          <i className="fas fa-plane icon-plane"></i>
-        </div>
-        <i className="fas fa-user icon-user"></i>
-      </header>
-
       <div className='login-container'>
         <div className="card-login">
           <div className="login-content">
-            <form className="form-card" >
+            <form className="form-card" onSubmit={handleSubmit}>
               <p>Faça seu login</p>
               <div className="input-email">
-                <input type="email" id="email" name="email" placeholder="Email" required />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
               </div>
               <div className="input-password">
-                <input type="password" id="password" name="password" placeholder="Password" required />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Senha"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
               </div>
               <button type="submit">Login</button>
               <a href="#" className="link-login">Esqueci a senha</a>
