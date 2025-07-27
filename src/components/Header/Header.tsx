@@ -33,6 +33,9 @@ function Header() {
               <button className="btn btn-outline-light" onClick={() => navigate('/perfil')}>
                 Minha Conta
               </button>
+              <button className="btn btn-danger" onClick={() => navigate('/perfil')}>
+                Sair
+              </button>
 
             </div>
           ) : (

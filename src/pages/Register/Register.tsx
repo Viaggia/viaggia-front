@@ -14,10 +14,6 @@ function Register() {
     password: '',
     cpf: '',
     phoneNumber: '',
-    addressStreet: '',
-    addressCity: '',
-    addressState: '',
-    addressZipCode: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,20 +24,15 @@ function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const { name, email, password, cpf, phoneNumber } = formData
-    const payload = { name, email, password, cpf, phoneNumber }
-
     try {
-      const response = await register(payload)
+      const response = await register(formData)
       console.log('Cadastro realizado com sucesso:', response)
-      alert('Cadastro realizado com sucesso!')
       navigate('/login')
     } catch (error) {
       console.error('Erro ao cadastrar:', error)
       alert('Erro ao cadastrar. Verifique os dados e tente novamente.')
     }
   }
-
 
   return (
     <div>
@@ -66,19 +57,6 @@ function Register() {
               <div className="inputs-register">
                 <input type="tel" name="phoneNumber" placeholder="Telefone (ex: +5511999999999)" required onChange={handleChange} />
               </div>
-              <div className="inputs-register">
-                <input type="text" name="addressStreet" placeholder="Rua" onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressCity" placeholder="Cidade" onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressState" placeholder="Estado (ex: SP)" maxLength={2} onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressZipCode" placeholder="CEP (ex: 12345-678)" onChange={handleChange} />
-              </div>
-
               <button type="submit">Cadastrar</button>
               <span>Já é cadastrado? <a href="/login" className="link-login">Fazer Login</a></span>
             </form>

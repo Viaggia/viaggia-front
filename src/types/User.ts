@@ -51,10 +51,6 @@ export interface CreateClientDTO {
   phoneNumber: string
   password: string
   cpf: string
-  addressStreet?: string
-  addressCity?: string
-  addressState?: string
-  addressZipCode?: string
 }
 
 export interface CreateAttendantDTO {

@@ -26,7 +26,7 @@ function Login() {
       console.log("userId: ", userId)
       if (userId) {
         const user = await getUserById(userId)
-        setUser(user) // Atualiza o contexto
+        setUser(user)
       }
 
 
@@ -66,7 +66,7 @@ function Login() {
               </div>
               <button type="submit">Login</button>
               <a href="#" className="link-login">Esqueci a senha</a>
-              <span>Ainda não tem conta? <a href="#" className="link-login">Cadastre-se</a></span>
+              <span>Ainda não tem conta? <a href="/register" className="link-login">Cadastre-se</a></span>
               <span>ou use uma das seguintes opções</span>
               <div className="img-link-login">
                 <a href="https://google.com">

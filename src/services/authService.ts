@@ -1,10 +1,12 @@
 import api from './api'
-import { LoginRequest, User } from '../types/User'
+import { CreateClientDTO, LoginRequest } from '../types/User'
 
-export async function register(userData: Partial<User>) {
+
+export async function register(userData: CreateClientDTO) {
   const response = await api.post('/api/users/client', userData)
   return response.data
 }
+
 
 
 export async function login(credentials: LoginRequest) {
