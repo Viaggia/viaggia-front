@@ -8,6 +8,7 @@ function Home() {
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
         <TravelForm />
          <HospedagemCards />
+         
       </div>
       
      
