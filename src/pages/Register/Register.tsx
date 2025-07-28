@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { register } from '../../services/authService'
 import { CreateClientDTO } from '../../types/User'
-import '@fortawesome/fontawesome-free/css/all.min.css'
-import './Register.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function Register() {
   const navigate = useNavigate()
@@ -29,58 +28,58 @@ function Register() {
     e.preventDefault()
     try {
       const response = await register(formData)
-      console.log('Cadastro realizado com sucesso:', response)
       alert('Cadastro realizado com sucesso!')
       navigate('/login')
     } catch (error) {
-      console.error('Erro ao cadastrar:', error)
       alert('Erro ao cadastrar. Verifique os dados e tente novamente.')
     }
   }
 
   return (
-    <div>
-      <div className='register-container'>
-        <div className="card-register">
-          <div className="register-content">
-            <form className="form-card" onSubmit={handleSubmit}>
-              <p>Faça seu Cadastro</p>
-
-              <div className="inputs-register">
-                <input type="text" name="name" placeholder="Nome Completo" required onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="email" name="email" placeholder="Email" required onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="password" name="password" placeholder="Senha" required onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="cpf" placeholder="CPF (ex: 123.456.789-00)" required onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="tel" name="phoneNumber" placeholder="Telefone (ex: +5511999999999)" required onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressStreet" placeholder="Rua" onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressCity" placeholder="Cidade" onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressState" placeholder="Estado (ex: SP)" maxLength={2} onChange={handleChange} />
-              </div>
-              <div className="inputs-register">
-                <input type="text" name="addressZipCode" placeholder="CEP (ex: 12345-678)" onChange={handleChange} />
-              </div>
-
-              <button type="submit">Cadastrar</button>
-              <span>Já é cadastrado? <a href="/login" className="link-login">Fazer Login</a></span>
-            </form>
+    <div className="container py-5">
+      <div className="row justify-content-center align-items-center">
+        <div className="col-lg-6 mb-4">
+          <div className="card shadow">
+            <div className="card-body">
+              <h4 className="card-title text-center mb-4">Faça seu Cadastro</h4>
+              <form onSubmit={handleSubmit}>
+                {[
+                  { name: 'name', label: 'Nome Completo', type: 'text' },
+                  { name: 'email', label: 'Email', type: 'email' },
+                  { name: 'password', label: 'Senha', type: 'password' },
+                  { name: 'cpf', label: 'CPF', type: 'text', maxLength: 11 },
+                  { name: 'phoneNumber', label: 'Telefone', type: 'tel', maxLength: 13 },
+                  { name: 'addressStreet', label: 'Rua', type: 'text' },
+                  { name: 'addressCity', label: 'Cidade', type: 'text' },
+                  { name: 'addressState', label: 'Estado', type: 'text', maxLength: 2 },
+                  { name: 'addressZipCode', label: 'CEP', type: 'text', maxLength: 8 }
+                ].map(({ name, label, type, maxLength }) => (
+                  <div className="mb-3" key={name}>
+                    <label htmlFor={name} className="form-label">{label}</label>
+                    <input
+                      type={type}
+                      name={name}
+                      id={name}
+                      value={(formData as any)[name]}
+                      onChange={handleChange}
+                      required={name !== 'addressStreet' && name !== 'addressCity' && name !== 'addressState' && name !== 'addressZipCode'}
+                      className="form-control"
+                      maxLength={maxLength}
+                    />
+                  </div>
+                ))}
+                <div className="d-grid gap-2">
+                  <button type="submit" className="btn btn-primary">Cadastrar</button>
+                </div>
+                <p className="mt-3 text-center">
+                  Já é cadastrado? <a href="/login" className="text-decoration-none text-primary">Fazer Login</a>
+                </p>
+              </form>
+            </div>
           </div>
         </div>
-        <div className='img-register'>
-          <img src="https://i.pinimg.com/736x/99/de/98/99de98eb4e7bd078d39db104da78444e.jpg" alt="imagem-register" />
+        <div className="col-lg-6 text-center">
+          <img src="https://i.pinimg.com/736x/99/de/98/99de98eb4e7bd078d39db104da78444e.jpg" alt="imagem-register" className="img-fluid rounded" />
         </div>
       </div>
     </div>

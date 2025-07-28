@@ -6,6 +6,11 @@ import NotFound from '../../pages/NotFound/NotFound'
 import Details from '../../pages/Details/Details'
 import Payment from '../../pages/Payment/Payment'
 import Search from '../../pages/Search/Search'
+import Recovery from '../../pages/Recovery/Recovery'
+import TokenVerification from '../../pages/Recovery/TokenVerification'
+import NewPassword from '../../pages/Recovery/NewPassword'
+
+
 
 function AppRoutes() {
   return (
@@ -16,6 +21,9 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/details" element={<Details />} />
       <Route path="/payment" element={<Payment />} />
+      <Route path='/recovery' element={<Recovery/>}/>
+      <Route path='/recovery/token' element={<TokenVerification/>}/>
+      <Route path='/recovery/newpassword' element={<NewPassword/>}/>
       <Route path="*" element={<NotFound />} />
     </Routes>
   )
