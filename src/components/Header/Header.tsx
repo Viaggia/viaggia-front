@@ -21,7 +21,7 @@ function Header() {
             <li className="nav-item"><Link className="nav-link text-white" to="/search">Buscar</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/details">Detalhes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/payment">Pagamento</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/pacotes">Pacotes</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/packages">Pacotes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/promocoes">Promoções</Link></li>
           </ul>
         </div>
@@ -30,10 +30,10 @@ function Header() {
           {user ? (
             <div className="text-white d-flex align-items-center gap-2">
               <span>Olá, {user.name}</span>
-              <button className="btn btn-outline-light" onClick={() => navigate('/perfil')}>
+              <button className="btn btn-outline-light" onClick={() => navigate('/profile')}>
                 Minha Conta
               </button>
-              <button className="btn btn-danger" onClick={() => navigate('/perfil')}>
+              <button className="btn btn-danger" onClick={() => navigate('/profile')}>
                 Sair
               </button>
 

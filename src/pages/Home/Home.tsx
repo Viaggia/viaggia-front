@@ -1,6 +1,41 @@
+import PackageCard from "../../components/cards/PackageCard/PackageCard"
+import CardCarousel from "../../components/carousels/CardCarousel/CardCarousel"
+import TravelForm from "../../components/forms/TravelForm/TravelForm"
 
-import TravelForm from "../../components/forms/TravelForm/TravelForm";
-import PromotionCard from "../../components/cards/Promotion/PromotionCard"; // ajuste conforme o seu caminho
+
+const hospedagens = [
+  {
+    titulo: 'Praia dos Carneiros - PE',
+    imagem: '/img/hotelmar.jpg',
+    preco: 'R$ 320',
+  },
+  {
+    titulo: 'Maragogi - AL',
+    imagem: '/img/praia2.jpg',
+    preco: 'R$ 280',
+  },
+  {
+    titulo: 'Jericoacoara - CE',
+    imagem: '/img/hotelmar.jpg',
+    preco: 'R$ 350',
+  },
+  {
+    titulo: 'Porto de Galinhas - PE',
+    imagem: '/img/vistahotel.jpg',
+    preco: 'R$ 300',
+  },
+  {
+    titulo: 'Pipa - RN',
+    imagem: '/img/praia2.jpg',
+    preco: 'R$ 270',
+  },
+  {
+    titulo: 'São Miguel do Gostoso - RN',
+    imagem: '/img/vistahotel.jpg',
+    preco: 'R$ 290',
+  },
+]
+
 
 function Home() {
   const promotions = [
@@ -36,19 +71,8 @@ function Home() {
       <div className="container bg-dark bg-opacity-50 p-4 rounded">
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
         <TravelForm />
-        
-
-        {/* Promoções */}
-        <div className="mt-5">
-          <h3 className="text-white mb-4 text-center">Promoções em Destaque</h3>
-          <div className="row row-cols-1 row-cols-md-3 g-4">
-            {promotions.map((promo, index) => (
-              <div className="col" key={index}>
-                <PromotionCard {...promo} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <CardCarousel items={hospedagens} CardComponent={PackageCard} />
+         
       </div>
     </section>
   );
