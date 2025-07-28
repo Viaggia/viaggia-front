@@ -10,6 +10,7 @@ import Profile from '../../pages/Profile/Profile'
 import Recovery from '../../pages/Recovery/Recovery'
 import TokenVerification from '../../pages/Recovery/TokenVerification'
 import NewPassword from '../../pages/Recovery/NewPassword'
+import Packages from '../../pages/Packages/Packages'
 
 
 
@@ -26,7 +27,8 @@ function AppRoutes() {
       <Route path='/recovery/token' element={<TokenVerification/>}/>
       <Route path='/recovery/newpassword' element={<NewPassword/>}/>
       <Route path="*" element={<NotFound />} />
-      <Route path="/perfil" element={<Profile />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/packages" element={<Packages />} />
     </Routes>
   )
 }
