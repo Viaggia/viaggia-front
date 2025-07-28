@@ -13,10 +13,6 @@ function Register() {
     password: '',
     cpf: '',
     phoneNumber: '',
-    addressStreet: '',
-    addressCity: '',
-    addressState: '',
-    addressZipCode: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,9 +22,10 @@ function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     try {
       const response = await register(formData)
-      alert('Cadastro realizado com sucesso!')
+      console.log('Cadastro realizado com sucesso:', response)
       navigate('/login')
     } catch (error) {
       alert('Erro ao cadastrar. Verifique os dados e tente novamente.')
