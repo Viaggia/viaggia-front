@@ -1,4 +1,4 @@
-import HospedagemCards from "../../components/cards/HospedagemCards/HospedagemCards";
+
 import TravelForm from "../../components/forms/TravelForm/TravelForm";
 import PromotionCard from "../../components/cards/Promotion/PromotionCard"; // ajuste conforme o seu caminho
 
@@ -36,7 +36,7 @@ function Home() {
       <div className="container bg-dark bg-opacity-50 p-4 rounded">
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
         <TravelForm />
-        <HospedagemCards />
+        
 
         {/* Promoções */}
         <div className="mt-5">
