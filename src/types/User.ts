@@ -76,3 +76,10 @@ export interface LoginRequest {
   email: string
   password: string
 }
+
+export interface CreateAdminDTO{
+  name: string
+   email: string
+  password: string
+  phoneNumber: string
+}
