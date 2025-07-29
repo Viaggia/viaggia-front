@@ -1,11 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { register } from '../../services/authService'
 import { CreateClientDTO } from '../../types/User'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { useLocation } from 'react-router-dom'
 
 function Register() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const userDataFromGoogle = location.state?.userData
 
   const [formData, setFormData] = useState<CreateClientDTO>({
     name: '',
@@ -14,6 +17,18 @@ function Register() {
     cpf: '',
     phoneNumber: '',
   })
+
+  useEffect(() => {
+    if (userDataFromGoogle) {
+      setFormData(prev => ({
+        ...prev,
+        name: userDataFromGoogle.name || '',
+        email: userDataFromGoogle.email || '',
+        phoneNumber: userDataFromGoogle.phoneNumber || '',
+      }))
+    }
+  }, [userDataFromGoogle])
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target

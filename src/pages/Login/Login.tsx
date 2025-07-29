@@ -88,10 +88,10 @@ function Login() {
                   {/* Ícones de login alternativo */}
                   <div className="d-flex justify-content-center gap-3 mt-3">
                     {[1, 2, 3].map((i) => (
-                      <a key={i} href="https://google.com">
+                      <a key={i} href="https://localhost:7164/api/Accounts/login-google">
                         <img
                           src="https://th.bing.com/th/id/R.9083a08e5078931279f9c07bd361b4f2?rik=wR6IQoBKiuF9Ww&pid=ImgRaw&r=0"
-                          alt={`Imagem ${i}`}
+                          alt={"Login com Google"}
                           className="rounded-circle"
                           style={{ width: '70px', height: '70px', objectFit: 'cover' }}
                         />
