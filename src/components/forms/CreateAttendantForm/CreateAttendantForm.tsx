@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { registerAdmin } from '../../services/authService'
-import { CreateAdminDTO } from '../../types/User'
+import { registerAttendant } from '../../../services/authService'
+import { CreateAttendantDTO } from '../../../types/User'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-function CreateAdminForm() {
+function CreateAttendantForm() {
   const navigate = useNavigate()
 
-  const [formData, setFormData] = useState<CreateAdminDTO>({
+  const [formData, setFormData] = useState<CreateAttendantDTO>({
     name: '',
+    employerCompanyName: '',
+    employeeId: '',
     email: '',
-    password: '',
     phoneNumber: '',
+    password: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,11 +25,11 @@ function CreateAdminForm() {
     e.preventDefault()
 
     try {
-      const response = await registerAdmin(formData)
-      console.log('Admin cadastrado com sucesso:', response)
-      navigate('/admin-dashboard')
+      const response = await registerAttendant(formData)
+      console.log('Atendente cadastrado com sucesso:', response)
+      navigate('/attendant-dashboard')
     } catch (error) {
-      alert('Erro ao cadastrar admin. Verifique os dados e tente novamente.')
+      alert('Erro ao cadastrar atendente. Verifique os dados e tente novamente.')
     }
   }
 
@@ -37,13 +39,15 @@ function CreateAdminForm() {
         <div className="col-lg-6 mb-4">
           <div className="card shadow">
             <div className="card-body">
-              <h4 className="card-title text-center mb-4">Cadastro de Administrador</h4>
+              <h4 className="card-title text-center mb-4">Cadastro de Atendente</h4>
               <form onSubmit={handleSubmit}>
                 {[
                   { name: 'name', label: 'Nome Completo', type: 'text' },
+                  { name: 'employerCompanyName', label: 'Empresa Empregadora', type: 'text' },
+                  { name: 'employeeId', label: 'ID do Funcionário', type: 'text' },
                   { name: 'email', label: 'Email', type: 'email' },
-                  { name: 'password', label: 'Senha', type: 'password' },
-                  { name: 'phoneNumber', label: 'Telefone', type: 'tel', maxLength: 13 }
+                  { name: 'phoneNumber', label: 'Telefone', type: 'tel', maxLength: 13 },
+                  { name: 'password', label: 'Senha', type: 'password' }
                 ].map(({ name, label, type, maxLength }) => (
                   <div className="mb-3" key={name}>
                     <label htmlFor={name} className="form-label">{label}</label>
@@ -60,16 +64,15 @@ function CreateAdminForm() {
                   </div>
                 ))}
                 <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-primary">Cadastrar Admin</button>
+                  <button type="submit" className="btn btn-primary">Cadastrar Atendente</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   )
 }
 
-export default CreateAdminForm
+export default CreateAttendantForm

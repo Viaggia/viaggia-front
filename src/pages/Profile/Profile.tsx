@@ -1,6 +1,8 @@
-import CreateAdminForm from '../../components/forms/CreateAdminForm'
-import CreateAttendantForm from '../../components/forms/CreateAttendantForm'
-import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm'
+import CreateAdminForm from '../../components/forms/CreateAdminForm/CreateAdminForm'
+import CreateAttendantForm from '../../components/forms/CreateAttendantForm/CreateAttendantForm'
+import CreateHotelForm from '../../components/forms/CreateHotelForm/CreateHotelForm'
+import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePackageForm'
+import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm'
 import { useAuth } from '../../context/AuthContext'
 import { useState } from 'react'
 
@@ -31,36 +33,50 @@ function Profile() {
           className={`btn w-100 mb-2 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('meu-perfil')}
         >
-          meu perfil
+          Meu Perfil
         </button>
 
         <button
           className={`btn w-100 ${activeButton === 'atualizar-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('atualizar-perfil')}
         >
-          atualizar perfil
+          Atualizar Perfil
         </button>
 
         <button
           className={`btn w-100 ${activeButton === 'cadastrar-adm' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('cadastrar-adm')}
         >
-          cadastrar-adm
+          Cadastrar Administrador
         </button>
 
         <button
           className={`btn w-100 ${activeButton === 'cadastrar-attendant' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('cadastrar-attendant')}
         >
-          cadastrar-attendant
+          Cadastrar Atendente
         </button>
 
         <button
           className={`btn w-100 ${activeButton === 'cadastrar-service-provider' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('cadastrar-service-provider')}
         >
-          cadastrar-service-provider
+          Cadastrar Prestador de Serviço
         </button>
+        <button
+          className={`btn w-100 ${activeButton === 'cadastrar-hotel' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          onClick={() => setActiveButton('cadastrar-hotel')}
+        >
+          Cadastrar Hotel
+        </button>
+        <button
+          className={`btn w-100 ${activeButton === 'cadastrar-pacote' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          onClick={() => setActiveButton('cadastrar-pacote')}
+        >
+          Cadastrar Pacote
+        </button>
+
+
       </div>
 
       <div className="profile-right col-10">
@@ -130,25 +146,35 @@ function Profile() {
               </div>
             </div>
           )}
-          {activeButton === 'cadastrar-adm' &&(
-              <div>
-                <CreateAdminForm/>
-              </div>
+          {activeButton === 'cadastrar-adm' && (
+            <div>
+              <CreateAdminForm />
+            </div>
           )}
 
-          {activeButton === 'cadastrar-attendant' &&(
-              <div>
-                <CreateAttendantForm/>
-              </div>
+          {activeButton === 'cadastrar-attendant' && (
+            <div>
+              <CreateAttendantForm />
+            </div>
           )}
 
-          {activeButton === 'cadastrar-service-provider' &&(
-              <div>
-                <CreateServiceProviderForm/>
-              </div>
+          {activeButton === 'cadastrar-service-provider' && (
+            <div>
+              <CreateServiceProviderForm />
+            </div>
+          )}
+          {activeButton === 'cadastrar-hotel' && (
+            <div>
+              <CreateHotelForm />
+            </div>
+          )}
+          {activeButton === 'cadastrar-pacote' && (
+            <div>
+              <CreatePackageForm />
+            </div>
           )}
 
-          
+
         </div>
       </div>
     </div>

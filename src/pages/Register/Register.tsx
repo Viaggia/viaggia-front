@@ -18,6 +18,15 @@ function Register() {
     phoneNumber: '',
   })
 
+  const formFields = [
+    { name: 'name', label: 'Nome Completo', type: 'text' },
+    { name: 'email', label: 'Email', type: 'email' },
+    { name: 'password', label: 'Senha', type: 'password' },
+    { name: 'cpf', label: 'CPF', type: 'text', maxLength: 14 },
+    { name: 'phoneNumber', label: 'Telefone', type: 'tel', maxLength: 13 },
+  ];
+
+
   useEffect(() => {
     if (userDataFromGoogle) {
       setFormData(prev => ({
@@ -29,11 +38,24 @@ function Register() {
     }
   }, [userDataFromGoogle])
 
+  function formatCpf(value: string): string {
+    const digits = value.replace(/\D/g, '');
+    return digits
+      .replace(/^(\d{3})(\d)/, '$1.$2')
+      .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4')
+      .slice(0, 14);
+  }
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+
+    const formattedValue = name === 'cpf' ? formatCpf(value) : value;
+
+    setFormData(prev => ({ ...prev, [name]: formattedValue }));
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,31 +77,22 @@ function Register() {
             <div className="card-body">
               <h4 className="card-title text-center mb-4">Faça seu Cadastro</h4>
               <form onSubmit={handleSubmit}>
-                {[
-                  { name: 'name', label: 'Nome Completo', type: 'text' },
-                  { name: 'email', label: 'Email', type: 'email' },
-                  { name: 'password', label: 'Senha', type: 'password' },
-                  { name: 'cpf', label: 'CPF', type: 'text', maxLength: 11 },
-                  { name: 'phoneNumber', label: 'Telefone', type: 'tel', maxLength: 13 },
-                  { name: 'addressStreet', label: 'Rua', type: 'text' },
-                  { name: 'addressCity', label: 'Cidade', type: 'text' },
-                  { name: 'addressState', label: 'Estado', type: 'text', maxLength: 2 },
-                  { name: 'addressZipCode', label: 'CEP', type: 'text', maxLength: 8 }
-                ].map(({ name, label, type, maxLength }) => (
+                {formFields.map(({ name, label, type, maxLength }) => (
                   <div className="mb-3" key={name}>
                     <label htmlFor={name} className="form-label">{label}</label>
                     <input
                       type={type}
                       name={name}
                       id={name}
-                      value={(formData as any)[name]}
+                      value={formData[name as keyof typeof formData] || ''}
                       onChange={handleChange}
-                      required={name !== 'addressStreet' && name !== 'addressCity' && name !== 'addressState' && name !== 'addressZipCode'}
+                      required={true}
                       className="form-control"
                       maxLength={maxLength}
                     />
                   </div>
                 ))}
+
                 <div className="d-grid gap-2">
                   <button type="submit" className="btn btn-primary">Cadastrar</button>
                 </div>

@@ -20,3 +20,22 @@ export interface PackageDate {
   packageId: number
   isActive: boolean
 }
+
+export interface PackageDateDTO {
+  packageDateId: number;
+  startDate: string;
+  endDate: string;
+  availableSlots: number;
+  isActive: boolean;
+}
+
+export interface PackageCreateDTO {
+  name: string;
+  destination: string;
+  description?: string;
+  basePrice: number;
+  hotelId: number;
+  isActive: boolean;
+  packageDates: PackageDateDTO[];
+  mediaFiles: File[];
+}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { registerServiceProvider } from '../../services/authService'
-import { CreateServiceProviderDTO } from '../../types/User'
+import { registerServiceProvider } from '../../../services/authService'
+import { CreateServiceProviderDTO } from '../../../types/User'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function CreateServiceProviderForm() {
