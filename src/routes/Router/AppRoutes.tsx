@@ -11,7 +11,7 @@ import Recovery from '../../pages/Recovery/Recovery'
 import TokenVerification from '../../pages/Recovery/TokenVerification'
 import NewPassword from '../../pages/Recovery/NewPassword'
 import Packages from '../../pages/Packages/Packages'
-import GoogleCallback from '../../pages/GoogleCallback/GoogleCallback'
+import AuthSuccess from '../../pages/AuthSuccess/AuthSuccess'
 
 
 
@@ -30,7 +30,7 @@ function AppRoutes() {
       <Route path="*" element={<NotFound />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/packages" element={<Packages />} />
-      <Route path="/google-callback" element={<GoogleCallback />} />
+      <Route path="/auth-success" element={<AuthSuccess />} />
 
     </Routes>
   )

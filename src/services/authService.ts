@@ -28,3 +28,18 @@ export async function login(credentials: LoginRequest) {
   const response = await api.post('/api/Auth/login', credentials)
   return response.data
 }
+
+
+export async function logout() {
+  const token = localStorage.getItem('token')
+  if (!token) return
+
+  await api.post('/api/Auth/logout-default', null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  localStorage.removeItem('token')
+}
+

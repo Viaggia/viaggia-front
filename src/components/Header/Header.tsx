@@ -2,10 +2,24 @@ import { Link } from 'react-router-dom'
 import { FaPlaneDeparture } from 'react-icons/fa'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { logout } from '../../services/authService'
 
 function Header() {
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
   const navigate = useNavigate()
+
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+    } finally {
+      setUser(null)
+      navigate('/login')
+    }
+  }
+
 
   return (
     <header>
@@ -33,10 +47,9 @@ function Header() {
               <button className="btn btn-outline-light" onClick={() => navigate('/profile')}>
                 Minha Conta
               </button>
-              <button className="btn btn-danger" onClick={() => navigate('/profile')}>
+              <button className="btn btn-danger" onClick={handleLogout}>
                 Sair
               </button>
-
             </div>
           ) : (
             <>
