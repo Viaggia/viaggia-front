@@ -43,3 +43,59 @@ export interface HotelRoomType {
   hotelId: number
   isActive: boolean
 }
+
+
+export interface CommoditiesServiceDTO {
+  serviceName: string;
+  isFree: boolean;
+  isActive: boolean;
+}
+
+
+export interface CreateCommoditieDTO {
+  hotelId: number;
+  hasParking: boolean;
+  isParkingFree: boolean;
+  hasBreakfast: boolean;
+  isBreakfastFree: boolean;
+  hasLunch: boolean;
+  isLunchFree: boolean;
+  hasDinner: boolean;
+  isDinnerFree: boolean;
+  hasSpa: boolean;
+  isSpaFree: boolean;
+  hasPool: boolean;
+  isPoolFree: boolean;
+  hasGym: boolean;
+  isGymFree: boolean;
+  hasWiFi: boolean;
+  isWiFiFree: boolean;
+  hasAirConditioning: boolean;
+  isAirConditioningFree: boolean;
+  hasAccessibilityFeatures: boolean;
+  isAccessibilityFeaturesFree: boolean;
+  isPetFriendly: boolean;
+  isPetFriendlyFree: boolean;
+  commoditiesServices: CommoditiesServiceDTO[];
+}
+
+
+
+export interface CreateHotelDTO {
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  description?: string;
+  starRating: number;
+  checkInTime?: string;
+  checkOutTime?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  isActive: boolean;
+  roomTypes: HotelRoomType[];
+  hotelDates: HotelDate[];
+  mediaFiles: File[];
+  commoditie: CreateCommoditieDTO;
+}

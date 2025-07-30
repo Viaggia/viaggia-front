@@ -32,7 +32,7 @@ const promotions = [
 const Promotion = () => {
   return (
     <div className="container py-4">
-      <h1 className="text-center mb-4">Promotion Page</h1>
+      <h1 className="text-center mb-4">Promoções Imperdíveis</h1>
 
       <div
         className="d-flex overflow-auto gap-4 px-2"

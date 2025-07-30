@@ -27,22 +27,8 @@ const hotels: HotelInfo[] = [
     title: 'Natureza & Luxo',
     description: 'Vista deslumbrante aliada a uma experiência sofisticada.',
     price: 'R$ 350',
-    images: ['/img/hotelvista.jpg', '/img/hotelluxo.jpg'],
+    images: ['/img/chale1.jpg'],
     button: 'Reservar agora',
-  },
-  {
-    title: 'Diversão em família',
-    description: 'Hospedagem perfeita para crianças e diversão.',
-    price: 'R$ 400',
-    images: ['/img/hotelkids.jpg'],
-    button: 'Ver oferta',
-  },
-  {
-    title: 'Refresco & Piscina',
-    description: 'Relaxe em uma piscina rodeada de tranquilidade.',
-    price: 'R$ 300',
-    images: ['/img/hotelpiscina.jpg'],
-    button: 'Saiba mais',
   },
   {
     title: 'Praia exclusiva',

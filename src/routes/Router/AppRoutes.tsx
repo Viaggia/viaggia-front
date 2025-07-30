@@ -11,6 +11,7 @@ import Recovery from '../../pages/Recovery/Recovery'
 import TokenVerification from '../../pages/Recovery/TokenVerification'
 import NewPassword from '../../pages/Recovery/NewPassword'
 import Packages from '../../pages/Packages/Packages'
+import AuthSuccess from '../../pages/AuthSuccess/AuthSuccess'
 import Promotion from '../../pages/Promotion/Promotion'
 
 
@@ -24,12 +25,14 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/details" element={<Details />} />
       <Route path="/payment" element={<Payment />} />
-      <Route path='/recovery' element={<Recovery/>}/>
-      <Route path='/recovery/token' element={<TokenVerification/>}/>
-      <Route path='/recovery/newpassword' element={<NewPassword/>}/>
+      <Route path='/recovery' element={<Recovery />} />
+      <Route path='/recovery/token' element={<TokenVerification />} />
+      <Route path='/recovery/newpassword' element={<NewPassword />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/packages" element={<Packages />} />
+      <Route path="/auth-success" element={<AuthSuccess />} />
+
       <Route path="/promotion" element={<Promotion />} />
 
     </Routes>
