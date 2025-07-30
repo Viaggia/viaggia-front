@@ -41,7 +41,7 @@ const PromoBanner: React.FC = () => {
 
   return (
     <a
-      href="/promocao"
+      href="/promotion"
       className={`promo-banner ${isSticky ? 'sticky' : ''}`}
     >
       <p>🔥 Promoção por tempo limitado!</p>

@@ -11,6 +11,7 @@ import Recovery from '../../pages/Recovery/Recovery'
 import TokenVerification from '../../pages/Recovery/TokenVerification'
 import NewPassword from '../../pages/Recovery/NewPassword'
 import Packages from '../../pages/Packages/Packages'
+import Promotion from '../../pages/Promotion/Promotion'
 
 
 
@@ -29,6 +30,8 @@ function AppRoutes() {
       <Route path="*" element={<NotFound />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/packages" element={<Packages />} />
+      <Route path="/promotion" element={<Promotion />} />
+
     </Routes>
   )
 }

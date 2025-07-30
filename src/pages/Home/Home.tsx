@@ -1,4 +1,5 @@
 import PackageCard from "../../components/cards/PackageCard/PackageCard"
+import PromotionCard from "../../components/cards/Promotion/PromotionCard";
 import CardCarousel from "../../components/carousels/CardCarousel/CardCarousel"
 import TravelForm from "../../components/forms/TravelForm/TravelForm"
 
@@ -72,6 +73,7 @@ function Home() {
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
         <TravelForm />
         <CardCarousel items={hospedagens} CardComponent={PackageCard} />
+        <CardCarousel items={promotions} CardComponent={PromotionCard} />
          
       </div>
     </section>
