@@ -14,6 +14,7 @@ import Packages from '../../pages/Packages/Packages'
 import AuthSuccess from '../../pages/AuthSuccess/AuthSuccess'
 import Promotion from '../../pages/Promotion/Promotion'
 import ReservePag from '../../pages/Reserve/ReservePag'
+import CancellationPag from '../../pages/Cancellation/Cancellationpag'
 
 
 
@@ -26,6 +27,7 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/details" element={<Details />} />
       <Route path="/reservepag" element={<ReservePag />} />
+      <Route path="/cancellationpag" element={<CancellationPag />} />
       <Route path="/payment" element={<Payment />} />
       <Route path='/recovery' element={<Recovery />} />
       <Route path='/recovery/token' element={<TokenVerification />} />

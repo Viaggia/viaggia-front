@@ -9,7 +9,7 @@ function SearchSection() {
 
       {/* 🌄 Imagem de fundo visível apenas atrás do formulário */}
       <div
-        className="position-absolute w-100 start-0"
+        className="position-absolute text-white w-100 start-0"
         style={{
           height: '300px', // altura controlada
           backgroundImage: 'url(/img/imgnav.jpg.jpg)', // caminho relativo à pasta public
