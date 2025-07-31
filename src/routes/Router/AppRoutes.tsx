@@ -15,6 +15,8 @@ import AuthSuccess from '../../pages/AuthSuccess/AuthSuccess'
 import Promotion from '../../pages/Promotion/Promotion'
 import ReservePag from '../../pages/Reserve/ReservePag'
 import CancellationPag from '../../pages/Cancellation/Cancellationpag'
+import PaymentPeding from '../../pages/Payment/PaymentPending'
+import PaymentConfirmed from '../../pages/Payment/PaymentConfirmed'
 
 
 
@@ -38,7 +40,8 @@ function AppRoutes() {
       <Route path="/auth-success" element={<AuthSuccess />} />
 
       <Route path="/promotion" element={<Promotion />} />
-
+      <Route path='/paymentpeding' element={<PaymentPeding/>}/>
+      <Route path='/paymentconfirmed' element={<PaymentConfirmed/>}/>
     </Routes>
   )
 }
