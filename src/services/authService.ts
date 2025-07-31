@@ -1,5 +1,6 @@
 import api from './api'
 import { CreateAdminDTO, CreateAttendantDTO, CreateClientDTO, CreateServiceProviderDTO, LoginRequest } from '../types/User'
+import { ForgotPasswordRequestDTO, ResetPasswordRequestDTO, ValidateTokenRequestDTO } from '../types/Authentication'
 
 
 export async function register(userData: CreateClientDTO) {
@@ -42,4 +43,20 @@ export async function logout() {
 
   localStorage.removeItem('token')
 }
+
+export async function forgotPassword(data: ForgotPasswordRequestDTO) {
+  const response = await api.post('/api/Auth/forgot-password', data);
+  return response.data;
+}
+
+export async function validateToken(data: ValidateTokenRequestDTO) {
+  const response = await api.post('/api/Auth/validate-token', data);
+  return response.data;
+}
+
+export async function resetPassword(data: ResetPasswordRequestDTO) {
+  const response = await api.post('/api/Auth/reset-password', data);
+  return response.data;
+}
+
 

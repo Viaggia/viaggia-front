@@ -47,13 +47,13 @@ function Login() {
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      name="email" 
-                      className="form-control" 
-                      placeholder="Email" 
-                      required 
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      className="form-control"
+                      placeholder="Email"
+                      required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                     />
@@ -61,13 +61,13 @@ function Login() {
 
                   <div className="mb-3">
                     <label htmlFor="password" className="form-label">Senha</label>
-                    <input 
-                      type="password" 
-                      id="password" 
-                      name="password" 
-                      className="form-control" 
-                      placeholder="Senha" 
-                      required 
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      className="form-control"
+                      placeholder="Senha"
+                      required
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                     />
@@ -78,8 +78,9 @@ function Login() {
                   </div>
 
                   <p className="mt-3 text-center">
-                    <a href="#" className="text-decoration-none text-primary">Esqueci a senha</a>
+                    <a href="/recovery" className="text-decoration-none text-primary">Esqueci a senha</a>
                   </p>
+
                   <p className="text-center">
                     Ainda não tem conta? <a href="/register" className="text-decoration-none text-primary">Cadastre-se</a>
                   </p>

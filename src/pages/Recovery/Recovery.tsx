@@ -1,7 +1,28 @@
-
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState } from 'react'
+import { forgotPassword } from '../../services/authService'
+import { useNavigate } from 'react-router-dom'
 
 function Recovery() {
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+
+  const navigate = useNavigate();
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      await forgotPassword({ email })
+      setMessage('Verifique seu e-mail para redefinir sua senha.')
+      setError('')
+      setTimeout(() => navigate('/recovery/token'), 2000); 
+    } catch (err) {
+      setError('Erro ao enviar solicitação. Verifique o e-mail informado.')
+      setMessage('')
+    }
+  }
+
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
       <div className="container py-5">
@@ -15,7 +36,7 @@ function Recovery() {
                 <p className="text-center text-muted mb-4">
                   Insira seu e-mail abaixo e enviaremos instruções para redefinir sua senha.
                 </p>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="form-floating mb-3">
                     <input
                       type="email"
@@ -24,6 +45,8 @@ function Recovery() {
                       className="form-control"
                       placeholder="Email"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                     <label htmlFor="email">Email</label>
                   </div>
@@ -33,6 +56,8 @@ function Recovery() {
                     </button>
                   </div>
                 </form>
+                {message && <p className="text-success text-center mt-3">{message}</p>}
+                {error && <p className="text-danger text-center mt-3">{error}</p>}
               </div>
               <div className="card-footer text-center text-muted small">
                 Você receberá um link de redefinição em seu e-mail.
@@ -42,7 +67,7 @@ function Recovery() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Recovery;
+export default Recovery
