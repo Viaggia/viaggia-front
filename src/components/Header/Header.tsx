@@ -37,8 +37,8 @@ function Header() {
             <li className="nav-item"><Link className="nav-link text-white" to="/payment">Pagamento</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/packages">Pacotes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/promotion">Promoções</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/reservepag">Reservas</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/cancellationpag">Cancelamento</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/my-reservations">Reservas</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/cancel-reservation">Cancelamento</Link></li>
 
 
           </ul>

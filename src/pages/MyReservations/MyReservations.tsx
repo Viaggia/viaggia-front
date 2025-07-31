@@ -74,7 +74,7 @@ const MyReservations: React.FC = () => {
                 </ul>
 
                 <div className="reservepag-cancel-wrapper">
-                  <button className="reservepag-cancelar" onClick={() => navigate('/cancellationpag')}>
+                  <button className="reservepag-cancelar" onClick={() => navigate('/cancel-reservation')}>
                     Cancelar minha reserva
                   </button>
                 </div>
