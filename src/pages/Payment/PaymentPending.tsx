@@ -1,7 +1,7 @@
 import { FaExclamationTriangle } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function PaymentPeding() {
+function PaymentPending() {
   return (
     <div className="container mt-5 pb-5">
       <div className="row justify-content-center">
@@ -48,4 +48,4 @@ function PaymentPeding() {
   );
 }
 
-export default PaymentPeding;
+export default PaymentPending;

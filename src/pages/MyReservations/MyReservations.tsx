@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './reservepag.css';
+import './MyReservations.css';
 
-interface Reserva {
+interface Reservation {
   id: string;
   titular: string;
   telefone: string;
@@ -15,7 +15,7 @@ interface Reserva {
   valoresServicos: number;
 }
 
-const reservas: Reserva[] = [
+const reservas: Reservation[] = [
   {
     id: 'reserva1',
     titular: 'João Silva',
@@ -28,12 +28,11 @@ const reservas: Reserva[] = [
     servicos: ['Café da manhã (+R$40/dia)', 'Massagem (+R$120)'],
     valoresServicos: 240,
   },
-  // Adicione mais reservas aqui
 ];
 
 const diaria = 200;
 
-const ReservePag: React.FC = () => {
+const MyReservations: React.FC = () => {
   const [detalheAberto, setDetalheAberto] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -98,4 +97,4 @@ const ReservePag: React.FC = () => {
   );
 };
 
-export default ReservePag;
+export default MyReservations;

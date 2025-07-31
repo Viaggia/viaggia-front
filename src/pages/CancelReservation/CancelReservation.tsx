@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './cancellationpag.css';
+import './CancelReservation.css';
 
-const CancellationPag: React.FC = () => {
+const CancelReservation: React.FC = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   const reserva = {
@@ -58,4 +58,4 @@ const CancellationPag: React.FC = () => {
   );
 };
 
-export default CancellationPag;
+export default CancelReservation;

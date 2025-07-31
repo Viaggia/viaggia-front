@@ -13,10 +13,10 @@ import NewPassword from '../../pages/Recovery/NewPassword'
 import Packages from '../../pages/Packages/Packages'
 import AuthSuccess from '../../pages/AuthSuccess/AuthSuccess'
 import Promotion from '../../pages/Promotion/Promotion'
-import ReservePag from '../../pages/Reserve/ReservePag'
-import CancellationPag from '../../pages/Cancellation/Cancellationpag'
 import PaymentPeding from '../../pages/Payment/PaymentPending'
 import PaymentConfirmed from '../../pages/Payment/PaymentConfirmed'
+import MyReservations from '../../pages/MyReservations/MyReservations'
+import CancelReservation from '../../pages/CancelReservation/CancelReservation'
 
 
 
@@ -28,8 +28,8 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/details" element={<Details />} />
-      <Route path="/reservepag" element={<ReservePag />} />
-      <Route path="/cancellationpag" element={<CancellationPag />} />
+      <Route path="/my-reservations" element={<MyReservations />} />
+      <Route path="/cancel-reservation" element={<CancelReservation />} />
       <Route path="/payment" element={<Payment />} />
       <Route path='/recovery' element={<Recovery />} />
       <Route path='/recovery/token' element={<TokenVerification />} />
@@ -40,7 +40,7 @@ function AppRoutes() {
       <Route path="/auth-success" element={<AuthSuccess />} />
 
       <Route path="/promotion" element={<Promotion />} />
-      <Route path='/paymentpeding' element={<PaymentPeding/>}/>
+      <Route path='/paymentpending' element={<PaymentPeding/>}/>
       <Route path='/paymentconfirmed' element={<PaymentConfirmed/>}/>
     </Routes>
   )
