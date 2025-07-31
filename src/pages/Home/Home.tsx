@@ -1,43 +1,63 @@
+import { useEffect, useState } from "react";
 import PackageCard from "../../components/cards/PackageCard/PackageCard"
 import CardCarousel from "../../components/carousels/CardCarousel/CardCarousel"
 import TravelForm from "../../components/forms/TravelForm/TravelForm"
-
-
-const hospedagens = [
-  {
-    titulo: 'Praia dos Carneiros - PE',
-    imagem: '/img/hotelmar.jpg',
-    preco: 'R$ 320',
-  },
-  {
-    titulo: 'Maragogi - AL',
-    imagem: '/img/praia2.jpg',
-    preco: 'R$ 280',
-  },
-  {
-    titulo: 'Jericoacoara - CE',
-    imagem: '/img/hotelmar.jpg',
-    preco: 'R$ 350',
-  },
-  {
-    titulo: 'Porto de Galinhas - PE',
-    imagem: '/img/vistahotel.jpg',
-    preco: 'R$ 300',
-  },
-  {
-    titulo: 'Pipa - RN',
-    imagem: '/img/praia2.jpg',
-    preco: 'R$ 270',
-  },
-  {
-    titulo: 'São Miguel do Gostoso - RN',
-    imagem: '/img/vistahotel.jpg',
-    preco: 'R$ 290',
-  },
-]
-
+import { PackageDTO } from "../../types/Package";
+import { getPackages } from "../../services/packageService";
+import { HotelDTO } from "../../types/Hotel";
+import { getHotels } from "../../services/hotelService";
+import HotelCardHome from "../../components/cards/HotelCard/HotelCard";
 
 function Home() {
+
+  const [packages, setPackages] = useState<PackageDTO[]>([]);
+  const [hotels, setHotels] = useState<HotelDTO[]>([]);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const data = await getPackages();
+        setPackages(data);
+      } catch (error) {
+        console.error('Erro ao buscar pacotes:', error);
+      }
+    };
+
+
+    const fetchHotels = async () => {
+      try {
+        const data = await getHotels();
+        setHotels(data);
+      } catch (error) {
+        console.error('Erro ao buscar hotéis:', error);
+      }
+    };
+
+    fetchPackages();
+    fetchHotels();
+
+  }, []);
+
+  console.log("hotels", hotels)
+
+  const carouselPackages = packages.map((pkg) => ({
+
+    titulo: pkg.name,
+    imagem: pkg.medias[0]?.mediaUrl || '/img/default.jpg',
+    preco: `R$ ${pkg.basePrice.toFixed(2)}`,
+  }));
+
+
+  const carouselHotels = hotels.map((hotel) => ({
+    titulo: hotel.name,
+    imagem: hotel.medias[0]?.mediaUrl || '/img/default.jpg',
+    preco: hotel.roomTypes[0]?.price
+      ? `R$ ${hotel.roomTypes[0].price.toFixed(2)}`
+      : 'Preço indisponível',
+  }));
+
+
+
   const promotions = [
     {
       title: 'Desconto no Nordeste',
@@ -71,8 +91,9 @@ function Home() {
       <div className="container bg-dark bg-opacity-50 p-4 rounded">
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
         <TravelForm />
-        <CardCarousel items={hospedagens} CardComponent={PackageCard} />
-         
+        <CardCarousel items={carouselPackages} CardComponent={PackageCard} text={"Pacotes Exclusivos"} />
+        <CardCarousel items={carouselHotels} CardComponent={HotelCardHome} text={"Hospedagens Recomendadas"} />
+
       </div>
     </section>
   );

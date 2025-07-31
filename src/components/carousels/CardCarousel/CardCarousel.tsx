@@ -3,13 +3,14 @@ import React from 'react'
 
 interface CardCarouselProps {
   items: any[]
-  CardComponent: React.FC<any>
+  CardComponent: React.FC<any>,
+  text: string
 }
 
-function CardCarousel({ items, CardComponent }: CardCarouselProps) {
+function CardCarousel({ items, CardComponent, text }: CardCarouselProps) {
   return (
     <div className="container my-5">
-      <h2 className="text-center mb-4">Confira nossas ofertas</h2>
+      <h2 className="text-center mb-4">{ text }</h2>
       <div
         className="d-flex overflow-auto gap-4 px-2 py-3"
         style={{ scrollSnapType: 'x mandatory' }}

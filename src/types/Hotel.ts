@@ -1,26 +1,25 @@
-export interface Hotel {
-  hotelId: number
-  name: string
-  street: string
-  city: string
-  state: string
-  zipCode: string
-  description?: string
-  starRating: number
-  hasParking: boolean
-  hasBreakfast: boolean
-  hasLunch: boolean
-  hasDinner: boolean
-  hasSpa: boolean
-  hasPool: boolean
-  hasGym: boolean
-  hasWiFi: boolean
-  isPetFriendly: boolean
-  checkInTime?: string
-  checkOutTime?: string
-  contactPhone?: string
-  contactEmail?: string
-  isActive: boolean
+import { CreateAddressDTO } from "./Address";
+import { MediaDTO } from "./Media";
+import { PackageDTO } from "./Package";
+import { ReviewDTO } from "./Review";
+
+export interface HotelDTO {
+  hotelId: number;
+  name: string;
+  description?: string;
+  starRating: number;
+  checkInTime?: string;
+  checkOutTime?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  isActive: boolean;
+  medias: MediaDTO[];
+  roomTypes: HotelRoomType[];
+  hotelDates: HotelDate[];
+  addresses: CreateAddressDTO[];
+  reviews: ReviewDTO[];
+  packages: PackageDTO[];
+  averageRating: number;
 }
 
 export interface HotelDate {
