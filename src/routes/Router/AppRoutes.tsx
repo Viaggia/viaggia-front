@@ -12,6 +12,8 @@ import TokenVerification from '../../pages/Recovery/TokenVerification'
 import NewPassword from '../../pages/Recovery/NewPassword'
 import Packages from '../../pages/Packages/Packages'
 import GoogleCallback from '../../pages/GoogleCallback/GoogleCallback'
+import PaymentPeding from '../../pages/Payment/PaymentPending'
+import PaymentConfirmed from '../../pages/Payment/PaymentConfirmed'
 
 
 
@@ -31,7 +33,8 @@ function AppRoutes() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/packages" element={<Packages />} />
       <Route path="/google-callback" element={<GoogleCallback />} />
-
+      <Route path='/paymentpeding' element={<PaymentPeding/>}/>
+      <Route path='/paymentconfirmed' element={<PaymentConfirmed/>}/>
     </Routes>
   )
 }

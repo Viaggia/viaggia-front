@@ -46,7 +46,7 @@ const Payment: React.FC = () => {
         <div className="col-md-6">
           <div className="card">
             <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Resumo do Pagamento</h5>
+              <h5 className="mb-0">Resumo do Pedido</h5>
             </div>
             <div className="card-body">
               <p><strong>Pacote:</strong> Nome do Pacote</p>
