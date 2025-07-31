@@ -27,6 +27,7 @@ function FiltersSection({ filtros, setFiltros }: FiltersSectionProps) {
         borderRadius: '1rem',
         color: '#000000', // texto preto
         backdropFilter: 'blur(4px)', // efeito levemente embaçado
+        marginTop: '27px' // 🎯 ajuste solicitado
       }}
     >
       <h4 className="mb-4">Filtrar hospedagens</h4>

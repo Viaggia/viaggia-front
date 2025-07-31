@@ -146,22 +146,33 @@ function SearchSection() {
 
 
   return (
-    <section
-      className="container-fluid text-dark py-5"
-      style={{ backgroundImage: 'url(/public/img/imgnav.jpg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-    >
-      {/* 🧳 TravelForm centralizado */}
-      <div className="container bg-dark bg-opacity-50 p-4 rounded">
+    <section className="container-fluid text-dark pt-5 position-relative">
+
+      {/* 🌄 Imagem de fundo visível apenas atrás do formulário */}
+      <div
+        className="position-absolute text-white w-100 start-0"
+        style={{
+          height: '300px', // altura controlada
+          backgroundImage: 'url(/img/imgnav.jpg.jpg)', // caminho relativo à pasta public
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          top: 0,
+          zIndex: 0 // imagem por trás
+        }}
+      />
+
+      {/* 🧳 Formulário sobreposto, mantendo o estilo */}
+      <div className="container position-relative z-1 bg-dark bg-opacity-50 p-4 rounded mb-5">
         <div className="container mb-3 text-center">
-          <h4 className="mb-3">Buscar hotéis</h4>
+          <h4 className="mb-3 text-light">Buscar hotéis</h4>
           <div className="d-flex justify-content-center">
             <TravelForm />
           </div>
         </div>
       </div>
 
-      {/* Cards e filtros alinhados */}
-      <div className="row px-4 align-items-start mt-4">
+      {/* 🎯 Filtros e cards de hotéis fora da área da imagem */}
+      <div className="row px-4 align-items-start mt-4 position-relative z-1">
         <div className="col-md-3 mt-4">
           <FiltersSection />
         </div>
@@ -171,6 +182,7 @@ function SearchSection() {
 
         </div>
       </div>
+      
     </section>
   );
 }

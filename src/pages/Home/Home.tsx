@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import PackageCard from "../../components/cards/PackageCard/PackageCard"
+import PromotionCard from "../../components/cards/Promotion/PromotionCard";
 import CardCarousel from "../../components/carousels/CardCarousel/CardCarousel"
 import TravelForm from "../../components/forms/TravelForm/TravelForm"
 import { PackageDTO } from "../../types/Package";

@@ -1,0 +1,101 @@
+/* Estilos exclusivos para a página CancellationPag */
+
+.cancellationpag-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+.cancellationpag-container h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+/* Informações da reserva */
+.cancellationpag-info {
+  background-color: #ecf0f1;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.cancellationpag-info p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* Políticas de cancelamento e alteração */
+.cancellationpag-politicas {
+  background-color: #fdfdfd;
+  border-left: 5px solid #1abc9c;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.cancellationpag-politicas h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.cancellationpag-politicas ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.cancellationpag-politicas li {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.cancellationpag-politicas p {
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+/* Botão de confirmação */
+.cancellationpag-confirmar {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  transition: background-color 0.3s ease;
+}
+
+.cancellationpag-confirmar:hover {
+  background-color: #c0392b;
+}
+
+/* Popup de sucesso */
+.popup-sucesso {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #81ced8;
+  color: #000000;
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: 1px solid #c8e6c9;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  animation: fadeOutPopup 5s forwards;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes fadeOutPopup {
+  0% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(-2px); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}

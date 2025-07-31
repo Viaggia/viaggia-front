@@ -1,0 +1,102 @@
+/* Estilos exclusivos para a página ReservePag */
+
+.reservepag-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.reservepag-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+.reservepag-card {
+  margin-bottom: 25px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Botão de toggle com setinha alinhada à direita */
+.reservepag-toggle {
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reservepag-toggle:hover {
+  background-color: #569fe4;
+}
+
+/* Texto à esquerda dentro do botão */
+.reservepag-toggle-text {
+  text-align: left;
+}
+
+/* Setinha à direita */
+.reservepag-seta {
+  font-size: 16px;
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+/* Área dos detalhes quando expandido */
+.reservepag-detalhes {
+  padding: 15px;
+  background-color: #ecf0f1;
+}
+
+.reservepag-detalhes ul {
+  padding-left: 20px;
+}
+
+/* Botão de cancelar ao final do card expandido */
+.reservepag-cancel-wrapper {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.reservepag-cancelar {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reservepag-cancelar:hover {
+  background-color: #c0392b;
+}
+
+/* Ícone fixo do WhatsApp */
+.reservepag-whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.reservepag-whatsapp-icon {
+  width: 50px;
+  transition: transform 0.3s ease;
+}
+
+.reservepag-whatsapp-icon:hover {
+  transform: scale(1.1);
+}

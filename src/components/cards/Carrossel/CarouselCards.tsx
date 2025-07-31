@@ -6,14 +6,14 @@ const imageList = [
   'coffemanha.jpg',
   'hotelquarto.jpg',
   'praia1.jpg',
-  'transferir.jpg',
-  'transferir1.jpg',
-  'transferir2.jpg',
+  'chale2.jpg',
+  'chale3.jpg',
+  'quartochale2.jpg',
 ];
 
 const Carousel: React.FC = () => {
   return (
-    <div className="p-0 m-0" style={{ paddingTop: '10px' }}>
+    <div className="pt-0 mt-0">
       <div
         id="uniqueCarousel"
         className="carousel slide"
