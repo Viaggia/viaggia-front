@@ -1,4 +1,4 @@
-import PromotionCard from "../../components/cards/Promotion/PromotionCard";
+import PromotionCard from "../../components/cards/PromotionCard/PromotionCard";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const promotions = [
