@@ -27,7 +27,7 @@ Este repositório contém o front-end do sistema **Viaggia**, desenvolvido com *
 │   ├── components/          # Componentes reutilizáveis
 │   ├── pages/               # Páginas principais (Home, Login, Pacotes, etc.)
 │   ├── services/            # Serviços de API (axios)
-│   ├── hooks/               # Hooks customizados
+│   ├── types/               # Types customizados
 │   ├── contexts/            # Contextos globais (ex: autenticação)
 │   ├── routes/              # Definição de rotas
 │   ├── utils/               # Funções utilitárias
