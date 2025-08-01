@@ -46,7 +46,6 @@ function Home() {
     preco: `R$ ${pkg.basePrice.toFixed(2)}`,
   }));
 
-
   const carouselHotels = hotels.map((hotel) => ({
     titulo: hotel.name,
     imagem: hotel.medias[0]?.mediaUrl || '/img/default.jpg',

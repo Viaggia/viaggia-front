@@ -1,6 +1,7 @@
 import CreateAdminForm from '../../components/forms/CreateAdminForm/CreateAdminForm'
 import CreateAttendantForm from '../../components/forms/CreateAttendantForm/CreateAttendantForm'
 import CreateHotelForm from '../../components/forms/CreateHotelForm/CreateHotelForm'
+import CreateHotelStepper from '../../components/forms/CreateHotelForm/CreateHotelStepper'
 import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePackageForm'
 import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm'
 import { useAuth } from '../../context/AuthContext'
@@ -163,9 +164,10 @@ function Profile() {
               <CreateServiceProviderForm />
             </div>
           )}
+
           {activeButton === 'cadastrar-hotel' && (
             <div>
-              <CreateHotelForm />
+              <CreateHotelStepper />
             </div>
           )}
           {activeButton === 'cadastrar-pacote' && (

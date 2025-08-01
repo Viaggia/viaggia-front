@@ -6,6 +6,11 @@ import { ReviewDTO } from "./Review";
 export interface HotelDTO {
   hotelId: number;
   name: string;
+  cnpj: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
   description?: string;
   starRating: number;
   checkInTime?: string;
@@ -13,14 +18,65 @@ export interface HotelDTO {
   contactPhone?: string;
   contactEmail?: string;
   isActive: boolean;
+  averageRating: number;
+  roomTypes: HotelRoomTypeDTO[];
   medias: MediaDTO[];
-  roomTypes: HotelRoomType[];
-  hotelDates: HotelDate[];
-  addresses: CreateAddressDTO[];
   reviews: ReviewDTO[];
   packages: PackageDTO[];
-  averageRating: number;
+  commodities: CommoditieDTO[];
+  commoditieServices: CommoditieServicesDTO[];
 }
+
+export interface HotelRoomTypeDTO {
+  roomTypeId: number;
+  name: RoomTypeEnum;
+  description?: string;
+  price: number;
+  capacity: number;
+  bedType?: string;
+  totalRooms: number;
+  availableRooms: number;
+  isActive: boolean;
+}
+
+export interface CommoditieDTO {
+  commoditieId: number;
+  hotelId: number;
+  hasParking: boolean;
+  isParkingPaid: boolean;
+  hasBreakfast: boolean;
+  isBreakfastPaid: boolean;
+  hasLunch: boolean;
+  isLunchPaid: boolean;
+  hasDinner: boolean;
+  isDinnerPaid: boolean;
+  hasSpa: boolean;
+  isSpaPaid: boolean;
+  hasPool: boolean;
+  isPoolPaid: boolean;
+  hasGym: boolean;
+  isGymPaid: boolean;
+  hasWiFi: boolean;
+  isWiFiPaid: boolean;
+  hasAirConditioning: boolean;
+  isAirConditioningPaid: boolean;
+  hasAccessibilityFeatures: boolean;
+  isAccessibilityFeaturesPaid: boolean;
+  isPetFriendly: boolean;
+  isPetFriendlyPaid: boolean;
+  isActive: boolean;
+  commoditieServices: CommoditieServicesDTO[];
+}
+
+export interface CommoditieServicesDTO {
+  commoditieServicesId: number;
+  name: string;
+  isPaid: boolean;
+  description?: string;
+  isActive: boolean;
+  commoditieId: number;
+}
+
 
 export interface HotelDate {
   hotelDateId: number
@@ -81,6 +137,10 @@ export interface CreateCommoditieDTO {
 export interface CreateHotelDTO {
   name: string;
   cnpj: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
   description?: string;
   starRating: number;
   checkInTime?: string;
@@ -88,9 +148,20 @@ export interface CreateHotelDTO {
   contactPhone?: string;
   contactEmail?: string;
   isActive: boolean;
-  roomTypes: HotelRoomType[];
-  hotelDates: HotelDate[];
   mediaFiles: File[];
-  commoditie: CreateCommoditieDTO;
+  roomTypesJson: string;
 }
+
+
+export type RoomTypeEnum = 'Single' | 'Double' | 'Suite' | 'Deluxe' | 'Family';
+
+export interface CreateHotelRoomTypeDTO {
+  Name: RoomTypeEnum;
+  Description: string;
+  Price: number;
+  Capacity: number;
+  BedType: string;
+  TotalRooms: number;
+}
+
 

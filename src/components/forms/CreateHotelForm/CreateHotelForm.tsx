@@ -1,15 +1,24 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreateHotelDTO } from '../../../types/Hotel';
+import { CreateHotelDTO, CreateHotelRoomTypeDTO, RoomTypeEnum } from '../../../types/Hotel';
 import { createHotel } from '../../../services/hotelService';
+
+
+const roomTypeOptions: RoomTypeEnum[] = ['Single', 'Double', 'Suite', 'Deluxe', 'Family'];
+
 
 function CreateHotelForm() {
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
 
-  const [formData, setFormData] = useState<CreateHotelDTO>({
+
+  const [formData, setFormData] = useState<Omit<CreateHotelDTO, 'roomTypesJson'>>({
     name: '',
     cnpj: '',
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
     description: '',
     starRating: 3,
     checkInTime: '',
@@ -17,41 +26,73 @@ function CreateHotelForm() {
     contactPhone: '',
     contactEmail: '',
     isActive: true,
-    roomTypes: [],
-    hotelDates: [],
-    mediaFiles: [],
-    commoditie: {
-      hotelId: 0,
-      hasParking: false,
-      isParkingFree: false,
-      hasBreakfast: false,
-      isBreakfastFree: false,
-      hasLunch: false,
-      isLunchFree: false,
-      hasDinner: false,
-      isDinnerFree: false,
-      hasSpa: false,
-      isSpaFree: false,
-      hasPool: false,
-      isPoolFree: false,
-      hasGym: false,
-      isGymFree: false,
-      hasWiFi: false,
-      isWiFiFree: false,
-      hasAirConditioning: false,
-      isAirConditioningFree: false,
-      hasAccessibilityFeatures: false,
-      isAccessibilityFeaturesFree: false,
-      isPetFriendly: false,
-      isPetFriendlyFree: false,
-      commoditiesServices: []
-    }
+    mediaFiles: []
   });
+
+
+
+  const [roomTypes, setRoomTypes] = useState<CreateHotelRoomTypeDTO[]>([
+    {
+      Name: 'Single',
+      Description: '',
+      Price: 0,
+      Capacity: 1,
+      BedType: '',
+      TotalRooms: 1
+    }
+  ]);
+
+
+  const handleRoomTypeChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const updatedRoomTypes = [...roomTypes];
+
+    const parsedValue =
+      name === 'Price' || name === 'Capacity' || name === 'TotalRooms'
+        ? Number(value)
+        : value;
+
+    updatedRoomTypes[index][name as keyof CreateHotelRoomTypeDTO] = parsedValue as never;
+    setRoomTypes(updatedRoomTypes);
+  };
+
+
+
+
+  const addRoomType = () => {
+    setRoomTypes([
+      ...roomTypes,
+      {
+        Name: 'Single',
+        Description: '',
+        Price: 0,
+        Capacity: 1,
+        BedType: '',
+        TotalRooms: 1
+      }
+    ]);
+  };
+
+
+
+
+  const removeRoomType = (index: number) => {
+    const updatedRoomTypes = roomTypes.filter((_, i) => i !== index);
+    setRoomTypes(updatedRoomTypes);
+  };
+
+
+
+
 
   const resetForm = () => {
     setFormData({
       name: '',
       cnpj: '',
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
       description: '',
       starRating: 3,
       checkInTime: '',
@@ -59,37 +100,20 @@ function CreateHotelForm() {
       contactPhone: '',
       contactEmail: '',
       isActive: true,
-      roomTypes: [],
-      hotelDates: [],
-      mediaFiles: [],
-      commoditie: {
-        hotelId: 0,
-        hasParking: false,
-        isParkingFree: false,
-        hasBreakfast: false,
-        isBreakfastFree: false,
-        hasLunch: false,
-        isLunchFree: false,
-        hasDinner: false,
-        isDinnerFree: false,
-        hasSpa: false,
-        isSpaFree: false,
-        hasPool: false,
-        isPoolFree: false,
-        hasGym: false,
-        isGymFree: false,
-        hasWiFi: false,
-        isWiFiFree: false,
-        hasAirConditioning: false,
-        isAirConditioningFree: false,
-        hasAccessibilityFeatures: false,
-        isAccessibilityFeaturesFree: false,
-        isPetFriendly: false,
-        isPetFriendlyFree: false,
-        commoditiesServices: []
-      }
+      mediaFiles: []
     });
+    setRoomTypes([
+      {
+        Name: 'Single',
+        Description: '',
+        Price: 0,
+        Capacity: 1,
+        BedType: '',
+        TotalRooms: 1
+      }
+    ]);
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -101,10 +125,29 @@ function CreateHotelForm() {
   };
 
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        mediaFiles: Array.from(files)
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await createHotel(formData);
+      const roomTypesJson = JSON.stringify(roomTypes);
+      const payload: CreateHotelDTO = {
+        ...formData,
+        roomTypesJson
+      };
+
+      console.log(payload)
+
+      const result = await createHotel(payload);
+      console.log("result, ", result)
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
       resetForm();
@@ -112,6 +155,7 @@ function CreateHotelForm() {
       alert('Erro ao cadastrar hotel. Verifique os dados e tente novamente.');
     }
   };
+
 
   return (
     <div className="container py-5">
@@ -145,29 +189,97 @@ function CreateHotelForm() {
                 {[
                   { name: 'name', label: 'Nome do Hotel', type: 'text', required: true },
                   { name: 'cnpj', label: 'CNPJ', type: 'text', required: true },
+                  { name: 'street', label: 'Rua', type: 'text', required: true },
+                  { name: 'city', label: 'Cidade', type: 'text', required: true },
+                  { name: 'state', label: 'Estado', type: 'text', required: true },
+                  { name: 'zipCode', label: 'CEP', type: 'text', required: true },
                   { name: 'description', label: 'Descrição', type: 'text', required: false },
                   { name: 'starRating', label: 'Classificação (1 a 5)', type: 'number', required: true },
                   { name: 'checkInTime', label: 'Check-in', type: 'text', required: false },
                   { name: 'checkOutTime', label: 'Check-out', type: 'text', required: false },
                   { name: 'contactPhone', label: 'Telefone de Contato', type: 'text', required: false },
                   { name: 'contactEmail', label: 'Email de Contato', type: 'email', required: false }
-                ].map(({ name, label, type, required }) => (
-                  <div className="mb-3" key={name}>
-                    <label htmlFor={name} className="form-label">
-                      {label} {required && <span className="text-danger">*</span>}
-                    </label>
-                    <input
-                      type={type}
-                      name={name}
-                      id={name}
-                      value={(formData as any)[name]}
-                      onChange={handleChange}
-                      className="form-control"
-                      required={required}
-                    />
+                ].
+
+                  map(({ name, label, type, required }) => (
+                    <div className="mb-3" key={name}>
+                      <label htmlFor={name} className="form-label">
+                        {label} {required && <span className="text-danger">*</span>}
+                      </label>
+                      <input
+                        type={type}
+                        name={name}
+                        id={name}
+                        value={(formData as any)[name]}
+                        onChange={handleChange}
+                        className="form-control"
+                        required={required}
+                      />
+                    </div>
+                  ))}
+
+
+                <div className="mb-3">
+                  <label htmlFor="mediaFiles" className="form-label">Imagens</label>
+                  <input
+                    type="file"
+                    name="mediaFiles"
+                    id="mediaFiles"
+                    multiple
+                    onChange={handleFileChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <h5 className="mt-4">Tipos de Quarto</h5>
+                {roomTypes.map((room, index) => (
+                  <div key={index} className="border p-3 mb-3">
+                    
+<div className="mb-2">
+                      <label className="form-label">Tipo</label>
+                      <select
+                        name="Name"
+                        value={room.Name}
+                        onChange={(e) => handleRoomTypeChange(index, e)}
+                        className="form-select"
+                        required
+                      >
+                        {roomTypeOptions.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                   
+{[
+                      { name: 'Description', label: 'Descrição', type: 'text' },
+                      { name: 'Price', label: 'Preço', type: 'number' },
+                      { name: 'Capacity', label: 'Capacidade', type: 'number' },
+                      { name: 'BedType', label: 'Tipo de Cama', type: 'text' },
+                      { name: 'TotalRooms', label: 'Total de Quartos', type: 'number' }
+                    ].
+map(({ name, label, type }) => (
+                      <div className="mb-2" key={name}>
+                        <label className="form-label">{label}</label>
+                        <input
+                          type={type}
+                          name={name}
+                          value={(room as any)[name]}
+                          onChange={(e) => handleRoomTypeChange(index, e)}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    ))}
+                    <button type="button" className="btn btn-danger mt-2" onClick={() => removeRoomType(index)}>
+                      Remover Tipo de Quarto
+                    </button>
                   </div>
-                ))
-                }
+                ))}
+                <button type="button" className="btn btn-secondary mb-3" onClick={addRoomType}>
+                  Adicionar Tipo de Quarto
+                </button>
+
                 <div className="d-grid gap-2">
                   <button type="submit" className="btn btn-primary">Cadastrar Hotel</button>
                 </div>
