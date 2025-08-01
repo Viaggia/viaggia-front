@@ -24,7 +24,6 @@ const Details: React.FC = () => {
         </div>
       </div>
 
-      {/* Agrupando texto e carrossel para controle de espaçamento */}
       <div className="row justify-content-around align-items-start">
         <div className="col-lg-6 mb-4">
           <CarouselCards />
@@ -39,14 +38,12 @@ const Details: React.FC = () => {
         </div>
       </div>
 
-      {/* Texto explicativo abaixo do carrossel */}
       <div className="col-md-6 m-3 mt-0">
         <p className="fw-bold padding-left-3 mb-2">
           O Hotel Mar à Vista está convenientemente localizado na popular área de Porto Seguro. Tanto viajantes a negócios quanto turistas podem desfrutar das instalações e serviços do hotel.
         </p>
       </div>
 
-      {/* Lista de serviços */}
       <div className="container mt-3">
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 gx-0 gy-1">
           <div className="col">
@@ -54,7 +51,7 @@ const Details: React.FC = () => {
             <ul className="list-unstyled small mb-0">
               <li>Wi-Fi</li>
               <li>Café da manhã</li>
-              <li>Estacionamento</li>
+              <li>Piscina</li>
               <li>Acessibilidade</li>
             </ul>
           </div>
@@ -70,30 +67,26 @@ const Details: React.FC = () => {
           <div className="col">
             <h6 className="mb-1">Serviços à parte</h6>
             <ul className="list-unstyled small mb-0">
-              <li>Passeio de Buggy</li>
+              <li>Estacionamento</li>
               <li>Almoço</li>
-              <li>Janta ou Almoço</li>
-              <li>Passeio Turístico</li>
-              <li>Aceita animais</li>
-              <li>Tem piscina</li>
-              <li>Sala de jogo</li>
+              <li>Janta</li>
               <li>Spa</li>
               <li>Academia</li>
+              <li>Pet Friendly</li>
+              <li>Ar-condicionado</li>
             </ul>
 
           </div>
           <div className="col">
             <h6 className="mb-1">Valores</h6>
             <ul className="list-unstyled small mb-0">
-              <li>R$120</li>
-              <li>R$40</li>
-              <li>R$45</li>
-              <li>R$100</li>
+              <li>R$20</li>
               <li>R$50</li>
-              <li>R$30</li>
-              <li>R$25</li>
-              <li>R$60</li>
-              <li>R$70</li>
+              <li>R$40</li>
+              <li>R$90</li>
+              <li>R$40</li>
+              <li>R$0</li>
+              <li>R$0</li>
             </ul>
           </div>
         </div>

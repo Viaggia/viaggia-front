@@ -2,25 +2,33 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const services = [
-  'Passeio de Buggy', 'Almoço', 'Janta ou Café da Manhã', 'Passeio Turístico',
-  'Wi-Fi grátis', 'Aceita animais', 'Tem piscina', 'Sala de jogo', 'Spa',
-  'Academia', 'Estacionamento', 'Acessibilidade'
+  'Estacionamento',
+  'Café da manhã',
+  'Almoço',
+  'Janta',
+  'Spa',
+  'Piscina',
+  'Academia',
+  'Wi-Fi',
+  'Ar-condicionado',
+  'Acessibilidade',
+  'Pet Friendly'
 ];
 
 const pricePerNight = 200;
+
 const serviceValues: { [key: string]: number } = {
-  'Passeio de Buggy': 150,
-  'Almoço': 50,
-  'Janta ou Café da Manhã': 40,
-  'Passeio Turístico': 120,
-  'Wi-Fi grátis': 0,
-  'Aceita animais': 0,
-  'Tem piscina': 0,
-  'Sala de jogo': 30,
-  'Spa': 90,
-  'Academia': 40,
   'Estacionamento': 20,
+  'Café da manhã': 0,
+  'Almoço': 50,
+  'Janta': 40,
+  'Spa': 90,
+  'Piscina': 0,
+  'Academia': 40,
+  'Wi-Fi': 0,
+  'Ar-condicionado': 0,
   'Acessibilidade': 0,
+  'Pet Friendly': 0,
 };
 
 const AdditionalServicesCard: React.FC = () => {
@@ -69,7 +77,6 @@ const AdditionalServicesCard: React.FC = () => {
 
   return (
     <div className="container my-4">
-      
       {/* Datas */}
       <div style={cardStyle} className="mb-3">
         <h5 style={titleStyle}>Selecione suas datas</h5>
