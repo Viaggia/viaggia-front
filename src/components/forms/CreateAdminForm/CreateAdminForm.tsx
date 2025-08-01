@@ -1,45 +1,49 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { registerAdmin } from '../../../services/authService'
-import { CreateAdminDTO } from '../../../types/User'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { registerAdmin } from '../../../services/authService';
+import { CreateAdminDTO } from '../../../types/User';
 
 function CreateAdminForm() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<CreateAdminDTO>({
     name: '',
     email: '',
     password: '',
     phoneNumber: '',
-  })
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const response = await registerAdmin(formData)
-      console.log('Admin cadastrado com sucesso:', response)
-      navigate('/admin-dashboard')
+      const response = await registerAdmin(formData);
+      console.log('Admin cadastrado com sucesso:', response);
+      navigate('/admin-dashboard');
     } catch (error) {
-      alert('Erro ao cadastrar admin. Verifique os dados e tente novamente.')
+      alert('Erro ao cadastrar admin. Verifique os dados e tente novamente.');
     }
-  }
+  };
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center align-items-center">
-        <div className="col-lg-6 mb-4">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white">
-                <h4 className="mb-0">Cadastro de Administrador</h4>
-              </div>
-            <div className="card-body ">
+    <div className="row m-0">
+      {/* Faixa azul no topo */}
+      <div className="col-12 bg-primary text-white py-3">
+        <div className="container">
+          <h4 className="mb-0">Cadastro de Administrador</h4>
+        </div>
+      </div>
+
+      {/* Conteúdo do formulário */}
+      <div className="col-12 py-5" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="container">
+          <div className="card shadow-sm rounded-4 border-0">
+            <div className="card-body">
               <form onSubmit={handleSubmit}>
                 {[
                   { name: 'name', label: 'Nome Completo', type: 'text' },
@@ -62,16 +66,17 @@ function CreateAdminForm() {
                   </div>
                 ))}
                 <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-primary">Cadastrar Admin</button>
+                  <button type="submit" className="btn btn-light text-primary fw-bold">
+                    Cadastrar Admin
+                  </button>
                 </div>
               </form>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
-  )
+  );
 }
 
-export default CreateAdminForm
+export default CreateAdminForm;

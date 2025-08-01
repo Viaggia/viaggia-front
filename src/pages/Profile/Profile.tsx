@@ -29,7 +29,7 @@ function Profile() {
         className="profile-left col-2 text-white d-flex flex-column align-items-center"
         style={{ backgroundColor: '#2577f2', minHeight: '100vh' }}
       >
-             <div className="mt-4 text-center">
+        <div className="mt-4 text-center">
           <div
             className="position-relative rounded-circle shadow mb-4"
             style={{ width: '150px', height: '150px', overflow: 'hidden' }}
@@ -69,7 +69,7 @@ function Profile() {
           Meu Perfil
         </button>
 
-         <button
+        <button
           className={`btn w-100 ${activeButton === 'minhas-reservas' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('minhas-reservas')}
         >
@@ -115,55 +115,55 @@ function Profile() {
         >
           Cadastrar Pacote
         </button>
-       
+
 
 
       </div>
 
-      
+
 
       <div className="profile-right col-10">
 
         <div className="container mt-5 mb-5">
-         {activeButton === 'meu-perfil' && (
-          <div>
-            <div className="card shadow-sm">
-              <div className="card-header bg-primary text-white">
-                <h4 className="mb-0">Perfil do Usuário</h4>
-              </div>
-              <div className="card-body">
-                <div className="row mb-3">
-                  <div className="col-md-6"><strong>Nome:</strong> {user.name}</div>
-                  <div className="col-md-6"><strong>Email:</strong> {user.email}</div>
+          {activeButton === 'meu-perfil' && (
+            <div>
+              <div className="card shadow-sm">
+                <div className="card-header bg-primary text-white">
+                  <h4 className="mb-0">Perfil do Usuário</h4>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-md-6"><strong>Telefone:</strong> {user.phoneNumber}</div>
-                  {user.cpf && <div className="col-md-6"><strong>CPF:</strong> {user.cpf}</div>}
-                </div>
-                {user.addressStreet && (
+                <div className="card-body">
                   <div className="row mb-3">
-                    <div className="col-md-12">
-                      <strong>Endereço:</strong> {user.addressStreet}, {user.addressCity} - {user.addressState}, {user.addressZipCode}
+                    <div className="col-md-6"><strong>Nome:</strong> {user.name}</div>
+                    <div className="col-md-6"><strong>Email:</strong> {user.email}</div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-md-6"><strong>Telefone:</strong> {user.phoneNumber}</div>
+                    {user.cpf && <div className="col-md-6"><strong>CPF:</strong> {user.cpf}</div>}
+                  </div>
+                  {user.addressStreet && (
+                    <div className="row mb-3">
+                      <div className="col-md-12">
+                        <strong>Endereço:</strong> {user.addressStreet}, {user.addressCity} - {user.addressState}, {user.addressZipCode}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {user.companyName && (
-                  <div className="row mb-3">
-                    <div className="col-md-6"><strong>Empresa:</strong> {user.companyName}</div>
-                    {user.companyLegalName && <div className="col-md-6"><strong>Razão Social:</strong> {user.companyLegalName}</div>}
-                  </div>
-                )}
-                {user.employerCompanyName && (
-                  <div className="row mb-3">
-                    <div className="col-md-6"><strong>Empresa Empregadora:</strong> {user.employerCompanyName}</div>
-                    {user.employeeId && <div className="col-md-6"><strong>ID do Funcionário:</strong> {user.employeeId}</div>}
-                  </div>
-                )}
+                  )}
+                  {user.companyName && (
+                    <div className="row mb-3">
+                      <div className="col-md-6"><strong>Empresa:</strong> {user.companyName}</div>
+                      {user.companyLegalName && <div className="col-md-6"><strong>Razão Social:</strong> {user.companyLegalName}</div>}
+                    </div>
+                  )}
+                  {user.employerCompanyName && (
+                    <div className="row mb-3">
+                      <div className="col-md-6"><strong>Empresa Empregadora:</strong> {user.employerCompanyName}</div>
+                      {user.employeeId && <div className="col-md-6"><strong>ID do Funcionário:</strong> {user.employeeId}</div>}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          
-)}
+
+          )}
 
 
           {activeButton === 'atualizar-perfil' && (
@@ -231,7 +231,7 @@ function Profile() {
 
 
         </div>
-        
+
       </div>
       {showModal && (
         <div
@@ -260,7 +260,7 @@ function Profile() {
         </div>
       )}
     </div>
-    
+
   )
 }
 
