@@ -38,8 +38,10 @@ function CreateAttendantForm() {
       <div className="row justify-content-center align-items-center">
         <div className="col-lg-6 mb-4">
           <div className="card shadow">
+             <div className="card-header bg-primary text-white">
+                <h4 className="mb-0">Cadastro de Atendente</h4>
+              </div>
             <div className="card-body">
-              <h4 className="card-title text-center mb-4">Cadastro de Atendente</h4>
               <form onSubmit={handleSubmit}>
                 {[
                   { name: 'name', label: 'Nome Completo', type: 'text' },
