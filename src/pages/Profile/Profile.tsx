@@ -5,6 +5,7 @@ import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePa
 import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm'
 import { useAuth } from '../../context/AuthContext'
 import { useState } from 'react'
+import MyReservations from '../MyReservations/MyReservations'
 
 function Profile() {
   const { user } = useAuth()
@@ -61,10 +62,17 @@ function Profile() {
 
 
         <button
-          className={`btn w-100 mb-2 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          className={`btn w-100 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('meu-perfil')}
         >
           Meu Perfil
+        </button>
+
+         <button
+          className={`btn w-100 ${activeButton === 'minhas-reservas' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          onClick={() => setActiveButton('minhas-reservas')}
+        >
+          Minhas Reservas
         </button>
 
         <button
@@ -106,6 +114,7 @@ function Profile() {
         >
           Cadastrar Pacote
         </button>
+       
 
 
       </div>
@@ -193,6 +202,12 @@ function Profile() {
           {activeButton === 'cadastrar-attendant' && (
             <div>
               <CreateAttendantForm />
+            </div>
+          )}
+
+          {activeButton === 'minhas-reservas' && (
+            <div>
+              <MyReservations />
             </div>
           )}
 
