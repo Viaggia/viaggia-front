@@ -1,6 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
 export default function TravelForm() {
+
+  
+const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('/search');
+  };
+
+
   return (
-    <form className="row g-3 d-flex justify-content-center p-3 rounded">
+    <form className="row g-3 d-flex justify-content-center p-3 rounded" onSubmit={handleSubmit}>
       {/* Destino */}
       <div className="col-md-2">
         <label className="form-label text-white">Destino</label>

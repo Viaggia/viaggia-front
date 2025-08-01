@@ -1,7 +1,16 @@
 import { FaExclamationTriangle } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 function PaymentPending() {
+
+  const navigate = useNavigate();
+
+  const handleGoToPaymentConfirmed = () => {
+    navigate('/paymentconfirmed');
+  };
+
+
   return (
     <div className="container mt-5 pb-5">
       <div className="row justify-content-center">
@@ -36,7 +45,10 @@ function PaymentPending() {
               <p><strong>Total:</strong> R$ 1.000,00</p>
             </div>
             <div className="card-footer text-end">
-              <button className="btn btn-success">Ir para o pagamento</button>
+              <button className="btn btn-success" onClick={handleGoToPaymentConfirmed}>
+                Ir para o pagamento
+              </button>
+
             </div>
           </div>
 

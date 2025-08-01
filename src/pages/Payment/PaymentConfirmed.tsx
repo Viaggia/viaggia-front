@@ -1,7 +1,16 @@
 import { FaCheckCircle } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 function PaymentConfirmed() {
+
+  const navigate = useNavigate();
+
+  const handleGoToReservations = () => {
+    navigate('/my-reservations');
+  };
+
+
   return (
     <div className="container mt-5 pb-5">
       <div className="row justify-content-center">
@@ -44,10 +53,14 @@ function PaymentConfirmed() {
 
           {/* Link para o recibo */}
           <div className="text-end mt-3">
-            <a href="/recibo" className="btn btn-link">
+            <a href="/recibo" className="btn btn-link me-2">
               Ver recibo
             </a>
+            <button className="btn btn-primary" onClick={handleGoToReservations}>
+              Ir para minhas reservas
+            </button>
           </div>
+
 
           {/* Espaço extra no final */}
           <div className="mt-5" />

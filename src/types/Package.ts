@@ -19,14 +19,15 @@ export interface PackageDTO {
   packageDates: PackageDateDTO[];
 }
 
-
 export interface PackageCreateDTO {
   name: string;
   destination: string;
   description?: string;
   basePrice: number;
-  hotelId: number;
+  hotelName: string;
   isActive: boolean;
-  packageDates: PackageDateDTO[];
+  startDate: string;
+  endDate: string;
   mediaFiles: File[];
 }
+

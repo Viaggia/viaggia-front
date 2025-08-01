@@ -1,7 +1,16 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 const Payment: React.FC = () => {
+
+  const navigate = useNavigate();
+
+  const handleGoToPaymentPending = () => {
+    navigate('/paymentpending');
+  };
+
+
   return (
     <div className="container py-5">
       <div className="row">
@@ -55,7 +64,10 @@ const Payment: React.FC = () => {
               <p><strong>Total:</strong> R$ 1.000,00</p>
             </div>
             <div className="card-footer text-end">
-              <button className="btn btn-success">Ir para o pagamento</button>
+              <button className="btn btn-success" onClick={handleGoToPaymentPending}>
+                Ir para o pagamento
+              </button>
+
             </div>
           </div>
         </div>

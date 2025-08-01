@@ -39,8 +39,6 @@ function Home() {
 
   }, []);
 
-  console.log("hotels", hotels)
-
   const carouselPackages = packages.map((pkg) => ({
 
     titulo: pkg.name,

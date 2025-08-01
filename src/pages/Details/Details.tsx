@@ -2,8 +2,17 @@ import React from 'react';
 import CarouselCards from '../../components/cards/Carrossel/CarouselCards';
 import AdditionalServicesCard from '../../components/Plus/AdditionalServicesCard';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 const Details: React.FC = () => {
+
+  const navigate = useNavigate();
+
+  const handleGoToPayment = () => {
+    navigate('/payment');
+  };
+
+
   return (
     <div className="container-fluid py-5">
       <div className="m-3">
@@ -22,6 +31,11 @@ const Details: React.FC = () => {
         </div>
         <div className="col-lg-3 mt-0">
           <AdditionalServicesCard />
+        </div>
+        <div className="text-center mt-4">
+          <button className="btn btn-primary px-5 py-2" onClick={handleGoToPayment}>
+            Ir para Pagamento
+          </button>
         </div>
       </div>
 
@@ -66,6 +80,7 @@ const Details: React.FC = () => {
               <li>Spa</li>
               <li>Academia</li>
             </ul>
+
           </div>
           <div className="col">
             <h6 className="mb-1">Valores</h6>

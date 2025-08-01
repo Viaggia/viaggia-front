@@ -78,14 +78,9 @@ export interface CreateCommoditieDTO {
   commoditiesServices: CommoditiesServiceDTO[];
 }
 
-
-
 export interface CreateHotelDTO {
   name: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
+  cnpj: string;
   description?: string;
   starRating: number;
   checkInTime?: string;
@@ -98,3 +93,4 @@ export interface CreateHotelDTO {
   mediaFiles: File[];
   commoditie: CreateCommoditieDTO;
 }
+
