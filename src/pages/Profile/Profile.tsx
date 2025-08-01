@@ -6,10 +6,14 @@ import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePa
 import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm'
 import { useAuth } from '../../context/AuthContext'
 import { useState } from 'react'
+import MyReservations from '../MyReservations/MyReservations'
 
 function Profile() {
   const { user } = useAuth()
   const [activeButton, setActiveButton] = useState('meu-perfil')
+  const [hover, setHover] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+
 
   if (!user) {
     return (
@@ -25,16 +29,51 @@ function Profile() {
         className="profile-left col-2 text-white d-flex flex-column align-items-center"
         style={{ backgroundColor: '#2577f2', minHeight: '100vh' }}
       >
-        <div className="mt-4 text-center">
+             <div className="mt-4 text-center">
+          <div
+            className="position-relative rounded-circle shadow mb-4"
+            style={{ width: '150px', height: '150px', overflow: 'hidden' }}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+          >
+            <img
+              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+              alt="imagem-perfil"
+              width={150}
+              height={150}
+            />
+
+            <div
+              className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center rounded-circle"
+              style={{
+                backgroundColor: hover ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0)',
+                opacity: hover ? 1 : 0,
+                transition: 'background-color 0.3s, opacity 0.3s',
+                cursor: hover ? 'pointer' : 'default'
+              }}
+              onClick={() => setShowModal(true)}
+            >
+              <i className="bi bi-pencil-fill text-white fs-4"></i>
+            </div>
+          </div>
+
           <h3 className="h3">{user.name}</h3>
           <p className="p">{user.email}</p>
         </div>
 
+
         <button
-          className={`btn w-100 mb-2 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          className={`btn w-100 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('meu-perfil')}
         >
           Meu Perfil
+        </button>
+
+         <button
+          className={`btn w-100 ${activeButton === 'minhas-reservas' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          onClick={() => setActiveButton('minhas-reservas')}
+        >
+          Minhas Reservas
         </button>
 
         <button
@@ -76,13 +115,18 @@ function Profile() {
         >
           Cadastrar Pacote
         </button>
+       
 
 
       </div>
 
+      
+
       <div className="profile-right col-10">
+
         <div className="container mt-5 mb-5">
-          {activeButton === 'meu-perfil' && (
+         {activeButton === 'meu-perfil' && (
+          <div>
             <div className="card shadow-sm">
               <div className="card-header bg-primary text-white">
                 <h4 className="mb-0">Perfil do Usuário</h4>
@@ -117,7 +161,10 @@ function Profile() {
                 )}
               </div>
             </div>
-          )}
+          </div>
+          
+)}
+
 
           {activeButton === 'atualizar-perfil' && (
             <div className="card shadow-sm">
@@ -159,6 +206,12 @@ function Profile() {
             </div>
           )}
 
+          {activeButton === 'minhas-reservas' && (
+            <div>
+              <MyReservations />
+            </div>
+          )}
+
           {activeButton === 'cadastrar-service-provider' && (
             <div>
               <CreateServiceProviderForm />
@@ -178,9 +231,38 @@ function Profile() {
 
 
         </div>
+        
       </div>
+      {showModal && (
+        <div
+          className="modal fade show"
+          style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
+          tabIndex={-1}
+          role="dialog"
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Atualizar Imagem de Perfil</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body text-center">
+                <p>Escolha uma nova imagem de perfil:</p>
+                <input type="file" className="form-control mb-3" />
+                <button className="btn btn-primary">Adicionar Imagem</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+    
   )
 }
+
 
 export default Profile

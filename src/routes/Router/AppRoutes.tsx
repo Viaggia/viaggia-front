@@ -17,6 +17,7 @@ import PaymentPeding from '../../pages/Payment/PaymentPending'
 import PaymentConfirmed from '../../pages/Payment/PaymentConfirmed'
 import MyReservations from '../../pages/MyReservations/MyReservations'
 import CancelReservation from '../../pages/CancelReservation/CancelReservation'
+import PaymentOrder from '../../pages/Payment/PaymentOrder'
 
 
 
@@ -42,6 +43,7 @@ function AppRoutes() {
       <Route path="/promotion" element={<Promotion />} />
       <Route path='/paymentpending' element={<PaymentPeding/>}/>
       <Route path='/paymentconfirmed' element={<PaymentConfirmed/>}/>
+      <Route path='/paymentorder' element={<PaymentOrder/>}/>
     </Routes>
   )
 }
