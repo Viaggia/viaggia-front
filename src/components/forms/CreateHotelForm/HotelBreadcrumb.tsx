@@ -6,7 +6,12 @@ interface Props {
 }
 
 const HotelBreadcrumb: React.FC<Props> = ({ currentStep, setStep }) => {
-  const steps = ['Informações Básicas', 'Tipos de Quarto', 'Revisar e Enviar'];
+  const steps = [
+    'Informações Básicas',
+    'Tipos de Quarto',
+    'Comodidades',
+    'Revisar e Enviar'
+  ];
 
   return (
     <nav aria-label="breadcrumb" className="mb-4">

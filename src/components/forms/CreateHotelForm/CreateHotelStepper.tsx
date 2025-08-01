@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreateHotelDTO, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
+import { CreateCommoditieDTO, CreateHotelDTO, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
 import { createHotel } from '../../../services/hotelService';
 import HotelBreadcrumb from './HotelBreadcrumb';
 import HotelBasicInfoForm from './HotelBasicInfoForm';
 import HotelRoomTypesForm from './HotelRoomTypesForm';
 import HotelReviewSubmit from './HotelReviewSubmit';
+import { createCommodities } from '../../../services/commodityService';
+import HotelCommoditiesForm from './HotelCommoditiesForm';
 
 function CreateHotelStepper() {
     const navigate = useNavigate();
@@ -40,6 +42,35 @@ function CreateHotelStepper() {
         }
     ]);
 
+
+    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommoditieDTO, 'hotelId'>>({
+        hasParking: false,
+        isParkingPaid: false,
+        hasBreakfast: false,
+        isBreakfastPaid: false,
+        hasLunch: false,
+        isLunchPaid: false,
+        hasDinner: false,
+        isDinnerPaid: false,
+        hasSpa: false,
+        isSpaPaid: false,
+        hasPool: false,
+        isPoolPaid: false,
+        hasGym: false,
+        isGymPaid: false,
+        hasWiFi: false,
+        isWiFiPaid: false,
+        hasAirConditioning: false,
+        isAirConditioningPaid: false,
+        hasAccessibilityFeatures: false,
+        isAccessibilityFeaturesPaid: false,
+        isPetFriendly: false,
+        isPetFriendlyPaid: false,
+        isActive: true,
+        commoditieServices: []
+    });
+
+
     const resetForm = () => {
         setFormData({
             name: '',
@@ -73,12 +104,22 @@ function CreateHotelStepper() {
     const handleSubmit = async () => {
         try {
             const roomTypesJson = JSON.stringify(roomTypes);
-            const payload: CreateHotelDTO = {
+            const hotelPayload: CreateHotelDTO = {
                 ...formData,
                 roomTypesJson
             };
 
-            await createHotel(payload);
+
+            const hotelResponse = await createHotel(hotelPayload);
+            const hotelId = hotelResponse.hotelId;
+
+            const commoditiesPayload: CreateCommoditieDTO = {
+                ...commoditiesFormData,
+                hotelId
+            };
+
+            await createCommodities(commoditiesPayload);
+
             setShowToast(true);
             resetForm();
             setTimeout(() => setShowToast(false), 4000);
@@ -109,14 +150,26 @@ function CreateHotelStepper() {
                                     prevStep={() => setStep(1)}
                                 />
                             )}
+
                             {step === 3 && (
-                                <HotelReviewSubmit
-                                    formData={{ ...formData, roomTypesJson: JSON.stringify(roomTypes) }}
-                                    roomTypes={roomTypes}
-                                    handleSubmit={handleSubmit}
+                                <HotelCommoditiesForm
+                                    commoditiesFormData={commoditiesFormData}
+                                    setCommoditiesFormData={setCommoditiesFormData}
+                                    nextStep={() => setStep(4)}
                                     prevStep={() => setStep(2)}
                                 />
                             )}
+                            {step === 4 && (
+                                <HotelReviewSubmit
+                                    formData={{ ...formData, roomTypesJson: JSON.stringify(roomTypes) }}
+                                    roomTypes={roomTypes}
+                                    commodities={commoditiesFormData}
+                                    handleSubmit={handleSubmit}
+                                    prevStep={() => setStep(3)}
+                                />
+                            )}
+
+
 
                             {showToast && (
                                 <div

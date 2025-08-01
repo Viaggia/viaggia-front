@@ -1,14 +1,40 @@
 import React from 'react';
-import { CreateHotelDTO, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
+import { CreateHotelDTO, CreateHotelRoomTypeDTO, CreateCommoditieDTO } from '../../../types/Hotel';
 
 interface Props {
   formData: CreateHotelDTO;
   roomTypes: CreateHotelRoomTypeDTO[];
+  commodities: Omit<CreateCommoditieDTO, 'hotelId'>;
   handleSubmit: () => void;
   prevStep: () => void;
 }
 
-const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, handleSubmit, prevStep }) => {
+const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, handleSubmit, prevStep }) => {
+  const comoditiesLabels: { field: keyof typeof commodities; label: string }[] = [
+    { field: 'hasParking', label: 'Tem Estacionamento' },
+    { field: 'isParkingPaid', label: 'Estacionamento é pago' },
+    { field: 'hasBreakfast', label: 'Tem Café da Manhã' },
+    { field: 'isBreakfastPaid', label: 'Café da Manhã é pago' },
+    { field: 'hasLunch', label: 'Tem Almoço' },
+    { field: 'isLunchPaid', label: 'Almoço é pago' },
+    { field: 'hasDinner', label: 'Tem Jantar' },
+    { field: 'isDinnerPaid', label: 'Jantar é pago' },
+    { field: 'hasSpa', label: 'Tem Spa' },
+    { field: 'isSpaPaid', label: 'Spa é pago' },
+    { field: 'hasPool', label: 'Tem Piscina' },
+    { field: 'isPoolPaid', label: 'Piscina é paga' },
+    { field: 'hasGym', label: 'Tem Academia' },
+    { field: 'isGymPaid', label: 'Academia é paga' },
+    { field: 'hasWiFi', label: 'Tem Wi-Fi' },
+    { field: 'isWiFiPaid', label: 'Wi-Fi é pago' },
+    { field: 'hasAirConditioning', label: 'Tem Ar-condicionado' },
+    { field: 'isAirConditioningPaid', label: 'Ar-condicionado é pago' },
+    { field: 'hasAccessibilityFeatures', label: 'Tem Acessibilidade' },
+    { field: 'isAccessibilityFeaturesPaid', label: 'Acessibilidade é paga' },
+    { field: 'isPetFriendly', label: 'Aceita Pets' },
+    { field: 'isPetFriendlyPaid', label: 'Taxa para Pets' }
+  ];
+
   return (
     <div>
       <h5 className="mb-3">Revisar Dados</h5>
@@ -42,6 +68,30 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, handleSubmit,
           </div>
         ))}
       </div>
+
+      <div className="mb-4">
+        <h6>🧾 Comodidades</h6>
+        <ul className="list-group">
+          {comoditiesLabels.map(({ field, label }) => (
+            <li key={field} className="list-group-item">
+              <strong>{label}:</strong> {commodities[field] ? 'Sim' : 'Não'}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {commodities.commoditieServices.length > 0 && (
+        <div className="mb-4">
+          <h6>🧩 Serviços Adicionais</h6>
+          {commodities.commoditieServices.map((service, index) => (
+            <div key={index} className="border rounded p-3 mb-2">
+              <p><strong>Nome:</strong> {service.name}</p>
+              <p><strong>Descrição:</strong> {service.description || '—'}</p>
+              <p><strong>Pago:</strong> {service.isPaid ? 'Sim' : 'Não'}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="d-flex justify-content-between">
         <button type="button" className="btn btn-outline-primary" onClick={prevStep}>Voltar</button>

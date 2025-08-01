@@ -110,28 +110,33 @@ export interface CommoditiesServiceDTO {
 export interface CreateCommoditieDTO {
   hotelId: number;
   hasParking: boolean;
-  isParkingFree: boolean;
+  isParkingPaid: boolean;
   hasBreakfast: boolean;
-  isBreakfastFree: boolean;
+  isBreakfastPaid: boolean;
   hasLunch: boolean;
-  isLunchFree: boolean;
+  isLunchPaid: boolean;
   hasDinner: boolean;
-  isDinnerFree: boolean;
+  isDinnerPaid: boolean;
   hasSpa: boolean;
-  isSpaFree: boolean;
+  isSpaPaid: boolean;
   hasPool: boolean;
-  isPoolFree: boolean;
+  isPoolPaid: boolean;
   hasGym: boolean;
-  isGymFree: boolean;
+  isGymPaid: boolean;
   hasWiFi: boolean;
-  isWiFiFree: boolean;
+  isWiFiPaid: boolean;
   hasAirConditioning: boolean;
-  isAirConditioningFree: boolean;
+  isAirConditioningPaid: boolean;
   hasAccessibilityFeatures: boolean;
-  isAccessibilityFeaturesFree: boolean;
+  isAccessibilityFeaturesPaid: boolean;
   isPetFriendly: boolean;
-  isPetFriendlyFree: boolean;
-  commoditiesServices: CommoditiesServiceDTO[];
+  isPetFriendlyPaid: boolean;
+  isActive: boolean;
+  commoditieServices: {
+    name: string;
+    isPaid: boolean;
+    description: string;
+  }[];
 }
 
 export interface CreateHotelDTO {
