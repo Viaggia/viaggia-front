@@ -65,7 +65,7 @@ const Payment: React.FC = () => {
             </div>
             <div className="card-footer text-end">
               <button className="btn btn-success" onClick={handleGoToPaymentPending}>
-                Ir para o pagamento
+                Finalizar Pedido
               </button>
 
             </div>
