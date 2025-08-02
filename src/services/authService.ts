@@ -44,6 +44,12 @@ export async function logout() {
   localStorage.removeItem('token')
 }
 
+export async function logoutGoogle() {
+  await api.post('/api/Accounts/logout-google')
+  localStorage.removeItem('token')
+}
+
+
 export async function forgotPassword(data: ForgotPasswordRequestDTO) {
   const response = await api.post('/api/Auth/forgot-password', data);
   return response.data;

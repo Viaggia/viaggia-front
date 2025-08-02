@@ -18,11 +18,18 @@ function AuthSuccess() {
 
         const userId = getUserIdFromToken(token)
         if (userId) {
-          const user = await getUserById(userId)
-          setUser(user)
+          try {
+            const user = await getUserById(userId)
+            setUser({ ...user, isGoogleAccount: true }) // 👈 Aqui marcamos que veio do Google
+            navigate('/')
+          } catch {
+            localStorage.removeItem('token')
+            setUser(null)
+            navigate('/login')
+          }
+        } else {
+          navigate('/login')
         }
-
-        navigate('/')
       } else {
         navigate('/login')
       }

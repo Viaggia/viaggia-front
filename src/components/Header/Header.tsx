@@ -2,24 +2,27 @@ import { Link } from 'react-router-dom'
 import { FaPlaneDeparture } from 'react-icons/fa'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { logout } from '../../services/authService'
+import { logout, logoutGoogle } from '../../services/authService'
 
 function Header() {
   const { user, setUser } = useAuth()
   const navigate = useNavigate()
 
 
-  const handleLogout = async () => {
-    try {
+const handleLogout = async () => {
+  try {
+    if (user?.isGoogleAccount) {
+      await logoutGoogle()
+    } else {
       await logout()
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error)
-    } finally {
-      setUser(null)
-      navigate('/login')
     }
+  } catch (error) {
+    console.error('Erro ao fazer logout:', error)
+  } finally {
+    setUser(null)
+    navigate('/login')
   }
-
+}
 
   return (
     <header>
@@ -33,14 +36,8 @@ function Header() {
           <ul className="navbar-nav">
             <li className="nav-item"><Link className="nav-link text-white" to="/">Home</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/search">Buscar</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/details">Detalhes</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/payment">Pagamento</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/packages">Pacotes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/promotion">Promoções</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/my-reservations">Reservas</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/cancel-reservation">Cancelamento</Link></li>
-
-
           </ul>
         </div>
 

@@ -20,8 +20,9 @@ export interface User {
   email: string
   password: string
   phoneNumber: string
-  createDate: string // ou Date, dependendo de como o backend envia
+  createDate: string
   isActive: boolean
+  isGoogleAccount?: boolean 
 
   // CLIENT
   cpf?: string

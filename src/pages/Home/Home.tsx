@@ -39,7 +39,7 @@ function Home() {
 
   }, []);
 
-  const backendUrl = "https://localhost:7164";
+  const backendUrl = import.meta.env.VITE_API_URL;
 
   const carouselPackages = packages.map((pkg) => ({
     packageId: pkg.packageId,
