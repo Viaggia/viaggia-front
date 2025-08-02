@@ -4,7 +4,7 @@ import { CreateHotelDTO, CreateHotelRoomTypeDTO, CreateCommoditieDTO } from '../
 interface Props {
   formData: CreateHotelDTO;
   roomTypes: CreateHotelRoomTypeDTO[];
-  commodities: Omit<CreateCommoditieDTO, 'hotelId'>;
+  commodities: Omit<CreateCommoditieDTO, 'hotelName'>;
   handleSubmit: () => void;
   prevStep: () => void;
 }

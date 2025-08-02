@@ -44,10 +44,11 @@ function CreatePackageForm() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      // setFormData(prev => ({ ...prev, mediaFiles: Array.from(e.target.files) }));
-    }
-  };
+  const files = e.target.files;
+  if (files && files.length > 0) {
+    setFormData(prev => ({ ...prev, mediaFiles: Array.from(files) }));
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

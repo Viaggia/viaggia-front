@@ -7,7 +7,7 @@ import { PackageDTO } from "../../types/Package";
 import { getPackages } from "../../services/packageService";
 import { HotelDTO } from "../../types/Hotel";
 import { getHotels } from "../../services/hotelService";
-import HotelCardHome from "../../components/cards/HotelCard/HotelCard";
+import HotelCard from "../../components/cards/HotelCard/HotelCard";
 
 function Home() {
 
@@ -39,21 +39,39 @@ function Home() {
 
   }, []);
 
+  const backendUrl = "https://localhost:7164";
+
   const carouselPackages = packages.map((pkg) => ({
-
+    packageId: pkg.packageId,
     titulo: pkg.name,
-    imagem: pkg.medias[0]?.mediaUrl || '/img/default.jpg',
-    preco: `R$ ${pkg.basePrice.toFixed(2)}`,
+    destino: pkg.destination,
+    descricao: pkg.description,
+    preco: pkg.basePrice,
+    imagem: pkg.medias[0] ? backendUrl + pkg.medias[0].mediaUrl : '/img/default.jpg',
+    datas: pkg.packageDates.length > 0
+      ? `${pkg.packageDates[0].startDate} até ${pkg.packageDates[0].endDate}`
+      : 'Datas não informadas',
   }));
 
-  const carouselHotels = hotels.map((hotel) => ({
-    titulo: hotel.name,
-    imagem: hotel.medias[0]?.mediaUrl || '/img/default.jpg',
-    preco: hotel.roomTypes[0]?.price
-      ? `R$ ${hotel.roomTypes[0].price.toFixed(2)}`
-      : 'Preço indisponível',
-  }));
+  const carouselHotels = hotels.map((hotel) => {
+    const menorPreco = hotel.roomTypes && hotel.roomTypes.length > 0
+      ? Math.min(...hotel.roomTypes.map(rt => rt.price))
+      : null;
 
+    return {
+      hotelId: hotel.hotelId,
+      titulo: hotel.name,
+      imagem: hotel.medias[0]
+        ? backendUrl + hotel.medias[0].mediaUrl
+        : '/img/default.jpg',
+      preco: menorPreco !== null
+        ? menorPreco
+        : null,
+      descricao: hotel.description,
+      estrelas: hotel.starRating,
+      cidade: hotel.city,
+    };
+  });
 
 
   const promotions = [
@@ -90,7 +108,7 @@ function Home() {
         <h2 className="mb-4 text-center">Escolha seu destino</h2>
         <TravelForm />
         <CardCarousel items={carouselPackages} CardComponent={PackageCard} text={"Pacotes Exclusivos"} />
-        <CardCarousel items={carouselHotels} CardComponent={HotelCardHome} text={"Hospedagens Recomendadas"} />
+        <CardCarousel items={carouselHotels} CardComponent={HotelCard} text={"Hospedagens Recomendadas"} />
 
       </div>
     </section>

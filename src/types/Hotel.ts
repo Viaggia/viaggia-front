@@ -108,7 +108,7 @@ export interface CommoditiesServiceDTO {
 
 
 export interface CreateCommoditieDTO {
-  hotelId: number;
+  hotelName: string;
   hasParking: boolean;
   isParkingPaid: boolean;
   hasBreakfast: boolean;
@@ -136,8 +136,10 @@ export interface CreateCommoditieDTO {
     name: string;
     isPaid: boolean;
     description: string;
+    isActive: boolean;
   }[];
 }
+
 
 export interface CreateHotelDTO {
   name: string;

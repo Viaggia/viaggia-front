@@ -1,37 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const services = [
-  'Estacionamento',
-  'Café da manhã',
-  'Almoço',
-  'Janta',
-  'Spa',
-  'Piscina',
-  'Academia',
-  'Wi-Fi',
-  'Ar-condicionado',
-  'Acessibilidade',
-  'Pet Friendly'
-];
+interface AdditionalServicesCardProps {
+  pricePerNight: number;
+  serviceValues: { [key: string]: number };
+  services: string[];
+}
 
-const pricePerNight = 200;
-
-const serviceValues: { [key: string]: number } = {
-  'Estacionamento': 20,
-  'Café da manhã': 0,
-  'Almoço': 50,
-  'Janta': 40,
-  'Spa': 90,
-  'Piscina': 0,
-  'Academia': 40,
-  'Wi-Fi': 0,
-  'Ar-condicionado': 0,
-  'Acessibilidade': 0,
-  'Pet Friendly': 0,
-};
-
-const AdditionalServicesCard: React.FC = () => {
+const AdditionalServicesCard: React.FC<AdditionalServicesCardProps> = ({ pricePerNight, serviceValues, services }) => {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -54,7 +30,7 @@ const AdditionalServicesCard: React.FC = () => {
     } else {
       setTotalPrice(null);
     }
-  }, [checkIn, checkOut, selectedServices]);
+  }, [checkIn, checkOut, selectedServices, pricePerNight, serviceValues]);
 
   const calculateNights = (startDate: string, endDate: string) => {
     const start = new Date(startDate);

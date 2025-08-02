@@ -39,3 +39,7 @@ export const createHotel = async (data: CreateHotelDTO) => {
   return response.data;
 };
 
+export async function getHotelById(id: number): Promise<HotelDTO> {
+  const response = await api.get(`/api/Hotel/${id}`);
+  return response.data.data;
+}

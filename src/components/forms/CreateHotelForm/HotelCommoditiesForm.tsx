@@ -2,8 +2,8 @@ import React from 'react';
 import { CommoditieServicesDTO, CreateCommoditieDTO } from '../../../types/Hotel';
 
 interface Props {
-  commoditiesFormData: Omit<CreateCommoditieDTO, 'hotelId'>;
-  setCommoditiesFormData: React.Dispatch<React.SetStateAction<Omit<CreateCommoditieDTO, 'hotelId'>>>;
+  commoditiesFormData: Omit<CreateCommoditieDTO, 'hotelName'>;
+  setCommoditiesFormData: React.Dispatch<React.SetStateAction<Omit<CreateCommoditieDTO, 'hotelName'>>>;
   nextStep: () => void;
   prevStep: () => void;
 }

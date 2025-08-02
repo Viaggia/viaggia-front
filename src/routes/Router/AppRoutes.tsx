@@ -39,11 +39,11 @@ function AppRoutes() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/packages" element={<Packages />} />
       <Route path="/auth-success" element={<AuthSuccess />} />
-
       <Route path="/promotion" element={<Promotion />} />
       <Route path='/paymentpending' element={<PaymentPeding/>}/>
       <Route path='/paymentconfirmed' element={<PaymentConfirmed/>}/>
       <Route path='/paymentorder' element={<PaymentOrder/>}/>
+      <Route path="/details/:hotelId" element={<Details />} />
     </Routes>
   )
 }

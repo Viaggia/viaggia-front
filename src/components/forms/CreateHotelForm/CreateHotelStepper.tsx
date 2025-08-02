@@ -43,7 +43,7 @@ function CreateHotelStepper() {
     ]);
 
 
-    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommoditieDTO, 'hotelId'>>({
+    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommoditieDTO, 'hotelName'>>({
         hasParking: false,
         isParkingPaid: false,
         hasBreakfast: false,
@@ -115,7 +115,7 @@ function CreateHotelStepper() {
 
             const commoditiesPayload: CreateCommoditieDTO = {
                 ...commoditiesFormData,
-                hotelId
+                hotelName: hotelResponse.name 
             };
 
             await createCommodities(commoditiesPayload);
