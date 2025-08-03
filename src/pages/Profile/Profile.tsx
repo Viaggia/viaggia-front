@@ -9,7 +9,7 @@ import { useState } from 'react'
 import MyReservations from '../MyReservations/MyReservations'
 
 function Profile() {
-  const { user } = useAuth()
+  const { user, role } = useAuth();
   const [activeButton, setActiveButton] = useState('meu-perfil')
   const [hover, setHover] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -83,38 +83,40 @@ function Profile() {
           Atualizar Perfil
         </button>
 
-        <button
-          className={`btn w-100 ${activeButton === 'cadastrar-adm' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('cadastrar-adm')}
-        >
-          Cadastrar Administrador
-        </button>
-
-        <button
-          className={`btn w-100 ${activeButton === 'cadastrar-attendant' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('cadastrar-attendant')}
-        >
-          Cadastrar Atendente
-        </button>
-
-        <button
-          className={`btn w-100 ${activeButton === 'cadastrar-service-provider' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('cadastrar-service-provider')}
-        >
-          Cadastrar Prestador de Serviço
-        </button>
-        <button
-          className={`btn w-100 ${activeButton === 'cadastrar-hotel' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('cadastrar-hotel')}
-        >
-          Cadastrar Hotel
-        </button>
-        <button
-          className={`btn w-100 ${activeButton === 'cadastrar-pacote' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('cadastrar-pacote')}
-        >
-          Cadastrar Pacote
-        </button>
+        {role !== 'CLIENT' && (
+          <>
+            <button
+              className={`btn w-100 ${activeButton === 'cadastrar-adm' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+              onClick={() => setActiveButton('cadastrar-adm')}
+            >
+              Cadastrar Administrador
+            </button>
+            <button
+              className={`btn w-100 ${activeButton === 'cadastrar-attendant' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+              onClick={() => setActiveButton('cadastrar-attendant')}
+            >
+              Cadastrar Atendente
+            </button>
+            <button
+              className={`btn w-100 ${activeButton === 'cadastrar-service-provider' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+              onClick={() => setActiveButton('cadastrar-service-provider')}
+            >
+              Cadastrar Prestador de Serviço
+            </button>
+            <button
+              className={`btn w-100 ${activeButton === 'cadastrar-hotel' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+              onClick={() => setActiveButton('cadastrar-hotel')}
+            >
+              Cadastrar Hotel
+            </button>
+            <button
+              className={`btn w-100 ${activeButton === 'cadastrar-pacote' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+              onClick={() => setActiveButton('cadastrar-pacote')}
+            >
+              Cadastrar Pacote
+            </button>
+          </>
+        )}
 
 
 

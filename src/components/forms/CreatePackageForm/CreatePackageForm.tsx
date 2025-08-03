@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { PackageCreateDTO } from '../../../types/Package';
 import { createPackage } from '../../../services/packageService';
-//import { createPackage } from '../../services/packageService';
+import ToastForm from '../../Toast/ToastForm';
 
 function CreatePackageForm() {
-  const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
 
   const [formData, setFormData] = useState<PackageCreateDTO>({
@@ -44,11 +42,11 @@ function CreatePackageForm() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (files && files.length > 0) {
-    setFormData(prev => ({ ...prev, mediaFiles: Array.from(files) }));
-  }
-};
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setFormData(prev => ({ ...prev, mediaFiles: Array.from(files) }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,35 +73,24 @@ function CreatePackageForm() {
 
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center align-items-center">
-        <div className="col-lg-8 mb-4">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white">
-                <h4 className="mb-0">Cadastro de Pacote</h4>
-              </div>
+    <div className="row m-0">
+      {/* Faixa azul no topo */}
+      <div className="col-12 bg-primary text-white py-3">
+        <div className="container">
+          <h4 className="mb-0">Cadastro de Pacote</h4>
+        </div>
+      </div>
+
+      {/* Conteúdo do formulário */}
+      <div className="col-12 py-5" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="container">
+          <div className="card shadow-sm rounded-4 border-0">
             <div className="card-body">
-              {showToast && (
-                <div
-                  className="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-4 show"
-                  role="alert"
-                  aria-live="assertive"
-                  aria-atomic="true"
-                  style={{ zIndex: 9999 }}
-                >
-                  <div className="d-flex">
-                    <div className="toast-body">
-                      Pacote criado com sucesso!
-                    </div>
-                    <button
-                      type="button"
-                      className="btn-close btn-close-white me-2 m-auto"
-                      onClick={() => setShowToast(false)}
-                      aria-label="Close"
-                    ></button>
-                  </div>
-                </div>
-              )}
+              <ToastForm
+                show={showToast}
+                message="Pacote criado com sucesso!"
+                onClose={() => setShowToast(false)}
+              />
 
               <form onSubmit={handleSubmit}>
                 {[
@@ -154,7 +141,7 @@ function CreatePackageForm() {
                 </div>
 
                 <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-primary">Cadastrar Pacote</button>
+                  <button type="submit" className="btn btn-light text-primary fw-bold">Cadastrar Pacote</button>
                 </div>
               </form>
             </div>

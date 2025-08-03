@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { getUserIdFromToken } from '../../utils/jwt'
+import { getRoleFromToken, getUserIdFromToken } from '../../utils/jwt'
 import { getUserById } from '../../services/userService'
 
 function AuthSuccess() {
   const navigate = useNavigate()
-  const { setUser } = useAuth()
+ const { setUser, setRole } = useAuth()
 
   useEffect(() => {
     const handleAuth = async () => {
@@ -17,14 +17,19 @@ function AuthSuccess() {
         localStorage.setItem('token', token)
 
         const userId = getUserIdFromToken(token)
+        const userRole = getRoleFromToken(token)
+
+        setRole(userRole)
+
         if (userId) {
           try {
             const user = await getUserById(userId)
-            setUser({ ...user, isGoogleAccount: true }) // 👈 Aqui marcamos que veio do Google
+            setUser({ ...user, isGoogleAccount: true })
             navigate('/')
           } catch {
             localStorage.removeItem('token')
             setUser(null)
+            setRole(null)
             navigate('/login')
           }
         } else {
@@ -36,7 +41,7 @@ function AuthSuccess() {
     }
 
     handleAuth()
-  }, [navigate, setUser])
+  }, [navigate, setUser, setRole])
 
   return <p className="text-center mt-5">Autenticando com Google...</p>
 }

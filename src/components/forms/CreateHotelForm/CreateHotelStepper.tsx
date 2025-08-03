@@ -8,9 +8,10 @@ import HotelRoomTypesForm from './HotelRoomTypesForm';
 import HotelReviewSubmit from './HotelReviewSubmit';
 import { createCommodities } from '../../../services/commodityService';
 import HotelCommoditiesForm from './HotelCommoditiesForm';
+import ToastForm from '../../Toast/ToastForm';
+import { extractCEPDigits, extractCNPJDigits, extractPhoneDigits } from '../../../utils/formatMask';
 
 function CreateHotelStepper() {
-    const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [showToast, setShowToast] = useState(false);
 
@@ -105,9 +106,12 @@ function CreateHotelStepper() {
         try {
             const roomTypesJson = JSON.stringify(roomTypes);
             const hotelPayload: CreateHotelDTO = {
-                ...formData,
-                roomTypesJson
-            };
+      ...formData,
+      cnpj: extractCNPJDigits(formData.cnpj),
+      zipCode: extractCEPDigits(formData.zipCode),
+      contactPhone: extractPhoneDigits(formData.contactPhone || ''),
+      roomTypesJson
+    };
 
 
             const hotelResponse = await createHotel(hotelPayload);
@@ -115,7 +119,7 @@ function CreateHotelStepper() {
 
             const commoditiesPayload: CreateCommoditieDTO = {
                 ...commoditiesFormData,
-                hotelName: hotelResponse.name 
+                hotelName: hotelResponse.name
             };
 
             await createCommodities(commoditiesPayload);
@@ -130,13 +134,24 @@ function CreateHotelStepper() {
     };
 
     return (
-        <div className="container py-5">
-            <div className="row justify-content-center align-items-center">
-                <div className="col-lg-8 mb-4">
-                    <div className="card shadow">
-                        <div className="card-body">
-                            <h4 className="card-title text-center mb-4">Cadastro de Hotel</h4>
+        <div className="row m-0">
+            {/* Faixa azul no topo */}
+            <div className="col-12 bg-primary text-white py-3">
+                <div className="container">
+                    <h4 className="mb-0">Cadastro de Hotel</h4>
+                </div>
+            </div>
 
+            {/* Conteúdo do formulário */}
+            <div className="col-12 py-5" style={{ backgroundColor: '#f8f9fa' }}>
+                <div className="container">
+                    <div className="card shadow-sm rounded-4 border-0">
+                        <div className="card-body">
+                            <ToastForm
+                                show={showToast}
+                                message="Hotel cadastrado com sucesso!"
+                                onClose={() => setShowToast(false)}
+                            />
                             <HotelBreadcrumb currentStep={step} setStep={setStep} />
 
                             {step === 1 && (
@@ -150,7 +165,6 @@ function CreateHotelStepper() {
                                     prevStep={() => setStep(1)}
                                 />
                             )}
-
                             {step === 3 && (
                                 <HotelCommoditiesForm
                                     commoditiesFormData={commoditiesFormData}
@@ -167,28 +181,6 @@ function CreateHotelStepper() {
                                     handleSubmit={handleSubmit}
                                     prevStep={() => setStep(3)}
                                 />
-                            )}
-
-
-
-                            {showToast && (
-                                <div
-                                    className="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-4 show"
-                                    role="alert"
-                                    aria-live="assertive"
-                                    aria-atomic="true"
-                                    style={{ zIndex: 9999 }}
-                                >
-                                    <div className="d-flex">
-                                        <div className="toast-body">Hotel cadastrado com sucesso!</div>
-                                        <button
-                                            type="button"
-                                            className="btn-close btn-close-white me-2 m-auto"
-                                            onClick={() => setShowToast(false)}
-                                            aria-label="Close"
-                                        ></button>
-                                    </div>
-                                </div>
                             )}
                         </div>
                     </div>
