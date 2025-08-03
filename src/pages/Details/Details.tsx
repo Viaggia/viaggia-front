@@ -7,6 +7,7 @@ import Carousel from '../../components/cards/Carrossel/CarouselCards';
 import ServiceList from '../../components/lists/ServiceList/ServiceList';
 import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
+import DateRangePicker from '../../components/forms/DateRangePicker/DateRangePicker';
 
 const backendUrl = "https://localhost:7164";
 
@@ -14,6 +15,24 @@ const Details: React.FC = () => {
   const navigate = useNavigate();
   const { hotelId } = useParams<{ hotelId: string }>();
   const [hotel, setHotel] = useState<HotelDTO | null>(null);
+  const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
+  const [showError, setShowError] = useState(false);
+
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [rooms, setRooms] = useState(1);
+
+  const handleQuantityChange = (roomTypeId: number, quantity: number) => {
+    setSelectedQuantities(prev => ({
+      ...prev,
+      [roomTypeId]: quantity
+    }));
+    if (showError && quantity > 0) setShowError(false);
+  };
+
+  const totalSelected = Object.values(selectedQuantities).reduce((sum, q) => sum + q, 0);
 
   useEffect(() => {
     if (hotelId) {
@@ -23,9 +42,6 @@ const Details: React.FC = () => {
 
   if (!hotel) return <div>Carregando...</div>;
 
-  console.log('Hotel:', hotel);
-
-  // Monta lista de imagens
   const images = hotel.medias.map(m => backendUrl + m.mediaUrl);
 
   const comodities = hotel.commodities[0] || {};
@@ -55,6 +71,13 @@ const Details: React.FC = () => {
   const naoOfertados = allServices
     .filter(s => !comodities[s.key as keyof typeof comodities])
     .map(s => s.label);
+
+  // Handler para o botão Pesquisar (pode ser customizado)
+  const handleSearch = () => {
+    // Aqui você pode implementar lógica para filtrar quartos, atualizar busca, etc.
+    // Por enquanto, só exibe no console:
+    console.log('Pesquisar:', { checkIn, checkOut, adults, children, rooms });
+  };
 
   return (
     <div className="container-fluid py-5">
@@ -106,7 +129,53 @@ const Details: React.FC = () => {
 
       {/* Listagem de quartos */}
       <div className="container mt-5">
-        <RoomTypeList roomTypes={hotel.roomTypes} />
+        <DateRangePicker
+          checkIn={checkIn}
+          checkOut={checkOut}
+          onCheckInChange={setCheckIn}
+          onCheckOutChange={setCheckOut}
+          adults={adults}
+          children={children}
+          rooms={rooms}
+          onAdultsChange={setAdults}
+          onChildrenChange={setChildren}
+          onRoomsChange={setRooms}
+          onSearch={handleSearch}
+        />
+        <RoomTypeList
+          roomTypes={hotel.roomTypes}
+          selectedQuantities={selectedQuantities}
+          onQuantityChange={handleQuantityChange}
+          showError={showError}
+        />
+        {showError && (
+          <div className="alert alert-danger mt-3" role="alert">
+            Selecione pelo menos um quarto para continuar.
+          </div>
+        )}
+        <button
+          className="btn btn-primary mt-4"
+          onClick={() => {
+            if (totalSelected === 0) {
+              setShowError(true);
+              return;
+            }
+            const selectedRooms = hotel.roomTypes
+              .filter(rt => selectedQuantities[rt.roomTypeId] > 0)
+              .map(rt => ({
+                ...rt,
+                quantity: selectedQuantities[rt.roomTypeId]
+              }));
+            navigate('/payment', {
+              state: {
+                hotel,
+                selectedRooms
+              }
+            });
+          }}
+        >
+          Ir para Pagamento
+        </button>
       </div>
 
     </div>

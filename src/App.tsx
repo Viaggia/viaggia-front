@@ -5,22 +5,28 @@ import AppRoutes from './routes/Router/AppRoutes'
 import Footer from './components/Footer/Footer'
 import { AuthProvider } from './context/AuthContext'
 import PromoBanner from './pages/Banner/PromoBanner'
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ptBR } from 'date-fns/locale';
+
 
 function App() {
   return (
     <AuthProvider>
-      <div className="d-flex flex-column min-vh-100">
-        <Router>
-          <PromoBanner/>
-        <Header />
-          <main className="flex-grow-1">
-            <AppRoutes />
-          </main>
-          <Footer />
-        </Router>
-      </div>
+      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+        <div className="d-flex flex-column min-vh-100">
+          <Router>
+            <PromoBanner/>
+            <Header />
+            <main className="flex-grow-1">
+              <AppRoutes />
+            </main>
+            <Footer />
+          </Router>
+        </div>
+      </LocalizationProvider>
     </AuthProvider>
-  )
+  );
 }
 
 
