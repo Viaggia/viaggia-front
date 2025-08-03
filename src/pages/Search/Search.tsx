@@ -145,46 +145,45 @@ function SearchSection() {
   ];
 
 
-  return (
-    <section className="container-fluid text-dark pt-5 position-relative">
-
-      {/* 🌄 Imagem de fundo visível apenas atrás do formulário */}
-      <div
-        className="position-absolute text-white w-100 start-0"
+ 
+return (
+    <section className="container-fluid text-dark position-relative px-0">
+      <section
+        className="search-img text-white py-5 w-100 m-0"
         style={{
-          height: '300px', // altura controlada
-          backgroundImage: 'url(/img/imgnav.jpg.jpg)', // caminho relativo à pasta public
+          backgroundImage: 'url(https://www.budgetair.ie/media/1253/flights-brazil-rio-de-janeiro.jpg?center=0.41,0.47&mode=crop&quality=75&width=1920&height=560&rnd=132211480730000000)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          top: 0,
-          zIndex: 0 // imagem por trás
+          minWidth: '100vw',
         }}
-      />
-
-      {/* 🧳 Formulário sobreposto, mantendo o estilo */}
-      <div className="container position-relative z-1 bg-dark bg-opacity-50 p-4 rounded mb-5">
-        <div className="container mb-3 text-center">
-          <h4 className="mb-3 text-light">Buscar hotéis</h4>
-          <div className="d-flex justify-content-center">
-            <TravelForm />
-          </div>
-        </div>
-      </div>
+      >
+        <section
+            className="search-section text-white py-5"
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              
+            }}
+          >
+            <div className="container bg-primary bg-opacity-100 p-4 rounded">
+              <h2 className="mb-4 text-center">Escolha seu destino</h2>
+              <TravelForm />
+            </div>
+        </section>
+      </section>
 
       {/* 🎯 Filtros e cards de hotéis fora da área da imagem */}
-      <div className="row px-4 align-items-start mt-4 position-relative z-1">
+      <div className="row gx-0 align-items-start mt-4 position-relative z-1">
         <div className="col-md-3 mt-4">
           <FiltersSection />
         </div>
         <div className="col-md-9">
-
           <HotelCardList hotels={hotels} />
-
         </div>
       </div>
-      
     </section>
   );
+
 }
 
 export default SearchSection;

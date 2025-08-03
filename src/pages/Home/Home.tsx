@@ -96,22 +96,35 @@ function Home() {
   ];
 
   return (
+    <div>
     <section
       className="search-section text-white py-5"
       style={{
-        backgroundImage: 'url(/public/img/imgnav.jpg.jpg)',
+        backgroundImage: 'url(https://www.budgetair.ie/media/1253/flights-brazil-rio-de-janeiro.jpg?center=0.41,0.47&mode=crop&quality=75&width=1920&height=560&rnd=132211480730000000)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      <div className="container bg-dark bg-opacity-50 p-4 rounded">
-        <h2 className="mb-4 text-center">Escolha seu destino</h2>
-        <TravelForm />
-        <CardCarousel items={carouselPackages} CardComponent={PackageCard} text={"Pacotes Exclusivos"} />
-        <CardCarousel items={carouselHotels} CardComponent={HotelCard} text={"Hospedagens Recomendadas"} />
+      <section
+        className="search-section text-white py-5"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="container bg-primary bg-opacity-100 p-4 rounded">
+          <h2 className="mb-4 text-center">Escolha seu destino</h2>
+          <TravelForm />
+        </div>
+      </section>
 
-      </div>
     </section>
+    <div>
+      <CardCarousel items={carouselPackages} CardComponent={PackageCard} text={"Pacotes Exclusivos"} />
+        <CardCarousel items={carouselHotels} CardComponent={HotelCard} text={"Hospedagens Recomendadas"} />
+    </div>
+    </div>
+    
   );
 }
 
