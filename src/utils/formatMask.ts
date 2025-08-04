@@ -47,3 +47,34 @@ export function formatCEP(value: string) {
 export function extractCEPDigits(value: string) {
   return value.replace(/\D/g, '').slice(0, 8);
 }
+
+export const formatDateInput = (value: string) => {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+};
+
+export function parseFieldValue(
+  name: string,
+  value: string,
+  type: string,
+  numericFields: string[] = []
+): string | number {
+  if (type === 'number' && value === '') return '';
+  if (numericFields.includes(name)) return Number(value);
+  return value;
+}
+
+export function parseCurrencyBRL(value: string): number {
+  // Remove tudo que não for dígito
+  const digits = value.replace(/\D/g, '');
+  // Converte para centavos e depois para reais
+  return Number(digits) / 100;
+}
+
+export function formatCurrencyBRL(value: number | string): string {
+  const number = typeof value === 'string' ? parseCurrencyBRL(value) : value;
+  return number.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}

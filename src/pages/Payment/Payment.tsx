@@ -33,8 +33,8 @@ const Payment: React.FC = () => {
     // Exemplo: monta o DTO para o primeiro quarto selecionado
     const dto: ReservationCreateDTO = {
       userId,
-      userNameReservation: '', // Preencha se tiver
-      packageId: 0, // Ajuste conforme necessário
+      userNameReservation: '', 
+      packageId: 0, 
       roomTypeId: selectedRooms[0].roomTypeId,
       hotelId: hotel.hotelId,
       checkInDate,
