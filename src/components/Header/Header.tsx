@@ -4,25 +4,39 @@ import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { logout, logoutGoogle } from '../../services/authService'
 
+declare global {
+  interface Window {
+    bootstrap: any;
+  }
+}
+
 function Header() {
   const { user, setUser } = useAuth()
   const navigate = useNavigate()
 
-
-const handleLogout = async () => {
-  try {
-    if (user?.isGoogleAccount) {
-      await logoutGoogle()
-    } else {
-      await logout()
+  const closeNavbar = () => {
+    const navbar = document.getElementById('navbarNav');
+    if (navbar && navbar.classList.contains('show')) {
+      const bsCollapse = new window.bootstrap.Collapse(navbar, { toggle: false });
+      bsCollapse.hide();
     }
-  } catch (error) {
-    console.error('Erro ao fazer logout:', error)
-  } finally {
-    setUser(null)
-    navigate('/login')
+  };
+
+
+  const handleLogout = async () => {
+    try {
+      if (user?.isGoogleAccount) {
+        await logoutGoogle()
+      } else {
+        await logout()
+      }
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+    } finally {
+      setUser(null)
+      navigate('/login')
+    }
   }
-}
 
   return (
     <header>
@@ -32,34 +46,76 @@ const handleLogout = async () => {
           <strong>Viaggia</strong>
         </Link>
 
-        <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item"><Link className="nav-link text-white" to="/">Home</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/search">Buscar</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/packages">Pacotes</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/promotion">Promoções</Link></li>
-          </ul>
-        </div>
+        {/* Botão hamburguer */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-        <div className="d-flex ms-auto">
-          {user ? (
-            <div className="text-white d-flex align-items-center gap-2">
-              <span>Olá, {user.name}</span>
-              <button className="btn btn-outline-light" onClick={() => navigate('/profile')}>
-                Minha Conta
-              </button>
-              <button className="btn btn-danger" onClick={handleLogout}>
-                Sair
-              </button>
-            </div>
-          ) : (
-            <>
-              <Link to="/login" className="btn btn-outline-light me-2">Login</Link>
-              <Link to="/register" className="btn btn-outline-light">Cadastrar</Link>
-            </>
-          )}
+        {/* Menu colapsável */}
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav me-auto">
+            <li className="nav-item"><Link className="nav-link text-white" to="/" onClick={closeNavbar}>Home</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/search" onClick={closeNavbar}>Buscar</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/packages" onClick={closeNavbar}>Pacotes</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/promotion" onClick={closeNavbar}>Promoções</Link></li>
+          </ul>
+
+          <div className="d-flex">
+            {user ? (
+              <div className="dropdown">
+                <button
+                  className="btn btn-outline-light dropdown-toggle"
+                  type="button"
+                  id="userMenu"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Olá, {user.name}
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                  <li>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => {
+                        navigate('/profile');
+                        closeNavbar();
+                      }}
+                    >
+                      Minha Conta
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="dropdown-item text-danger"
+                      onClick={() => {
+                        handleLogout();
+                        closeNavbar();
+                      }}
+                    >
+                      Sair
+                    </button>
+                  </li>
+                </ul>
+
+              </div>
+            ) : (
+              <>
+                <Link to="/login" className="btn btn-outline-light me-2">Login</Link>
+                <Link to="/register" className="btn btn-outline-light">Cadastrar</Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
+
     </header>
   )
 }

@@ -14,7 +14,6 @@ function Profile() {
   const [hover, setHover] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
-
   if (!user) {
     return (
       <div className="container mt-5 mb-5">
@@ -23,26 +22,78 @@ function Profile() {
     )
   }
 
+  // Opções do menu lateral
+  const menuOptions = [
+    { value: 'meu-perfil', label: 'Meu Perfil' },
+    { value: 'minhas-reservas', label: 'Minhas Reservas' },
+    { value: 'atualizar-perfil', label: 'Atualizar Perfil' },
+    ...(role !== 'CLIENT'
+      ? [
+          { value: 'cadastrar-adm', label: 'Cadastrar Administrador' },
+          { value: 'cadastrar-attendant', label: 'Cadastrar Atendente' },
+          { value: 'cadastrar-service-provider', label: 'Cadastrar Prestador de Serviço' },
+          { value: 'cadastrar-hotel', label: 'Cadastrar Hotel' },
+          { value: 'cadastrar-pacote', label: 'Cadastrar Pacote' },
+        ]
+      : []),
+  ];
+
   return (
     <div className="row m-0">
+      {/* Barra lateral (desktop) */}
       <div
-        className="profile-left col-2 text-white d-flex flex-column align-items-center"
+        className="profile-left col-2 text-white d-none d-md-flex flex-column align-items-center"
         style={{ backgroundColor: '#2577f2', minHeight: '100vh' }}
       >
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center w-100 d-none d-md-block">
+          <div className="d-flex flex-column align-items-center w-100">
+            <div
+              className="position-relative rounded-circle shadow mb-2"
+              style={{ width: '100px', height: '100px', overflow: 'hidden' }}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+            >
+              <img
+                src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                alt="imagem-perfil"
+                width={100}
+                height={100}
+              />
+              <div
+                className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center rounded-circle"
+                style={{
+                  backgroundColor: hover ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0)',
+                  opacity: hover ? 1 : 0,
+                  transition: 'background-color 0.3s, opacity 0.3s',
+                  cursor: hover ? 'pointer' : 'default'
+                }}
+                onClick={() => setShowModal(true)}
+              >
+                <i className="bi bi-pencil-fill text-white fs-4"></i>
+              </div>
+            </div>
+            <div className="text-center mt-2">
+              <h5 className="h5 mb-1">{user.name}</h5>
+              <p className="mb-1">{user.email}</p>
+            </div>
+            {/* Espaço entre email e botões */}
+            <div style={{ height: 32 }} />
+          </div>
+        </div>
+        {/* Mobile: mantém o antigo */}
+        <div className="mt-4 text-center d-md-none">
           <div
-            className="position-relative rounded-circle shadow mb-4"
-            style={{ width: '150px', height: '150px', overflow: 'hidden' }}
+            className="position-relative rounded-circle shadow mb-2"
+            style={{ width: '100px', height: '100px', overflow: 'hidden' }}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
           >
             <img
               src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
               alt="imagem-perfil"
-              width={150}
-              height={150}
+              width={100}
+              height={100}
             />
-
             <div
               className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center rounded-circle"
               style={{
@@ -56,76 +107,26 @@ function Profile() {
               <i className="bi bi-pencil-fill text-white fs-4"></i>
             </div>
           </div>
-
-          <h3 className="h3">{user.name}</h3>
-          <p className="p">{user.email}</p>
+          <h5 className="text-white mb-2">{user.name}</h5>
+          <p className="text-white mb-2">{user.email}</p>
         </div>
 
-
-        <button
-          className={`btn w-100 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('meu-perfil')}
-        >
-          Meu Perfil
-        </button>
-
-        <button
-          className={`btn w-100 ${activeButton === 'minhas-reservas' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('minhas-reservas')}
-        >
-          Minhas Reservas
-        </button>
-
-        <button
-          className={`btn w-100 ${activeButton === 'atualizar-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('atualizar-perfil')}
-        >
-          Atualizar Perfil
-        </button>
-
-        {role !== 'CLIENT' && (
-          <>
+        {/* Botões com espaçamento vertical */}
+        <div className="w-100 d-flex flex-column align-items-center gap-2 mt-0">
+          {menuOptions.map(opt => (
             <button
-              className={`btn w-100 ${activeButton === 'cadastrar-adm' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-              onClick={() => setActiveButton('cadastrar-adm')}
+              key={opt.value}
+              className={`btn w-100 ${activeButton === opt.value ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+              onClick={() => setActiveButton(opt.value)}
             >
-              Cadastrar Administrador
+              {opt.label}
             </button>
-            <button
-              className={`btn w-100 ${activeButton === 'cadastrar-attendant' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-              onClick={() => setActiveButton('cadastrar-attendant')}
-            >
-              Cadastrar Atendente
-            </button>
-            <button
-              className={`btn w-100 ${activeButton === 'cadastrar-service-provider' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-              onClick={() => setActiveButton('cadastrar-service-provider')}
-            >
-              Cadastrar Prestador de Serviço
-            </button>
-            <button
-              className={`btn w-100 ${activeButton === 'cadastrar-hotel' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-              onClick={() => setActiveButton('cadastrar-hotel')}
-            >
-              Cadastrar Hotel
-            </button>
-            <button
-              className={`btn w-100 ${activeButton === 'cadastrar-pacote' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-              onClick={() => setActiveButton('cadastrar-pacote')}
-            >
-              Cadastrar Pacote
-            </button>
-          </>
-        )}
-
-
-
+          ))}
+        </div>
       </div>
 
-
-
-      <div className="profile-right col-10">
-
+      {/* Conteúdo principal */}
+      <div className="profile-right col-12 col-md-10">
         <div className="container mt-5 mb-5">
           {activeButton === 'meu-perfil' && (
             <div>
@@ -164,9 +165,7 @@ function Profile() {
                 </div>
               </div>
             </div>
-
           )}
-
 
           {activeButton === 'atualizar-perfil' && (
             <div className="card shadow-sm">
@@ -230,10 +229,7 @@ function Profile() {
               <CreatePackageForm />
             </div>
           )}
-
-
         </div>
-
       </div>
       {showModal && (
         <div
@@ -262,9 +258,7 @@ function Profile() {
         </div>
       )}
     </div>
-
   )
 }
-
 
 export default Profile
