@@ -106,12 +106,12 @@ function CreateHotelStepper() {
         try {
             const roomTypesJson = JSON.stringify(roomTypes);
             const hotelPayload: CreateHotelDTO = {
-      ...formData,
-      cnpj: extractCNPJDigits(formData.cnpj),
-      zipCode: extractCEPDigits(formData.zipCode),
-      contactPhone: extractPhoneDigits(formData.contactPhone || ''),
-      roomTypesJson
-    };
+                ...formData,
+                cnpj: extractCNPJDigits(formData.cnpj),
+                zipCode: extractCEPDigits(formData.zipCode),
+                contactPhone: extractPhoneDigits(formData.contactPhone || ''),
+                roomTypesJson
+            };
 
 
             const hotelResponse = await createHotel(hotelPayload);
@@ -152,7 +152,9 @@ function CreateHotelStepper() {
                                 message="Hotel cadastrado com sucesso!"
                                 onClose={() => setShowToast(false)}
                             />
-                            <HotelBreadcrumb currentStep={step} setStep={setStep} />
+                            <div className="mb-4">
+                                <HotelBreadcrumb currentStep={step} setStep={setStep} />
+                            </div>
 
                             {step === 1 && (
                                 <HotelBasicInfoForm formData={formData} setFormData={setFormData} nextStep={() => setStep(2)} />
