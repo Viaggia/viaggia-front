@@ -1,28 +1,29 @@
 import { Carousel } from 'react-bootstrap';
 import { HotelDTO } from '../../../types/Hotel';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface HotelCardSearchProps {
   hotel: HotelDTO;
 }
 
 function HotelCardSearch({ hotel }: HotelCardSearchProps) {
+  const location = useLocation();
+  const backendUrl = import.meta.env.VITE_API_URL;
 
-const navigate = useNavigate();
-
-  const handleReserve = () => {
-    navigate('/details');
-  };
+  // Monta as URLs das imagens igual ao card da home
+  const images = hotel.medias && hotel.medias.length > 0
+    ? hotel.medias.map(img => backendUrl + img.mediaUrl)
+    : ['/img/default.jpg'];
 
   return (
     <div className="card mb-5" style={{ width: '100%', borderRadius: '1rem', overflow: 'hidden' }}>
       <div className="row g-0 h-100">
         <div className="col-md-6">
           <Carousel>
-            {hotel.medias.map((img, idx) => (
+            {images.map((imgUrl, idx) => (
               <Carousel.Item key={idx}>
                 <img
-                  src={img.mediaUrl}
+                  src={imgUrl}
                   alt={`Imagem ${idx}`}
                   className="d-block w-100 h-100"
                   style={{ objectFit: 'cover', height: '300px' }}
@@ -41,7 +42,13 @@ const navigate = useNavigate();
             <h5 className="text-primary">
               {hotel.roomTypes[0]?.price ? `R$ ${hotel.roomTypes[0].price.toFixed(2)}` : 'Preço indisponível'}
             </h5>
-            <button className="btn btn-success w-100" onClick={handleReserve}>Reservar</button>
+            <Link
+              to={`/details/${hotel.hotelId}`}
+              className="btn btn-success w-100"
+              state={location.state}
+            >
+              Reservar
+            </Link>
           </div>
         </div>
       </div>

@@ -18,14 +18,23 @@ interface DateRangePickerProps {
   onSearch: () => void;
 }
 
-function getTodayISO() {
-  return new Date().toISOString().split('T')[0];
+export function getTodayISO() {
+  const today = new Date();
+  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  return today.toISOString().split('T')[0];
 }
 
-function getFutureISO(days: number) {
+export function getFutureISO(days: number) {
   const d = new Date();
   d.setDate(d.getDate() + days);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().split('T')[0];
+}
+
+function parseLocalDate(str: string): Date | null {
+  if (!str) return null;
+  const [year, month, day] = str.split('-').map(Number);
+  return new Date(year, month - 1, day);
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
@@ -65,18 +74,13 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     setOpen(false);
   };
 
-  // Utilitário para converter string yyyy-mm-dd para Date e vice-versa
-  const parseDate = (str: string) => (str ? new Date(str) : null);
-  const formatDate = (date: Date | null) =>
-    date ? date.toISOString().split('T')[0] : '';
-
   return (
     <div className="d-flex align-items-end gap-2 mb-3 flex-wrap">
       {/* Check-in */}
       <div style={{ minWidth: 140, maxWidth: 180 }}>
         <DatePicker
           label="Check-in"
-          value={checkInValue ? new Date(checkInValue) : null}
+          value={checkInValue ? parseLocalDate(checkInValue) : null}
           onChange={date => onCheckInChange(date ? date.toISOString().split('T')[0] : '')}
           format="dd/MM/yyyy"
           slotProps={{ textField: { size: 'small', fullWidth: true } }}
@@ -86,7 +90,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
       <div style={{ minWidth: 140, maxWidth: 180 }}>
         <DatePicker
           label="Check-out"
-          value={checkOutValue ? new Date(checkOutValue) : null}
+          value={checkOutValue ? parseLocalDate(checkOutValue) : null}
           onChange={date => onCheckOutChange(date ? date.toISOString().split('T')[0] : '')}
           format="dd/MM/yyyy"
           slotProps={{ textField: { size: 'small', fullWidth: true } }}

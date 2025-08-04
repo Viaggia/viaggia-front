@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { HotelDTO } from '../../types/Hotel';
-import { getHotelById } from '../../services/hotelService';
+import { getAvailableRooms, getHotelById } from '../../services/hotelService';
 import Carousel from '../../components/cards/Carrossel/CarouselCards';
 import ServiceList from '../../components/lists/ServiceList/ServiceList';
 import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
-import DateRangePicker from '../../components/forms/DateRangePicker/DateRangePicker';
+import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/forms/DateRangePicker/DateRangePicker';
 
 const backendUrl = "https://localhost:7164";
 
@@ -18,11 +18,29 @@ const Details: React.FC = () => {
   const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
   const [showError, setShowError] = useState(false);
 
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [rooms, setRooms] = useState(1);
+  const location = useLocation();
+
+   const searchState = location.state || {};
+
+  const [checkIn, setCheckIn] = useState(
+    searchState.checkInDate || getTodayISO()
+  );
+  const [checkOut, setCheckOut] = useState(
+    searchState.checkOutDate || getFutureISO(7)
+  );
+  const [adults, setAdults] = useState(
+    typeof searchState.adults === 'number'
+      ? searchState.adults
+      : typeof searchState.numberOfPeople === 'number'
+        ? Math.max(1, searchState.numberOfPeople - (searchState.children || 0))
+        : 1
+  );
+  const [children, setChildren] = useState(
+    typeof searchState.children === 'number' ? searchState.children : 0
+  );
+  const [rooms, setRooms] = useState(
+    typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1
+  );
 
   const handleQuantityChange = (roomTypeId: number, quantity: number) => {
     setSelectedQuantities(prev => ({
@@ -72,12 +90,27 @@ const Details: React.FC = () => {
     .filter(s => !comodities[s.key as keyof typeof comodities])
     .map(s => s.label);
 
-  // Handler para o botão Pesquisar (pode ser customizado)
-  const handleSearch = () => {
-    // Aqui você pode implementar lógica para filtrar quartos, atualizar busca, etc.
-    // Por enquanto, só exibe no console:
-    console.log('Pesquisar:', { checkIn, checkOut, adults, children, rooms });
-  };
+ const handleSearch = async () => {
+  try {
+    // Soma adultos + crianças para o filtro
+    const numberOfPeople = adults + children;
+    if (!checkIn || !checkOut) {
+      alert('Selecione as datas de check-in e check-out.');
+      return;
+    }
+    const availableRooms = await getAvailableRooms(
+      hotel.hotelId,
+      numberOfPeople,
+      checkIn,
+      checkOut
+    );
+    // Atualiza os quartos do hotel com o resultado filtrado
+    setHotel(prev => prev ? { ...prev, roomTypes: availableRooms } : prev);
+  } catch (error) {
+    alert('Não foi possível buscar quartos disponíveis.');
+    console.error(error);
+  }
+};
 
   return (
     <div className="container-fluid py-5">
@@ -123,7 +156,7 @@ const Details: React.FC = () => {
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
           <ServiceList title="Não ofertados" items={naoOfertados} />
-          <ExtraCommoditiesList commoditieServices={hotel.commoditieServices} />
+          <ExtraCommoditiesList commoditieServices={hotel.commodities[0]?.CustomCommodities || []} />
         </div>
       </div>
 

@@ -24,7 +24,7 @@ export interface HotelDTO {
   reviews: ReviewDTO[];
   packages: PackageDTO[];
   commodities: CommoditieDTO[];
-  commoditieServices: CommoditieServicesDTO[];
+  CustomCommodities: CustomCommodityDTO[];
 }
 
 export interface HotelRoomTypeDTO {
@@ -65,16 +65,20 @@ export interface CommoditieDTO {
   isPetFriendly: boolean;
   isPetFriendlyPaid: boolean;
   isActive: boolean;
-  commoditieServices: CommoditieServicesDTO[];
+  // Novo campo conforme backend:
+  CustomCommodities: CustomCommodityDTO[];
 }
 
-export interface CommoditieServicesDTO {
-  commoditieServicesId: number;
+export interface CustomCommodityDTO {
+  customCommodityId: number;
+  hotelName: string;
   name: string;
   isPaid: boolean;
+  price?: number;
   description?: string;
   isActive: boolean;
   commoditieId: number;
+  hotelId: number;
 }
 
 
@@ -171,4 +175,19 @@ export interface CreateHotelRoomTypeDTO {
   TotalRooms: number;
 }
 
+export interface HotelSearchDTO {
+  city: string;
+  checkInDate: string; 
+  checkOutDate: string;
+  numberOfPeople: number;
+  numberOfRooms: number;
+}
 
+export interface HotelFilterParams {
+  commodities?: string[];
+  CustomCommodities?: string[];
+  roomTypes?: string[];
+  minPrice?: number;
+  maxPrice?: number;
+  minCapacity?: number;
+}

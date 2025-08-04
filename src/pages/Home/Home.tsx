@@ -41,6 +41,8 @@ function Home() {
 
   const backendUrl = import.meta.env.VITE_API_URL;
 
+  console.log("hotels, ", hotels)
+
   const carouselPackages = packages.map((pkg) => ({
     packageId: pkg.packageId,
     titulo: pkg.name,
