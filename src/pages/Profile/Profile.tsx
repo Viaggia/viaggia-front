@@ -63,7 +63,7 @@ function Profile() {
 
 
         <button
-          className={`btn w-100 ${activeButton === 'meu-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
+          className={`btn w-100 ${activeButton === 'meu-perfil' || 'atualizar-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
           onClick={() => setActiveButton('meu-perfil')}
         >
           Meu Perfil
@@ -76,12 +76,6 @@ function Profile() {
           Minhas Reservas
         </button>
 
-        <button
-          className={`btn w-100 ${activeButton === 'atualizar-perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
-          onClick={() => setActiveButton('atualizar-perfil')}
-        >
-          Atualizar Perfil
-        </button>
 
         <button
           className={`btn w-100 ${activeButton === 'cadastrar-adm' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'}`}
@@ -159,9 +153,16 @@ function Profile() {
                       {user.employeeId && <div className="col-md-6"><strong>ID do Funcionário:</strong> {user.employeeId}</div>}
                     </div>
                   )}
+                <button
+                className="btn btn-outline-primary"
+                onClick={() => setActiveButton('atualizar-perfil')}
+              >
+                <i className="bi bi-pencil"></i> Editar
+              </button>
                 </div>
-              </div>
+                
             </div>
+          </div>
 
           )}
 
@@ -194,6 +195,7 @@ function Profile() {
               </div>
             </div>
           )}
+          
           {activeButton === 'cadastrar-adm' && (
             <div>
               <CreateAdminForm />
