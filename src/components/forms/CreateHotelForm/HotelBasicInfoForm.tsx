@@ -226,6 +226,21 @@ const HotelBasicInfoForm: React.FC<Props> = ({ formData, setFormData, nextStep }
       <div className="mb-3">
         <label className="form-label">Imagens</label>
         <input type="file" multiple onChange={handleFileChange} className="form-control" />
+        {/* Lista visual dos arquivos selecionados com miniatura */}
+        {formData.mediaFiles && formData.mediaFiles.length > 0 && (
+          <div className="mt-2 d-flex flex-wrap gap-2">
+            {formData.mediaFiles.map((file: File, idx: number) => (
+              <div key={idx} className="d-flex flex-column align-items-center" style={{ width: 80 }}>
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6, border: '1px solid #ddd' }}
+                />
+                <span className="small text-truncate" style={{ maxWidth: 70 }}>{file.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="d-grid gap-2">
         <button

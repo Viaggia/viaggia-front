@@ -24,14 +24,26 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
   const [newRoom, setNewRoom] = useState<CreateHotelRoomTypeDTO>({ ...defaultRoom });
 
   const handleNewRoomChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const parsedValue = ['Price', 'Capacity', 'TotalRooms'].includes(name) ? Number(value) : value;
+    const { name, value, type } = e.target;
+    // Permite campo vazio para inputs numéricos
+    const parsedValue =
+      type === 'number' && value === ''
+        ? ''
+        : ['Price', 'Capacity', 'TotalRooms'].includes(name)
+          ? Number(value)
+          : value;
     setNewRoom(prev => ({ ...prev, [name]: parsedValue }));
   };
 
   const handleExistingRoomChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const parsedValue = ['Price', 'Capacity', 'TotalRooms'].includes(name) ? Number(value) : value;
+    const { name, value, type } = e.target;
+    
+    const parsedValue =
+      type === 'number' && value === ''
+        ? ''
+        : ['Price', 'Capacity', 'TotalRooms'].includes(name)
+          ? Number(value)
+          : value;
     const updated = [...roomTypes];
     updated[index] = { ...updated[index], [name]: parsedValue };
     setRoomTypes(updated);
