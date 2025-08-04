@@ -6,7 +6,7 @@ import HotelBreadcrumb from './HotelBreadcrumb';
 import HotelBasicInfoForm from './HotelBasicInfoForm';
 import HotelRoomTypesForm from './HotelRoomTypesForm';
 import HotelReviewSubmit from './HotelReviewSubmit';
-import { createCommodities } from '../../../services/commodityService';
+import { createCommodities, createCustomCommodity } from '../../../services/commodityService';
 import HotelCommoditiesForm from './HotelCommoditiesForm';
 import ToastForm from '../../Toast/ToastForm';
 import { extractCEPDigits, extractCNPJDigits, extractPhoneDigits } from '../../../utils/formatMask';
@@ -44,31 +44,42 @@ function CreateHotelStepper() {
     ]);
 
 
-    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommoditieDTO, 'hotelName'>>({
-        hasParking: false,
-        isParkingPaid: false,
-        hasBreakfast: false,
-        isBreakfastPaid: false,
-        hasLunch: false,
-        isLunchPaid: false,
-        hasDinner: false,
-        isDinnerPaid: false,
-        hasSpa: false,
-        isSpaPaid: false,
-        hasPool: false,
-        isPoolPaid: false,
-        hasGym: false,
-        isGymPaid: false,
-        hasWiFi: false,
-        isWiFiPaid: false,
-        hasAirConditioning: false,
-        isAirConditioningPaid: false,
-        hasAccessibilityFeatures: false,
-        isAccessibilityFeaturesPaid: false,
-        isPetFriendly: false,
-        isPetFriendlyPaid: false,
-        isActive: true,
-        commoditieServices: []
+    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommoditieDTO, 'HotelName'>>({
+        HasParking: false,
+        IsParkingPaid: false,
+        HasBreakfast: false,
+        IsBreakfastPaid: false,
+        HasLunch: false,
+        IsLunchPaid: false,
+        HasDinner: false,
+        IsDinnerPaid: false,
+        HasSpa: false,
+        IsSpaPaid: false,
+        HasPool: false,
+        IsPoolPaid: false,
+        HasGym: false,
+        IsGymPaid: false,
+        HasWiFi: false,
+        IsWiFiPaid: false,
+        HasAirConditioning: false,
+        IsAirConditioningPaid: false,
+        HasAccessibilityFeatures: false,
+        IsAccessibilityFeaturesPaid: false,
+        IsPetFriendly: false,
+        IsPetFriendlyPaid: false,
+        IsActive: true,
+        ParkingPrice: 0,
+        BreakfastPrice: 0,
+        LunchPrice: 0,
+        DinnerPrice: 0,
+        SpaPrice: 0,
+        PoolPrice: 0,
+        GymPrice: 0,
+        WiFiPrice: 0,
+        AirConditioningPrice: 0,
+        AccessibilityFeaturesPrice: 0,
+        PetFriendlyPrice: 0,
+        CustomCommodities: []
     });
 
 
@@ -113,16 +124,25 @@ function CreateHotelStepper() {
                 roomTypesJson
             };
 
-
             const hotelResponse = await createHotel(hotelPayload);
-            const hotelId = hotelResponse.hotelId;
 
+            console.log("hotelResponse", hotelResponse)
+
+            // Cria commodity SEM custom
             const commoditiesPayload: CreateCommoditieDTO = {
                 ...commoditiesFormData,
-                hotelName: hotelResponse.name
+                HotelName: hotelResponse.data.name,
+                CustomCommodities: [] // Não envia custom aqui!
             };
-
             await createCommodities(commoditiesPayload);
+
+            // Cria custom commodities individualmente
+            for (const custom of commoditiesFormData.CustomCommodities) {
+                await createCustomCommodity({
+                    ...custom,
+                    hotelName: hotelResponse.data.name
+                });
+            }
 
             setShowToast(true);
             resetForm();

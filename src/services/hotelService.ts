@@ -30,7 +30,7 @@ export const createHotel = async (data: CreateHotelDTO) => {
     formData.append('MediaFiles', file);
   });
 
-  const response = await api.post('/api/Hotel/create', formData, {
+  const response = await api.post('/api/Hotel', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

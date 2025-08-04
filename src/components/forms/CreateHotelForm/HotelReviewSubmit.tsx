@@ -17,23 +17,23 @@ import PetsIcon from '@mui/icons-material/Pets';
 interface Props {
   formData: CreateHotelDTO;
   roomTypes: CreateHotelRoomTypeDTO[];
-  commodities: Omit<CreateCommoditieDTO, 'hotelName'>;
+  commodities: Omit<CreateCommoditieDTO, 'HotelName'>;
   handleSubmit: () => void;
   prevStep: () => void;
 }
 
-const comoditiesIcons: Partial<Record<keyof Omit<CreateCommoditieDTO, 'hotelName'>, React.ReactNode>> = {
-  hasParking: <LocalParkingIcon fontSize="small" />,
-  hasBreakfast: <BreakfastDiningIcon fontSize="small" />,
-  hasLunch: <LunchDiningIcon fontSize="small" />,
-  hasDinner: <DinnerDiningIcon fontSize="small" />,
-  hasSpa: <SpaIcon fontSize="small" />,
-  hasPool: <PoolIcon fontSize="small" />,
-  hasGym: <FitnessCenterIcon fontSize="small" />,
-  hasWiFi: <WifiIcon fontSize="small" />,
-  hasAirConditioning: <AcUnitIcon fontSize="small" />,
-  hasAccessibilityFeatures: <AccessibleIcon fontSize="small" />,
-  isPetFriendly: <PetsIcon fontSize="small" />,
+const comoditiesIcons: Partial<Record<keyof Omit<CreateCommoditieDTO, 'HotelName'>, React.ReactNode>> = {
+  HasParking: <LocalParkingIcon fontSize="small" />,
+  HasBreakfast: <BreakfastDiningIcon fontSize="small" />,
+  HasLunch: <LunchDiningIcon fontSize="small" />,
+  HasDinner: <DinnerDiningIcon fontSize="small" />,
+  HasSpa: <SpaIcon fontSize="small" />,
+  HasPool: <PoolIcon fontSize="small" />,
+  HasGym: <FitnessCenterIcon fontSize="small" />,
+  HasWiFi: <WifiIcon fontSize="small" />,
+  HasAirConditioning: <AcUnitIcon fontSize="small" />,
+  HasAccessibilityFeatures: <AccessibleIcon fontSize="small" />,
+  IsPetFriendly: <PetsIcon fontSize="small" />,
 };
 
 function renderStars(rating: number) {
@@ -56,28 +56,28 @@ function formatBRL(value: number) {
 
 const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, handleSubmit, prevStep }) => {
   const comoditiesLabels: { field: keyof typeof commodities; label: string }[] = [
-    { field: 'hasParking', label: 'Estacionamento' },
-    { field: 'isParkingPaid', label: 'Estacionamento é pago' },
-    { field: 'hasBreakfast', label: 'Café da Manhã' },
-    { field: 'isBreakfastPaid', label: 'Café da Manhã é pago' },
-    { field: 'hasLunch', label: 'Almoço' },
-    { field: 'isLunchPaid', label: 'Almoço é pago' },
-    { field: 'hasDinner', label: 'Jantar' },
-    { field: 'isDinnerPaid', label: 'Jantar é pago' },
-    { field: 'hasSpa', label: 'Spa' },
-    { field: 'isSpaPaid', label: 'Spa é pago' },
-    { field: 'hasPool', label: 'Piscina' },
-    { field: 'isPoolPaid', label: 'Piscina é paga' },
-    { field: 'hasGym', label: 'Academia' },
-    { field: 'isGymPaid', label: 'Academia é paga' },
-    { field: 'hasWiFi', label: 'Wi-Fi' },
-    { field: 'isWiFiPaid', label: 'Wi-Fi é pago' },
-    { field: 'hasAirConditioning', label: 'Ar-condicionado' },
-    { field: 'isAirConditioningPaid', label: 'Ar-condicionado é pago' },
-    { field: 'hasAccessibilityFeatures', label: 'Acessibilidade' },
-    { field: 'isAccessibilityFeaturesPaid', label: 'Acessibilidade é paga' },
-    { field: 'isPetFriendly', label: 'Aceita Pets' },
-    { field: 'isPetFriendlyPaid', label: 'Taxa para Pets' }
+    { field: 'HasParking', label: 'Estacionamento' },
+    { field: 'IsParkingPaid', label: 'Estacionamento é pago' },
+    { field: 'HasBreakfast', label: 'Café da Manhã' },
+    { field: 'IsBreakfastPaid', label: 'Café da Manhã é pago' },
+    { field: 'HasLunch', label: 'Almoço' },
+    { field: 'IsLunchPaid', label: 'Almoço é pago' },
+    { field: 'HasDinner', label: 'Jantar' },
+    { field: 'IsDinnerPaid', label: 'Jantar é pago' },
+    { field: 'HasSpa', label: 'Spa' },
+    { field: 'IsSpaPaid', label: 'Spa é pago' },
+    { field: 'HasPool', label: 'Piscina' },
+    { field: 'IsPoolPaid', label: 'Piscina é paga' },
+    { field: 'HasGym', label: 'Academia' },
+    { field: 'IsGymPaid', label: 'Academia é paga' },
+    { field: 'HasWiFi', label: 'Wi-Fi' },
+    { field: 'IsWiFiPaid', label: 'Wi-Fi é pago' },
+    { field: 'HasAirConditioning', label: 'Ar-condicionado' },
+    { field: 'IsAirConditioningPaid', label: 'Ar-condicionado é pago' },
+    { field: 'HasAccessibilityFeatures', label: 'Acessibilidade' },
+    { field: 'IsAccessibilityFeaturesPaid', label: 'Acessibilidade é paga' },
+    { field: 'IsPetFriendly', label: 'Aceita Pets' },
+    { field: 'IsPetFriendlyPaid', label: 'Taxa para Pets' }
   ];
 
   const offered: { label: string; isPaid?: boolean; field: keyof typeof commodities }[] = [];
@@ -193,11 +193,11 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
         </div>
       </div>
 
-      {commodities.commoditieServices.length > 0 && (
+      {commodities.CustomCommodities && commodities.CustomCommodities.length > 0 && (
         <div className="mb-4">
           <h6>🧩 Serviços Adicionais</h6>
           <div className="row g-2">
-            {commodities.commoditieServices.map((service, index) => (
+            {commodities.CustomCommodities.map((service, index) => (
               <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div className="card h-100 p-2 d-flex flex-column gap-1">
                   <span className="fw-bold">{service.name}</span>
