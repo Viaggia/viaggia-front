@@ -17,6 +17,8 @@
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
     "@mui/x-date-pickers": "^8.9.2",
+    "@stripe/react-stripe-js": "^3.9.0",
+    "@stripe/stripe-js": "github:stripe/stripe-js",
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",

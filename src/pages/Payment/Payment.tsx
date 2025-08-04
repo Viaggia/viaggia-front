@@ -48,7 +48,7 @@ const Payment: React.FC = () => {
     try {
       const result = await createPaymentIntent(dto);
       if (result.url) {
-        window.location.href = result.url; // Redireciona para o Stripe Checkout
+        window.location.href = result.url;
       }
     } catch (err) {
       alert('Erro ao criar pagamento');
