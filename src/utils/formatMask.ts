@@ -78,3 +78,15 @@ export function formatCurrencyBRL(value: number | string): string {
   const number = typeof value === 'string' ? parseCurrencyBRL(value) : value;
   return number.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
+
+export function parseLocalDate(str?: string): Date | null {
+  if (!str) return null;
+  const [year, month, day] = str.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+export function formatDateToISO(date: Date | null): string {
+  return date
+    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    : '';
+}

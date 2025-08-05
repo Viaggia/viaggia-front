@@ -27,7 +27,7 @@ function PackageCard({ packageId, titulo, destino, descricao, preco, imagem, dat
         <p className="text-muted" style={{ fontSize: '0.9rem' }}>
           *Taxas e impostos não inclusos
         </p>
-        <Link to={`/details/${packageId}`} className="btn btn-success w-100">
+        <Link to={`/package-details/${packageId}`} className="btn btn-success w-100">
           Conferir oferta
         </Link>
       </div>

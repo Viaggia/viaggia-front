@@ -8,16 +8,16 @@ const Payment: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { hotel, selectedRooms } = location.state || {};
+  const { hotel, selectedRooms, pkg } = location.state || {};
+
+  const isPackage = !!pkg;
 
   const [loading, setLoading] = useState(false);
 
-  const total =
-    Array.isArray(selectedRooms)
-      ? selectedRooms.reduce(
-        (sum, room) => sum + (room.price * room.quantity),
-        0
-      )
+  const total = isPackage
+    ? pkg.basePrice
+    : Array.isArray(selectedRooms)
+      ? selectedRooms.reduce((sum, room) => sum + (room.price * room.quantity), 0)
       : 0;
 
   // Exemplo: pegue os dados do usuário logado e das datas conforme sua lógica real
@@ -26,36 +26,56 @@ const Payment: React.FC = () => {
   const checkOutDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
   const handleGoToPaymentPending = async () => {
-    if (!hotel || !selectedRooms || selectedRooms.length === 0) return;
+  setLoading(true);
 
-    setLoading(true);
+  try {
+    let dto: ReservationCreateDTO;
 
-    // Exemplo: monta o DTO para o primeiro quarto selecionado
-    const dto: ReservationCreateDTO = {
-      userId,
-      userNameReservation: '', 
-      packageId: 0, 
-      roomTypeId: selectedRooms[0].roomTypeId,
-      hotelId: hotel.hotelId,
-      checkInDate,
-      checkOutDate,
-      totalPrice: total,
-      numberOfGuests: selectedRooms[0].quantity,
-      status: 'Pendente',
-      isActive: true,
-    };
-
-    try {
-      const result = await createPaymentIntent(dto);
-      if (result.url) {
-        window.location.href = result.url;
-      }
-    } catch (err) {
-      alert('Erro ao criar pagamento');
-    } finally {
+    if (isPackage && pkg) {
+      // Reserva de pacote
+      dto = {
+        userId,
+        userNameReservation: '',
+        packageId: pkg.packageId,
+        roomTypeId: 0, // ou null, conforme seu backend aceita
+        hotelId: pkg.hotelId,
+        checkInDate: pkg.packageDates?.[0]?.startDate || '', // ajuste formato se necessário
+        checkOutDate: pkg.packageDates?.[0]?.endDate || '',
+        totalPrice: pkg.basePrice,
+        numberOfGuests: 2, // ou outro valor padrão
+        status: 'Pendente',
+        isActive: true,
+      };
+    } else if (hotel && selectedRooms && selectedRooms.length > 0) {
+      // Reserva de hotel/quarto avulso
+      dto = {
+        userId,
+        userNameReservation: '',
+        packageId: 0,
+        roomTypeId: selectedRooms[0].roomTypeId,
+        hotelId: hotel.hotelId,
+        checkInDate,
+        checkOutDate,
+        totalPrice: total,
+        numberOfGuests: selectedRooms[0].quantity,
+        status: 'Pendente',
+        isActive: true,
+      };
+    } else {
       setLoading(false);
+      return;
     }
-  };
+
+    const result = await createPaymentIntent(dto);
+    if (result.url) {
+      window.location.href = result.url;
+    }
+  } catch (err) {
+    alert('Erro ao criar pagamento');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="container py-5">
@@ -64,8 +84,19 @@ const Payment: React.FC = () => {
         <div className="col-md-6 mb-4">
           <div className="mb-4">
             <h5>Informações do Cliente</h5>
-            <p><strong>Hotel:</strong> {hotel?.name}</p>
-            <p><strong>Cidade:</strong> {hotel?.city} - {hotel?.state}</p>
+            {isPackage ? (
+              <>
+                <p><strong>Pacote:</strong> {pkg.name}</p>
+                <p><strong>Destino:</strong> {pkg.destination}</p>
+                <p><strong>Hotel:</strong> {hotel?.name || pkg.hotelName}</p>
+                <p><strong>Datas:</strong> {pkg.packageDates?.[0]?.startDate} até {pkg.packageDates?.[0]?.endDate}</p>
+              </>
+            ) : (
+              <>
+                <p><strong>Hotel:</strong> {hotel?.name}</p>
+                <p><strong>Cidade:</strong> {hotel?.city} - {hotel?.state}</p>
+              </>
+            )}
           </div>
 
           <form>
@@ -104,20 +135,35 @@ const Payment: React.FC = () => {
               <h5 className="mb-0">Resumo do Pedido</h5>
             </div>
             <div className="card-body">
-              <p><strong>Hotel:</strong> {hotel?.name}</p>
-              <ul className="list-group mb-3">
-                {Array.isArray(selectedRooms) && selectedRooms.map((room, idx) => (
-                  <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between align-items-center">
-                    <span>
-                      {typeof room.name === 'string' ? room.name : 'Quarto'} ({room.quantity}x)
-                    </span>
-                    <span>
-                      R$ {(room.price * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p><strong>Total:</strong> R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+              {isPackage ? (
+                <>
+                  <p><strong>Pacote:</strong> {pkg.name}</p>
+                  <ul className="list-group mb-3">
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      <span>Pacote completo</span>
+                      <span>R$ {pkg.basePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    </li>
+                  </ul>
+                  <p><strong>Total:</strong> R$ {pkg.basePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </>
+              ) : (
+                <>
+                  <p><strong>Hotel:</strong> {hotel?.name}</p>
+                  <ul className="list-group mb-3">
+                    {Array.isArray(selectedRooms) && selectedRooms.map((room, idx) => (
+                      <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                          {typeof room.name === 'string' ? room.name : 'Quarto'} ({room.quantity}x)
+                        </span>
+                        <span>
+                          R$ {(room.price * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p><strong>Total:</strong> R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </>
+              )}
             </div>
             <div className="card-footer text-end">
               <button

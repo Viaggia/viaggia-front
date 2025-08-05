@@ -7,6 +7,11 @@ export async function getPackages(): Promise<PackageDTO[]> {
   return response.data.data;
 }
 
+export async function getPackageById(packageId: number): Promise<PackageDTO> {
+  const response = await api.get(`/api/Packages/${packageId}`);
+  return response.data.data;
+}
+
 export const createPackage = async (data: PackageCreateDTO) => {
   const formData = new FormData();
 

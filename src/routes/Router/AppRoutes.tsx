@@ -21,6 +21,7 @@ import PaymentOrder from '../../pages/Payment/PaymentOrder'
 import AboutUs from '../../pages/AboutUs/AboutUs'
 import Contact from '../../pages/Contact/Contact'
 import PrivacyTerms from '../../pages/PrivacyTerms/PrivacyTerms'
+import DetailsPackage from '../../pages/DetailsPackage/DetailsPackage'
 
 
 
@@ -50,6 +51,7 @@ function AppRoutes() {
       <Route path="/about" element={<AboutUs />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/privacy" element={<PrivacyTerms />} />
+      <Route path="/package-details/:packageId" element={<DetailsPackage />} />
 
     </Routes>
   )

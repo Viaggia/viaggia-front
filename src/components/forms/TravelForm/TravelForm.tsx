@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
+import { formatDateToISO, parseLocalDate } from "../../../utils/formatMask";
 
 interface TravelFormProps {
   initialValues?: {
@@ -11,17 +12,21 @@ interface TravelFormProps {
     numberOfRooms?: number;
     children?: number;
   };
+  isSearchPage?: boolean;
+  onSearch?: () => void;
 }
 
-export default function TravelForm({ initialValues }: TravelFormProps) {
+export default function TravelForm({ initialValues, onSearch }: TravelFormProps) {
   const navigate = useNavigate();
   const [city, setCity] = useState(initialValues?.city || '');
+
   const [checkInDate, setCheckInDate] = useState<Date | null>(
-    initialValues?.checkInDate ? new Date(initialValues.checkInDate) : null
+    parseLocalDate(initialValues?.checkInDate)
   );
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(
-    initialValues?.checkOutDate ? new Date(initialValues.checkOutDate) : null
+    parseLocalDate(initialValues?.checkOutDate)
   );
+
   const [adults, setAdults] = useState(
     initialValues?.numberOfPeople !== undefined
       ? Math.max(1, (initialValues.numberOfPeople ?? 1) - (initialValues?.children ?? 0))
@@ -31,20 +36,20 @@ export default function TravelForm({ initialValues }: TravelFormProps) {
   const [rooms, setRooms] = useState(initialValues?.numberOfRooms || 1);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate('/search', {
-      state: {
-        city,
-        checkInDate: checkInDate ? checkInDate.toISOString().split('T')[0] : '',
-        checkOutDate: checkOutDate ? checkOutDate.toISOString().split('T')[0] : '',
-        numberOfPeople: adults + children,
-        numberOfRooms: rooms,
-      }
-    });
+  e.preventDefault();
+  if (onSearch) onSearch();
+  const params = {
+    city,
+    checkInDate: formatDateToISO(checkInDate),
+    checkOutDate: formatDateToISO(checkOutDate),
+    numberOfPeople: (adults + children).toString(),
+    numberOfRooms: rooms.toString(),
   };
-
-  // Altura padrão do input do Bootstrap 5: 38px
-  const inputHeight = 38;
+  navigate({
+    pathname: '/search',
+    search: `?${createSearchParams(params)}`,
+  });
+};
 
   return (
     <form className="row g-3 d-flex justify-content-center p-3 rounded" onSubmit={handleSubmit}>
@@ -61,7 +66,7 @@ export default function TravelForm({ initialValues }: TravelFormProps) {
           slotProps={{
             textField: {
               fullWidth: true,
-              size: "small", // <-- deixa o campo menor
+              size: "small",
               sx: {
                 '& .MuiInputBase-root': {
                   minHeight: '38px',
@@ -91,7 +96,7 @@ export default function TravelForm({ initialValues }: TravelFormProps) {
           slotProps={{
             textField: {
               fullWidth: true,
-              size: "small", // <-- deixa o campo menor
+              size: "small",
               sx: {
                 '& .MuiInputBase-root': {
                   minHeight: '38px',
