@@ -39,4 +39,7 @@ dist-ssr/
 # Arquivos temporários de editores (como Vim)
 *.sw?
 
+# vite
+.vite/
+
  
