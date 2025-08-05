@@ -18,6 +18,9 @@ import PaymentConfirmed from '../../pages/Payment/PaymentConfirmed'
 import MyReservations from '../../pages/MyReservations/MyReservations'
 import CancelReservation from '../../pages/CancelReservation/CancelReservation'
 import PaymentOrder from '../../pages/Payment/PaymentOrder'
+import AboutUs from '../../pages/AboutUs/AboutUs'
+import Contact from '../../pages/Contact/Contact'
+import PrivacyTerms from '../../pages/PrivacyTerms/PrivacyTerms'
 
 
 
@@ -40,10 +43,14 @@ function AppRoutes() {
       <Route path="/packages" element={<Packages />} />
       <Route path="/auth-success" element={<AuthSuccess />} />
       <Route path="/promotion" element={<Promotion />} />
-      <Route path='/paymentpending' element={<PaymentPeding/>}/>
-      <Route path='/paymentconfirmed' element={<PaymentConfirmed/>}/>
-      <Route path='/paymentorder' element={<PaymentOrder/>}/>
+      <Route path='/paymentpending' element={<PaymentPeding />} />
+      <Route path='/paymentconfirmed' element={<PaymentConfirmed />} />
+      <Route path='/paymentorder' element={<PaymentOrder />} />
       <Route path="/details/:hotelId" element={<Details />} />
+      <Route path="/about" element={<AboutUs />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/privacy" element={<PrivacyTerms />} />
+
     </Routes>
   )
 }

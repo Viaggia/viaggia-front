@@ -4,24 +4,27 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
-import { getUserIdFromToken } from '../../utils/jwt';
+import { getRoleFromToken, getUserIdFromToken } from '../../utils/jwt';
 import { getUserById } from '../../services/userService';
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { setUser } = useAuth();
+  const { setUser, setRole } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await login({ email, password });
       localStorage.setItem('token', response.token);
-      console.log('Login realizado com sucesso!, token: ', response.token);
 
       const userId = getUserIdFromToken(response.token);
-      console.log("userId: ", userId);
+      const userRole = getRoleFromToken(response.token);
+      
+      setRole(userRole);
+
+      console.log("userRole ", userRole)
       if (userId) {
         const user = await getUserById(userId);
         setUser(user);

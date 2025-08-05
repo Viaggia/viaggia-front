@@ -3,11 +3,14 @@ import { HotelRoomTypeDTO } from '../../../types/Hotel';
 
 interface RoomTypeListProps {
   roomTypes: HotelRoomTypeDTO[];
+  selectedQuantities: { [roomTypeId: number]: number };
+  onQuantityChange: (roomTypeId: number, quantity: number) => void;
+  showError?: boolean;
 }
 
-const RoomTypeList: React.FC<RoomTypeListProps> = ({ roomTypes }) => (
+const RoomTypeList: React.FC<RoomTypeListProps> = ({ roomTypes, selectedQuantities, onQuantityChange, showError }) => (
   <div className="col-12">
-    <h4 className="mb-3">Escolha seu quarto</h4>
+    <h4 className="mb-3">Escolha a quantidade de quartos</h4>
     {roomTypes.map(rt => (
       <div key={rt.roomTypeId} className="card mb-4 shadow-sm">
         <div className="card-body">
@@ -28,15 +31,17 @@ const RoomTypeList: React.FC<RoomTypeListProps> = ({ roomTypes }) => (
             </div>
             <div>
               <label htmlFor={`roomQty-${rt.roomTypeId}`} className="form-label mb-0">Quantidade</label>
-              <select id={`roomQty-${rt.roomTypeId}`} className="form-select form-select-sm w-auto ms-2">
-                {[...Array(rt.availableRooms).keys()].map(i => (
-                  <option key={i + 1} value={i + 1}>{i + 1}</option>
+              <select
+                id={`roomQty-${rt.roomTypeId}`}
+                className={`form-select form-select-sm w-auto ms-2${showError && (selectedQuantities[rt.roomTypeId] || 0) === 0 ? ' border-danger' : ''}`}
+                value={selectedQuantities[rt.roomTypeId] || 0}
+                onChange={e => onQuantityChange(rt.roomTypeId, Number(e.target.value))}
+              >
+                {[...Array(rt.availableRooms + 1).keys()].map(i => (
+                  <option key={i} value={i}>{i}</option>
                 ))}
               </select>
             </div>
-          </div>
-          <div className="mt-3">
-            <button className="btn btn-outline-primary w-100">Reservar este quarto</button>
           </div>
         </div>
       </div>

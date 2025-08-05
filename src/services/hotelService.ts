@@ -1,9 +1,9 @@
 import api from './api';
-import { CreateHotelDTO, HotelDTO } from '../types/Hotel';
+import { CreateHotelDTO, HotelDTO, HotelFilterParams, HotelRoomTypeDTO, HotelSearchDTO } from '../types/Hotel';
 
 export async function getHotels(): Promise<HotelDTO[]> {
-  const response = await api.get('/api/Hotel/getAll');
-  return response.data;
+  const response = await api.get('/api/Hotel');
+  return response.data.data;
 }
 
 export const createHotel = async (data: CreateHotelDTO) => {
@@ -30,7 +30,7 @@ export const createHotel = async (data: CreateHotelDTO) => {
     formData.append('MediaFiles', file);
   });
 
-  const response = await api.post('/api/Hotel/create', formData, {
+  const response = await api.post('/api/Hotel', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -41,5 +41,31 @@ export const createHotel = async (data: CreateHotelDTO) => {
 
 export async function getHotelById(id: number): Promise<HotelDTO> {
   const response = await api.get(`/api/Hotel/${id}`);
+  return response.data.data;
+}
+
+export async function getAvailableRooms(
+  hotelId: number,
+  numberOfPeople: number,
+  checkInDate: string,
+  checkOutDate: string
+): Promise<HotelRoomTypeDTO[]> {
+  const response = await api.get(`/api/Hotel/${hotelId}/available-rooms`, {
+    params: {
+      numberOfPeople,
+      checkInDate,
+      checkOutDate,
+    },
+  });
+  return response.data.data;
+}
+
+export async function searchHotels(search: HotelSearchDTO): Promise<HotelDTO[]> {
+  const response = await api.get('/api/Hotel/search', { params: search });
+  return response.data.data;
+}
+
+export async function filterHotels(params: HotelFilterParams): Promise<HotelDTO[]> {
+  const response = await api.get('/api/Hotel/filter', { params });
   return response.data.data;
 }

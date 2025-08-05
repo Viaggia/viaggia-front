@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { HotelDTO } from '../../types/Hotel';
-import { getHotelById } from '../../services/hotelService';
+import { getAvailableRooms, getHotelById } from '../../services/hotelService';
 import Carousel from '../../components/cards/Carrossel/CarouselCards';
 import ServiceList from '../../components/lists/ServiceList/ServiceList';
 import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
+import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/forms/DateRangePicker/DateRangePicker';
 
 const backendUrl = "https://localhost:7164";
 
@@ -14,6 +15,42 @@ const Details: React.FC = () => {
   const navigate = useNavigate();
   const { hotelId } = useParams<{ hotelId: string }>();
   const [hotel, setHotel] = useState<HotelDTO | null>(null);
+  const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
+  const [showError, setShowError] = useState(false);
+
+  const location = useLocation();
+
+   const searchState = location.state || {};
+
+  const [checkIn, setCheckIn] = useState(
+    searchState.checkInDate || getTodayISO()
+  );
+  const [checkOut, setCheckOut] = useState(
+    searchState.checkOutDate || getFutureISO(7)
+  );
+  const [adults, setAdults] = useState(
+    typeof searchState.adults === 'number'
+      ? searchState.adults
+      : typeof searchState.numberOfPeople === 'number'
+        ? Math.max(1, searchState.numberOfPeople - (searchState.children || 0))
+        : 1
+  );
+  const [children, setChildren] = useState(
+    typeof searchState.children === 'number' ? searchState.children : 0
+  );
+  const [rooms, setRooms] = useState(
+    typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1
+  );
+
+  const handleQuantityChange = (roomTypeId: number, quantity: number) => {
+    setSelectedQuantities(prev => ({
+      ...prev,
+      [roomTypeId]: quantity
+    }));
+    if (showError && quantity > 0) setShowError(false);
+  };
+
+  const totalSelected = Object.values(selectedQuantities).reduce((sum, q) => sum + q, 0);
 
   useEffect(() => {
     if (hotelId) {
@@ -23,9 +60,6 @@ const Details: React.FC = () => {
 
   if (!hotel) return <div>Carregando...</div>;
 
-  console.log('Hotel:', hotel);
-
-  // Monta lista de imagens
   const images = hotel.medias.map(m => backendUrl + m.mediaUrl);
 
   const comodities = hotel.commodities[0] || {};
@@ -55,6 +89,28 @@ const Details: React.FC = () => {
   const naoOfertados = allServices
     .filter(s => !comodities[s.key as keyof typeof comodities])
     .map(s => s.label);
+
+ const handleSearch = async () => {
+  try {
+    // Soma adultos + crianças para o filtro
+    const numberOfPeople = adults + children;
+    if (!checkIn || !checkOut) {
+      alert('Selecione as datas de check-in e check-out.');
+      return;
+    }
+    const availableRooms = await getAvailableRooms(
+      hotel.hotelId,
+      numberOfPeople,
+      checkIn,
+      checkOut
+    );
+    // Atualiza os quartos do hotel com o resultado filtrado
+    setHotel(prev => prev ? { ...prev, roomTypes: availableRooms } : prev);
+  } catch (error) {
+    alert('Não foi possível buscar quartos disponíveis.');
+    console.error(error);
+  }
+};
 
   return (
     <div className="container-fluid py-5">
@@ -100,13 +156,59 @@ const Details: React.FC = () => {
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
           <ServiceList title="Não ofertados" items={naoOfertados} />
-          <ExtraCommoditiesList commoditieServices={hotel.commoditieServices} />
+          <ExtraCommoditiesList commoditieServices={hotel.commodities[0]?.CustomCommodities || []} />
         </div>
       </div>
 
       {/* Listagem de quartos */}
       <div className="container mt-5">
-        <RoomTypeList roomTypes={hotel.roomTypes} />
+        <DateRangePicker
+          checkIn={checkIn}
+          checkOut={checkOut}
+          onCheckInChange={setCheckIn}
+          onCheckOutChange={setCheckOut}
+          adults={adults}
+          children={children}
+          rooms={rooms}
+          onAdultsChange={setAdults}
+          onChildrenChange={setChildren}
+          onRoomsChange={setRooms}
+          onSearch={handleSearch}
+        />
+        <RoomTypeList
+          roomTypes={hotel.roomTypes}
+          selectedQuantities={selectedQuantities}
+          onQuantityChange={handleQuantityChange}
+          showError={showError}
+        />
+        {showError && (
+          <div className="alert alert-danger mt-3" role="alert">
+            Selecione pelo menos um quarto para continuar.
+          </div>
+        )}
+        <button
+          className="btn btn-primary mt-4"
+          onClick={() => {
+            if (totalSelected === 0) {
+              setShowError(true);
+              return;
+            }
+            const selectedRooms = hotel.roomTypes
+              .filter(rt => selectedQuantities[rt.roomTypeId] > 0)
+              .map(rt => ({
+                ...rt,
+                quantity: selectedQuantities[rt.roomTypeId]
+              }));
+            navigate('/payment', {
+              state: {
+                hotel,
+                selectedRooms
+              }
+            });
+          }}
+        >
+          Ir para Pagamento
+        </button>
       </div>
 
     </div>

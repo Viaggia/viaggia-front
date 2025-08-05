@@ -20,8 +20,10 @@ export interface User {
   email: string
   password: string
   phoneNumber: string
-  createDate: string // ou Date, dependendo de como o backend envia
+  createDate: string
   isActive: boolean
+  isGoogleAccount?: boolean 
+  avatarUrl?: string;
 
   // CLIENT
   cpf?: string
@@ -82,4 +84,15 @@ export interface CreateAdminDTO{
    email: string
   password: string
   phoneNumber: string
+}
+
+export interface UpdateUserDTO {
+  name: string;
+  phoneNumber?: string;
+  cpf?: string;
+  companyName?: string;
+  companyLegalName?: string;
+  employerCompanyName?: string;
+  employeeId?: string;
+  // avatar?: File; // Se quiser permitir upload de imagem
 }
