@@ -1,111 +1,50 @@
-import { Carousel } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
 
-interface HotelInfo {
-  title: string
-  description: string
-  price: string
-  images: string[]
-  button: string
+interface HotelCardProps {
+  hotelId: number;
+  titulo: string;
+  imagem: string;
+  preco: number | null;
+  descricao?: string;
+  estrelas?: number;
+  cidade?: string;
 }
 
-const hotels: HotelInfo[] = [
-  {
-    title: 'Café & Vista',
-    description: 'Comece o dia com um café incrível e vista para o mar.',
-    price: 'R$ 320',
-    images: ['/img/coffemanha.jpg', '/img/hotelmar.jpg'],
-    button: 'Conferir oferta',
-  },
-  {
-    title: 'Quarto com conforto',
-    description: 'Relaxe em um quarto planejado para seu descanso.',
-    price: 'R$ 280',
-    images: ['/img/hotelquarto.jpg'],
-    button: 'Ver detalhes',
-  },
-  {
-    title: 'Natureza & Luxo',
-    description: 'Vista deslumbrante aliada a uma experiência sofisticada.',
-    price: 'R$ 350',
-    images: ['/img/hotelvista.jpg', '/img/hotelluxo.jpg'],
-    button: 'Reservar agora',
-  },
-  {
-    title: 'Diversão em família',
-    description: 'Hospedagem perfeita para crianças e diversão.',
-    price: 'R$ 400',
-    images: ['/img/hotelkids.jpg'],
-    button: 'Ver oferta',
-  },
-  {
-    title: 'Refresco & Piscina',
-    description: 'Relaxe em uma piscina rodeada de tranquilidade.',
-    price: 'R$ 300',
-    images: ['/img/hotelpiscina.jpg'],
-    button: 'Saiba mais',
-  },
-  {
-    title: 'Praia exclusiva',
-    description: 'Acorde com o som das ondas em um lugar paradisíaco.',
-    price: 'R$ 420',
-    images: ['/img/hotelmar.jpg'],
-    button: 'Ver experiência',
-  },
-]
+function HotelCard({ hotelId, titulo, imagem, preco, descricao, estrelas, cidade }: HotelCardProps) {
+  
+  const precoFormatado = preco !== null && preco !== undefined
+    ? preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    : 'Preço indisponível';
 
-function HotelCard({ title, description, price, images, button }: HotelInfo) {
+
   return (
-    <div
-      className="card mb-5"
-      style={{
-        width: '90%',
-        maxWidth: '1400px',
-        height: '300px',
-        borderRadius: '1rem',
-        overflow: 'hidden',
-        marginLeft: 'auto',
-      }}
-    >
-      <div className="row g-0 h-100">
-        <div className="col-md-6">
-          <Carousel>
-            {images.map((img, idx) => (
-              <Carousel.Item key={idx}>
-                <img
-                  src={img}
-                  alt="Imagem hotel"
-                  className="d-block w-100 h-100"
-                  style={{
-                    objectFit: 'cover',
-                    borderRadius: '1rem 0 0 1rem',
-                    height: '300px',
-                  }}
-                />
-              </Carousel.Item>
+    <div className="card h-100 shadow-sm" style={{ minWidth: '250px' }}>
+      <img
+        src={imagem}
+        className="card-img-top"
+        alt={titulo}
+        style={{ objectFit: 'cover', height: 180 }}
+      />
+      <div className="card-body">
+        <h5 className="card-title">{titulo}</h5>
+        {estrelas && (
+          <div className="mb-2">
+            {Array.from({ length: estrelas }).map((_, i) => (
+              <span key={i} style={{ color: '#FFD700', fontSize: '1.1em' }}>★</span>
             ))}
-          </Carousel>
-        </div>
-        <div className="col-md-6 p-4 d-flex flex-column justify-content-between h-100">
-          <div>
-            <h4 className="fw-bold">{title}</h4>
-            <p>{description}</p>
           </div>
-          <div>
-            <h5 className="text-primary">{price}</h5>
-            <button className="btn btn-success w-100">{button}</button>
-          </div>
-        </div>
+        )}
+        {cidade && <div className="text-muted mb-1">{cidade}</div>}
+        {descricao && <p className="card-text" style={{ fontSize: '0.95rem' }}>{descricao}</p>}
+        <p className="card-text mb-1">A partir de</p>
+        <h2 className="text-primary">{precoFormatado}</h2>
+        <p className="text-muted" style={{ fontSize: '0.9rem' }}>*Taxas não inclusas</p>
+        <Link to={`/details/${hotelId}`} className="btn btn-success w-100">
+          Ver detalhes
+        </Link>
       </div>
     </div>
-  )
+  );
 }
 
-export default function HotelCardsPage() {
-  return (
-    <div className="container py-5 d-flex flex-column align-items-end">
-      {hotels.map((hotel, index) => (
-        <HotelCard key={index} {...hotel} />
-      ))}
-    </div>
-  )
-}
+export default HotelCard;

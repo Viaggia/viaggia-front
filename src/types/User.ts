@@ -22,6 +22,8 @@ export interface User {
   phoneNumber: string
   createDate: string
   isActive: boolean
+  isGoogleAccount?: boolean 
+  avatarUrl?: string;
 
   // CLIENT
   cpf?: string
@@ -39,6 +41,7 @@ export interface User {
   employerCompanyName?: string
   employeeId?: string
 
+  // Relacionamentos
   userRoles: UserRole[]
   reservations: Reservation[]
   payments: Payment[]
@@ -50,10 +53,6 @@ export interface CreateClientDTO {
   phoneNumber: string
   password: string
   cpf: string
-  addressStreet?: string
-  addressCity?: string
-  addressState?: string
-  addressZipCode?: string
 }
 
 export interface CreateAttendantDTO {
@@ -78,4 +77,22 @@ export interface CreateServiceProviderDTO {
 export interface LoginRequest {
   email: string
   password: string
+}
+
+export interface CreateAdminDTO{
+  name: string
+   email: string
+  password: string
+  phoneNumber: string
+}
+
+export interface UpdateUserDTO {
+  name: string;
+  phoneNumber?: string;
+  cpf?: string;
+  companyName?: string;
+  companyLegalName?: string;
+  employerCompanyName?: string;
+  employeeId?: string;
+  // avatar?: File; // Se quiser permitir upload de imagem
 }

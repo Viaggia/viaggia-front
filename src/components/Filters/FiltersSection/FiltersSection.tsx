@@ -23,10 +23,11 @@ function FiltersSection({ filtros, setFiltros }: FiltersSectionProps) {
     <div
       className="container mb-5 p-4"
       style={{
-        backgroundColor: 'rgba(50, 50, 50, 0.5)', // cinza escuro semi-transparente
+        backgroundColor: 'rgba(50, 50, 50, 0.29)', // cinza escuro semi-transparente
         borderRadius: '1rem',
         color: '#000000', // texto preto
         backdropFilter: 'blur(4px)', // efeito levemente embaçado
+        marginTop: '27px' // 🎯 ajuste solicitado
       }}
     >
       <h4 className="mb-4">Filtrar hospedagens</h4>

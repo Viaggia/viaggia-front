@@ -1,0 +1,6 @@
+.carousel-img {
+  height: 400px; /* ou qualquer altura que desejar */
+  object-fit: cover;
+  margin: 0;
+  padding: 0;
+}

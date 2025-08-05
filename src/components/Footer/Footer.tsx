@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { Link } from 'react-router-dom'
 
 function Footer() {
   return (
@@ -13,12 +14,13 @@ function Footer() {
           </div>
 
           {/* Links úteis */}
+
           <div className="col-md-4 mb-3 text-center">
             <h6 className="fw-semibold">Links</h6>
             <ul className="list-unstyled">
-              <li><a href="#" className="text-decoration-none text-muted">Sobre nós</a></li>
-              <li><a href="#" className="text-decoration-none text-muted">Contato</a></li>
-              <li><a href="#" className="text-decoration-none text-muted">Termos e privacidade</a></li>
+              <li><Link to="/about" className="text-decoration-none text-muted">Sobre nós</Link></li>
+              <li><Link to="/contact" className="text-decoration-none text-muted">Contato</Link></li>
+              <li><Link to="/privacy" className="text-decoration-none text-muted">Termos e privacidade</Link></li>
             </ul>
           </div>
 

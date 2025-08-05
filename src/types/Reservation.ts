@@ -16,3 +16,17 @@ export interface Reservation {
   payments: Payment[]
   companions: Companion[]
 }
+
+export interface ReservationCreateDTO {
+  userId: number;
+  userNameReservation?: string;
+  packageId?: number;
+  roomTypeId?: number;
+  hotelId?: number;
+  checkInDate: string;
+  checkOutDate: string;
+  totalPrice: number;
+  numberOfGuests: number;
+  status: string;
+  isActive: boolean;
+}
