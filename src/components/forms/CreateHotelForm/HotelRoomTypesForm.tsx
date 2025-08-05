@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RoomTypeEnum, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
-import { parseFieldValue } from '../../../utils/formatMask';
+import { formatCurrencyBRL, parseCurrencyBRL, parseFieldValue } from '../../../utils/formatMask';
 
 interface Props {
   roomTypes: CreateHotelRoomTypeDTO[];
@@ -26,14 +26,27 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
 
   const handleNewRoomChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const parsedValue = parseFieldValue(name, value, type, ['Price', 'Capacity', 'TotalRooms']);
+    let parsedValue: string | number = value;
+
+    if (name === 'Price') {
+      parsedValue = parseCurrencyBRL(value);
+    } else {
+      parsedValue = parseFieldValue(name, value, type, ['Price', 'Capacity', 'TotalRooms']);
+    }
+
     setNewRoom(prev => ({ ...prev, [name]: parsedValue }));
   };
 
   const handleExistingRoomChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
+    let parsedValue: string | number = value;
 
-    const parsedValue = parseFieldValue(name, value, type, ['Price', 'Capacity', 'TotalRooms']);
+    if (name === 'Price') {
+      parsedValue = parseCurrencyBRL(value);
+    } else {
+      parsedValue = parseFieldValue(name, value, type, ['Price', 'Capacity', 'TotalRooms']);
+    }
+
     const updated = [...roomTypes];
     updated[index] = { ...updated[index], [name]: parsedValue };
     setRoomTypes(updated);
@@ -108,12 +121,13 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
             <div className="col-md-3 mb-2">
               <label className="form-label">Preço <span className="text-danger">*</span></label>
               <input
-                type="number"
+                type="text"
                 name="Price"
-                value={newRoom.Price}
+                value={formatCurrencyBRL(newRoom.Price)}
                 onChange={handleNewRoomChange}
                 className="form-control"
                 required
+                min={0}
               />
             </div>
             <div className="col-md-3 mb-2">
@@ -190,10 +204,10 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
                 <div className="col-6 mb-2">
                   <label className="form-label">Preço</label>
                   <input
-                    type="number"
+                    type="text"
                     name="Price"
-                    value={room.Price}
-                    onChange={(e) => handleExistingRoomChange(index, e)}
+                    value={formatCurrencyBRL(room.Price)}
+                    onChange={e => handleExistingRoomChange(index, e)}
                     className="form-control"
                   />
                 </div>

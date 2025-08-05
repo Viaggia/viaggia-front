@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { CreateCommoditieDTO, CustomCommodityDTO } from '../../../types/Hotel';
 import { comoditiesIcons } from '../../../utils/commoditiesIcons';
+import { formatCurrencyBRL, parseCurrencyBRL } from '../../../utils/formatMask';
+import CurrencyInput from '../../Inputs/CurrencyInput';
 
 interface Props {
   commoditiesFormData: Omit<CreateCommoditieDTO, 'HotelName'>;
@@ -14,25 +16,25 @@ type BooleanFields = {
 };
 
 type FormCustomCommodity = Partial<CustomCommodityDTO> & {
-  name: string;
-  isPaid: boolean;
-  price?: number;
-  description?: string;
-  isActive: boolean;
+  Name: string;
+  IsPaid: boolean;
+  Price?: number;
+  Description?: string;
+  IsActive: boolean;
 };
 
 const priceFields = [
-  { paid: 'isParkingPaid', price: 'parkingPrice', label: 'Preço do Estacionamento', dep: 'hasParking' },
-  { paid: 'isBreakfastPaid', price: 'breakfastPrice', label: 'Preço do Café da Manhã', dep: 'hasBreakfast' },
-  { paid: 'isLunchPaid', price: 'lunchPrice', label: 'Preço do Almoço', dep: 'hasLunch' },
-  { paid: 'isDinnerPaid', price: 'dinnerPrice', label: 'Preço do Jantar', dep: 'hasDinner' },
-  { paid: 'isSpaPaid', price: 'spaPrice', label: 'Preço do Spa', dep: 'hasSpa' },
-  { paid: 'isPoolPaid', price: 'poolPrice', label: 'Preço da Piscina', dep: 'hasPool' },
-  { paid: 'isGymPaid', price: 'gymPrice', label: 'Preço da Academia', dep: 'hasGym' },
-  { paid: 'isWiFiPaid', price: 'wiFiPrice', label: 'Preço do Wi-Fi', dep: 'hasWiFi' },
-  { paid: 'isAirConditioningPaid', price: 'airConditioningPrice', label: 'Preço do Ar-condicionado', dep: 'hasAirConditioning' },
-  { paid: 'isAccessibilityFeaturesPaid', price: 'accessibilityFeaturesPrice', label: 'Preço da Acessibilidade', dep: 'hasAccessibilityFeatures' },
-  { paid: 'isPetFriendlyPaid', price: 'petFriendlyPrice', label: 'Preço para Pets', dep: 'isPetFriendly' },
+  { paid: 'IsParkingPaid', price: 'ParkingPrice', label: 'Preço do Estacionamento', dep: 'HasParking' },
+  { paid: 'IsBreakfastPaid', price: 'BreakfastPrice', label: 'Preço do Café da Manhã', dep: 'HasBreakfast' },
+  { paid: 'IsLunchPaid', price: 'LunchPrice', label: 'Preço do Almoço', dep: 'HasLunch' },
+  { paid: 'IsDinnerPaid', price: 'DinnerPrice', label: 'Preço do Jantar', dep: 'HasDinner' },
+  { paid: 'IsSpaPaid', price: 'SpaPrice', label: 'Preço do Spa', dep: 'HasSpa' },
+  { paid: 'IsPoolPaid', price: 'PoolPrice', label: 'Preço da Piscina', dep: 'HasPool' },
+  { paid: 'IsGymPaid', price: 'GymPrice', label: 'Preço da Academia', dep: 'HasGym' },
+  { paid: 'IsWiFiPaid', price: 'WiFiPrice', label: 'Preço do Wi-Fi', dep: 'HasWiFi' },
+  { paid: 'IsAirConditioningPaid', price: 'AirConditioningPrice', label: 'Preço do Ar-condicionado', dep: 'HasAirConditioning' },
+  { paid: 'IsAccessibilityFeaturesPaid', price: 'AccessibilityFeaturesPrice', label: 'Preço da Acessibilidade', dep: 'HasAccessibilityFeatures' },
+  { paid: 'IsPetFriendlyPaid', price: 'PetFriendlyPrice', label: 'Preço para Pets', dep: 'IsPetFriendly' },
 ];
 
 const HotelCommoditiesForm: React.FC<Props> = ({
@@ -44,11 +46,11 @@ const HotelCommoditiesForm: React.FC<Props> = ({
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [serviceDraft, setServiceDraft] = useState<FormCustomCommodity>({
-    name: '',
-    isPaid: false,
-    price: undefined,
-    description: '',
-    isActive: true,
+    Name: '',
+    IsPaid: false,
+    Price: undefined,
+    Description: '',
+    IsActive: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +62,7 @@ const HotelCommoditiesForm: React.FC<Props> = ({
     const { name, value } = e.target;
     setCommoditiesFormData(prev => ({
       ...prev,
-      [name]: Number(value)
+      [name]: parseCurrencyBRL(value)
     }));
   };
 
@@ -68,7 +70,7 @@ const HotelCommoditiesForm: React.FC<Props> = ({
     const { name, value, type, checked } = e.target;
     setServiceDraft(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : name === 'price' ? Number(value) : value
+      [name]: type === 'checkbox' ? checked : name === 'Price' ? Number(value) : value
     }));
   };
 
@@ -76,34 +78,32 @@ const HotelCommoditiesForm: React.FC<Props> = ({
     setEditingIndex(index);
     const service = commoditiesFormData.CustomCommodities[index];
     setServiceDraft({
-      name: service.name ?? '',
-      isPaid: service.isPaid ?? false,
-      price: service.price,
-      description: service.description ?? '',
-      isActive: service.isActive ?? true,
+      Name: service.Name ?? '',
+      IsPaid: service.IsPaid ?? false,
+      Price: service.Price,
+      Description: service.Description ?? '',
+      IsActive: service.IsActive ?? true,
     });
     setIsAdding(true);
   };
 
-
   const handleSaveService = () => {
-    if (!serviceDraft.name.trim()) {
+    if (!serviceDraft.Name.trim()) {
       alert('O nome do serviço é obrigatório.');
       return;
     }
-    if (serviceDraft.isPaid && (!serviceDraft.price || serviceDraft.price <= 0)) {
+    if (serviceDraft.IsPaid && (!serviceDraft.Price || serviceDraft.Price <= 0)) {
       alert('Informe o preço do serviço pago.');
       return;
     }
 
-    // Garante que só os campos do tipo esperado vão para o array
-    const newService: Omit<CustomCommodityDTO, 'customCommodityId' | 'commoditieId' | 'hotelId'> = {
-      name: serviceDraft.name,
-      isPaid: serviceDraft.isPaid,
-      price: serviceDraft.isPaid ? serviceDraft.price : undefined,
-      description: serviceDraft.description,
-      isActive: serviceDraft.isActive,
-      hotelName: '', // pode ser preenchido no backend
+    const newService: Omit<CustomCommodityDTO, 'CustomCommodityId' | 'CommoditieId' | 'HotelId'> = {
+      Name: serviceDraft.Name,
+      IsPaid: serviceDraft.IsPaid,
+      Price: serviceDraft.IsPaid ? serviceDraft.Price : undefined,
+      Description: serviceDraft.Description,
+      IsActive: serviceDraft.IsActive,
+      HotelName: '', // pode ser preenchido no backend
     };
 
     if (editingIndex !== null) {
@@ -123,11 +123,11 @@ const HotelCommoditiesForm: React.FC<Props> = ({
       }));
     }
     setServiceDraft({
-      name: '',
-      isPaid: false,
-      price: undefined,
-      description: '',
-      isActive: true,
+      Name: '',
+      IsPaid: false,
+      Price: undefined,
+      Description: '',
+      IsActive: true,
     });
     setIsAdding(false);
     setEditingIndex(null);
@@ -135,11 +135,11 @@ const HotelCommoditiesForm: React.FC<Props> = ({
 
   const handleCancelService = () => {
     setServiceDraft({
-      name: '',
-      isPaid: false,
-      price: undefined,
-      description: '',
-      isActive: true,
+      Name: '',
+      IsPaid: false,
+      Price: undefined,
+      Description: '',
+      IsActive: true,
     });
     setIsAdding(false);
     setEditingIndex(null);
@@ -155,17 +155,17 @@ const HotelCommoditiesForm: React.FC<Props> = ({
 
   // Dependências entre comodidades e suas opções pagas
   const dependencies: Record<string, string> = {
-    isParkingPaid: 'hasParking',
-    isBreakfastPaid: 'hasBreakfast',
-    isLunchPaid: 'hasLunch',
-    isDinnerPaid: 'hasDinner',
-    isSpaPaid: 'hasSpa',
-    isPoolPaid: 'hasPool',
-    isGymPaid: 'hasGym',
-    isWiFiPaid: 'hasWiFi',
-    isAirConditioningPaid: 'hasAirConditioning',
-    isAccessibilityFeaturesPaid: 'hasAccessibilityFeatures',
-    isPetFriendlyPaid: 'isPetFriendly'
+    IsParkingPaid: 'HasParking',
+    IsBreakfastPaid: 'HasBreakfast',
+    IsLunchPaid: 'HasLunch',
+    IsDinnerPaid: 'HasDinner',
+    IsSpaPaid: 'HasSpa',
+    IsPoolPaid: 'HasPool',
+    IsGymPaid: 'HasGym',
+    IsWiFiPaid: 'HasWiFi',
+    IsAirConditioningPaid: 'HasAirConditioning',
+    IsAccessibilityFeaturesPaid: 'HasAccessibilityFeatures',
+    IsPetFriendlyPaid: 'IsPetFriendly'
   };
 
   const comoditiesLabels: { field: keyof BooleanFields; label: string }[] = [
@@ -203,56 +203,49 @@ const HotelCommoditiesForm: React.FC<Props> = ({
           const isDisabled = dependency ? !commoditiesFormData[dependency as keyof BooleanFields] : false;
           const isPaidField = field.endsWith('Paid');
           const icon = !isPaidField ? comoditiesIcons[field as keyof typeof comoditiesIcons] : null;
+          const priceField = priceFields.find(p => p.paid === field);
 
           return (
             <div className="col-md-6 mb-3" key={field}>
-              <div className="form-check form-switch d-flex align-items-center m-0">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name={field}
-                  checked={commoditiesFormData[field]}
-                  onChange={handleChange}
-                  disabled={isDisabled}
-                  id={`switch-${field}`}
-                />
-                <label className="form-check-label ms-2 d-flex align-items-center gap-2" htmlFor={`switch-${field}`}>
-                  {icon && <span>{icon}</span>}
-                  {label}
-                </label>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              <div className="d-flex align-items-center">
+                <div className="form-check form-switch d-flex align-items-center m-0">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name={field}
+                    checked={commoditiesFormData[field]}
+                    onChange={handleChange}
+                    disabled={isDisabled}
+                    id={`switch-${field}`}
+                  />
+                  <label className="form-check-label ms-2 d-flex align-items-center gap-2" htmlFor={`switch-${field}`}>
+                    {icon && <span>{icon}</span>}
+                    {label}
+                  </label>
+                </div>
+                {/* Campo de valor alinhado à direita */}
+                {priceField && (
+                  <div className="ms-auto d-flex flex-column align-items-start" style={{ width: 140 }}>
+                    <CurrencyInput
+                      name={priceField.price}
+                      label="Preço"
+                      value={commoditiesFormData[priceField.price as keyof typeof commoditiesFormData] as number}
+                      onChange={(val) =>
+                        setCommoditiesFormData((prev) => ({
+                          ...prev,
+                          [priceField.price]: val,
+                        }))
+                      }
+                      disabled={
+                        !commoditiesFormData[priceField.dep as keyof typeof commoditiesFormData] ||
+                        !commoditiesFormData[priceField.paid as keyof typeof commoditiesFormData]
+                      }
+                      inputStyle={{ width: 100 }}
+                    />
 
-      {/* Campos de preço para comodidades pagas */}
-      <div className="row">
-        {priceFields.map(({ paid, price, label, dep }) => {
-          // Garante que o valor é number ou string, senão retorna ""
-          const value = commoditiesFormData[price as keyof typeof commoditiesFormData];
-          return (
-            <div className="col-md-6 mb-3" key={price}>
-              <label className="form-label">{label}</label>
-              <input
-                type="number"
-                className="form-control"
-                name={price}
-                value={
-                  typeof value === 'number' && !isNaN(value)
-                    ? value
-                    : typeof value === 'string'
-                      ? value
-                      : ''
-                }
-                onChange={handlePriceChange}
-                disabled={
-                  !Boolean(commoditiesFormData[dep as keyof typeof commoditiesFormData]) ||
-                  !Boolean(commoditiesFormData[paid as keyof typeof commoditiesFormData])
-                }
-                min={0}
-                placeholder="0,00"
-              />
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
@@ -274,8 +267,8 @@ const HotelCommoditiesForm: React.FC<Props> = ({
                 type="text"
                 className="form-control"
                 placeholder="Nome do Serviço"
-                name="name"
-                value={serviceDraft.name}
+                name="Name"
+                value={serviceDraft.Name}
                 onChange={handleServiceDraftChange}
               />
             </div>
@@ -284,8 +277,8 @@ const HotelCommoditiesForm: React.FC<Props> = ({
                 type="text"
                 className="form-control"
                 placeholder="Descrição"
-                name="description"
-                value={serviceDraft.description}
+                name="Description"
+                value={serviceDraft.Description}
                 onChange={handleServiceDraftChange}
               />
             </div>
@@ -294,23 +287,21 @@ const HotelCommoditiesForm: React.FC<Props> = ({
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  name="isPaid"
-                  checked={serviceDraft.isPaid}
+                  name="IsPaid"
+                  checked={serviceDraft.IsPaid}
                   onChange={handleServiceDraftChange}
                 />
                 <label className="form-check-label ms-1">Pago</label>
               </div>
             </div>
             <div className="col-md-3 mb-2">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Preço"
-                name="price"
-                value={serviceDraft.price || ''}
-                onChange={handleServiceDraftChange}
-                disabled={!serviceDraft.isPaid}
-                min={0}
+              <CurrencyInput
+                name="Price"
+                value={serviceDraft.Price}
+                onChange={(val) =>
+                  setServiceDraft((prev) => ({ ...prev, Price: val }))
+                }
+                disabled={!serviceDraft.IsPaid}
               />
             </div>
           </div>
@@ -330,15 +321,15 @@ const HotelCommoditiesForm: React.FC<Props> = ({
         <div key={index} className="card p-3 mb-3">
           <div className="row align-items-center">
             <div className="col-md-4 mb-2">
-              <strong>{service.name}</strong>
-              <div className="text-muted small">{service.description}</div>
+              <strong>{service.Name}</strong>
+              <div className="text-muted small">{service.Description}</div>
             </div>
             <div className="col-md-2 mb-2">
-              <span className={`badge ${service.isPaid ? 'bg-warning text-dark' : 'bg-success'}`}>
-                {service.isPaid ? 'Pago' : 'Grátis'}
+              <span className={`badge ${service.IsPaid ? 'bg-warning text-dark' : 'bg-success'}`}>
+                {service.IsPaid ? 'Pago' : 'Grátis'}
               </span>
-              {service.isPaid && service.price ? (
-                <span className="ms-2 text-muted small">R$ {Number(service.price).toFixed(2)}</span>
+              {service.IsPaid && service.Price ? (
+                <span className="ms-2 text-muted small">R$ {Number(service.Price).toFixed(2)}</span>
               ) : null}
             </div>
             <div className="col-md-6 mb-2 text-end">

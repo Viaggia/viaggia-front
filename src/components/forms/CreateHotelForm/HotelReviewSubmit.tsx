@@ -54,6 +54,21 @@ function formatBRL(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+// Mapeamento dos campos pagos para seus respectivos campos de preço
+const paidToPriceField: Record<string, keyof Omit<CreateCommoditieDTO, 'HotelName'>> = {
+  IsParkingPaid: 'ParkingPrice',
+  IsBreakfastPaid: 'BreakfastPrice',
+  IsLunchPaid: 'LunchPrice',
+  IsDinnerPaid: 'DinnerPrice',
+  IsSpaPaid: 'SpaPrice',
+  IsPoolPaid: 'PoolPrice',
+  IsGymPaid: 'GymPrice',
+  IsWiFiPaid: 'WiFiPrice',
+  IsAirConditioningPaid: 'AirConditioningPrice',
+  IsAccessibilityFeaturesPaid: 'AccessibilityFeaturesPrice',
+  IsPetFriendlyPaid: 'PetFriendlyPrice',
+};
+
 const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, handleSubmit, prevStep }) => {
   const comoditiesLabels: { field: keyof typeof commodities; label: string }[] = [
     { field: 'HasParking', label: 'Estacionamento' },
@@ -137,23 +152,35 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
         <h6>🧾 Comodidades Ofertadas</h6>
         <div className="row g-2">
           {offered.map((item, idx) => {
-            const icon = comoditiesIcons[item.field];
-            return (
-              <div key={idx} className="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div className="card h-100 p-2 d-flex flex-row align-items-center gap-2">
-                  {icon && <span>{icon}</span>}
-                  <div className="flex-grow-1">
-                    <span>{item.label}</span>
-                  </div>
-                  {item.isPaid !== undefined && (
-                    <span className={`badge ${item.isPaid ? 'bg-warning text-dark' : 'bg-success'}`}>
-                      {item.isPaid ? 'Pago' : 'Grátis'}
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+  const icon = comoditiesIcons[item.field];
+  const paidField = comoditiesLabels.find(l => l.field === item.field.replace('Has', 'Is') + 'Paid')?.field;
+  const priceField = paidToPriceField[paidField as string];
+  const isPaid = paidField ? (commodities[paidField as keyof typeof commodities] as boolean) : false;
+  const price =
+    typeof priceField === 'string' && priceField in commodities
+      ? (commodities[priceField as keyof typeof commodities] as number)
+      : undefined;
+
+  return (
+    <div key={idx} className="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div className="card h-100 p-2 d-flex flex-row align-items-center gap-2">
+        {icon && <span>{icon}</span>}
+        <div className="flex-grow-1">
+          <span>{item.label}</span>
+        </div>
+        {paidField && isPaid ? (
+          <span className="badge bg-warning text-dark">
+            {typeof price === 'number' && !isNaN(price)
+              ? formatBRL(price)
+              : 'Pago'}
+          </span>
+        ) : (
+          <span className="badge bg-success">Grátis</span>
+        )}
+      </div>
+    </div>
+  );
+})}
         </div>
         {notOffered.length > 0 && (
           <>
@@ -200,10 +227,12 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
             {commodities.CustomCommodities.map((service, index) => (
               <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div className="card h-100 p-2 d-flex flex-column gap-1">
-                  <span className="fw-bold">{service.name}</span>
-                  <span className="text-muted small">{service.description || '—'}</span>
-                  <span className={`badge align-self-start ${service.isPaid ? 'bg-warning text-dark' : 'bg-success'}`}>
-                    {service.isPaid ? 'Pago' : 'Grátis'}
+                  <span className="fw-bold">{service.Name}</span>
+                  <span className="text-muted small">{service.Description || '—'}</span>
+                  <span className={`badge align-self-start ${service.IsPaid ? 'bg-warning text-dark' : 'bg-success'}`}>
+                    {service.IsPaid && service.Price !== undefined
+                      ? service.Price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                      : 'Grátis'}
                   </span>
                 </div>
               </div>
