@@ -10,6 +10,7 @@ import ProfileSidebar from '../../components/Sidebars/ProfileSidebar'
 import ProfileMobileMenu from '../../components/Sidebars/ProfileMobileMenu'
 import ProfileUserInfoCard from '../../components/cards/ProfileUserInfoCard/ProfileUserInfoCard'
 import { updateUser } from '../../services/userService'
+import MyHotels from '../MyHotels/MyHotels'
 
 function Profile() {
   const { user, role } = useAuth();
@@ -28,12 +29,12 @@ function Profile() {
     )
   }
 
-  // Opções do menu lateral
   const menuOptions = [
     { value: 'meu-perfil', label: 'Meu Perfil' },
     { value: 'minhas-reservas', label: 'Minhas Reservas' },
     ...(role !== 'CLIENT'
       ? [
+        { value: 'meus-hoteis', label: 'Meus Hotéis' },
         { value: 'cadastrar-adm', label: 'Cadastrar Administrador' },
         { value: 'cadastrar-attendant', label: 'Cadastrar Atendente' },
         { value: 'cadastrar-service-provider', label: 'Cadastrar Prestador de Serviço' },
@@ -132,6 +133,11 @@ function Profile() {
           {activeButton === 'cadastrar-pacote' && (
             <div>
               <CreatePackageForm />
+            </div>
+          )}
+          {activeButton === 'meus-hoteis' && (
+            <div>
+              <MyHotels userId={user.id} />
             </div>
           )}
         </div>
