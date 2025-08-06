@@ -1,5 +1,13 @@
 import React from 'react';
-import { CreateHotelDTO, CreateHotelRoomTypeDTO, CreateCommodityDTO } from '../../../types/Hotel';
+import {
+  CreateHotelDTO,
+  CreateHotelRoomTypeDTO,
+  CreateCommodityDTO,
+  HotelDTO,
+  HotelRoomTypeDTO,
+  CommodityDTO,
+  CustomCommodityDTO,
+} from '../../../types/Hotel';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
@@ -14,15 +22,26 @@ import AcUnitIcon from '@mui/icons-material/AcUnit';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import PetsIcon from '@mui/icons-material/Pets';
 
-interface Props {
-  formData: CreateHotelDTO;
-  roomTypes: CreateHotelRoomTypeDTO[];
-  commodities: Omit<CreateCommodityDTO, 'hotelName'>;
+// Tipos genéricos para aceitar tanto criação quanto edição
+type HotelFormType = CreateHotelDTO | HotelDTO;
+type RoomTypeFormType = CreateHotelRoomTypeDTO | HotelRoomTypeDTO;
+type CommodityFormType = Omit<CreateCommodityDTO, 'hotelName'> | CommodityDTO;
+
+interface Props<
+  H extends HotelFormType = HotelFormType,
+  R extends RoomTypeFormType = RoomTypeFormType,
+  C extends CommodityFormType = CommodityFormType
+> {
+  formData: H;
+  roomTypes: R[];
+  commodities?: C; // Para create
+  commodity?: C;   // Para edit
+  customCommodities?: CustomCommodityDTO[]; // Para edit, se necessário
   handleSubmit: () => void;
   prevStep: () => void;
 }
 
-const comoditiesIcons: Partial<Record<keyof Omit<CreateCommodityDTO, 'hotelName'>, React.ReactNode>> = {
+const comoditiesIcons: Partial<Record<keyof CommodityFormType, React.ReactNode>> = {
   hasParking: <LocalParkingIcon fontSize="small" />,
   hasBreakfast: <BreakfastDiningIcon fontSize="small" />,
   hasLunch: <LunchDiningIcon fontSize="small" />,
@@ -54,8 +73,7 @@ function formatBRL(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-// Mapeamento dos campos pagos para seus respectivos campos de preço
-const paidToPriceField: Record<string, keyof Omit<CreateCommodityDTO, 'hotelName'>> = {
+const paidToPriceField: Record<string, keyof CommodityFormType> = {
   hasParking: 'parkingPrice',
   hasBreakfast: 'breakfastPrice',
   hasLunch: 'lunchPrice',
@@ -69,42 +87,60 @@ const paidToPriceField: Record<string, keyof Omit<CreateCommodityDTO, 'hotelName
   isPetFriendly: 'petFriendlyPrice',
 };
 
-const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, handleSubmit, prevStep }) => {
-  const comoditiesLabels: { field: keyof typeof commodities; label: string }[] = [
-    { field: 'hasParking', label: 'Estacionamento' },
-    { field: 'isParkingPaid', label: 'Estacionamento é pago' },
-    { field: 'hasBreakfast', label: 'Café da Manhã' },
-    { field: 'isBreakfastPaid', label: 'Café da Manhã é pago' },
-    { field: 'hasLunch', label: 'Almoço' },
-    { field: 'isLunchPaid', label: 'Almoço é pago' },
-    { field: 'hasDinner', label: 'Jantar' },
-    { field: 'isDinnerPaid', label: 'Jantar é pago' },
-    { field: 'hasSpa', label: 'Spa' },
-    { field: 'isSpaPaid', label: 'Spa é pago' },
-    { field: 'hasPool', label: 'Piscina' },
-    { field: 'isPoolPaid', label: 'Piscina é paga' },
-    { field: 'hasGym', label: 'Academia' },
-    { field: 'isGymPaid', label: 'Academia é paga' },
-    { field: 'hasWiFi', label: 'Wi-Fi' },
-    { field: 'isWiFiPaid', label: 'Wi-Fi é pago' },
-    { field: 'hasAirConditioning', label: 'Ar-condicionado' },
-    { field: 'isAirConditioningPaid', label: 'Ar-condicionado é pago' },
-    { field: 'hasAccessibilityFeatures', label: 'Acessibilidade' },
-    { field: 'isAccessibilityFeaturesPaid', label: 'Acessibilidade é paga' },
-    { field: 'isPetFriendly', label: 'Aceita Pets' },
-    { field: 'isPetFriendlyPaid', label: 'Taxa para Pets' }
-  ];
+const comoditiesLabels: { field: keyof CommodityFormType; label: string }[] = [
+  { field: 'hasParking', label: 'Estacionamento' },
+  { field: 'isParkingPaid', label: 'Estacionamento é pago' },
+  { field: 'hasBreakfast', label: 'Café da Manhã' },
+  { field: 'isBreakfastPaid', label: 'Café da Manhã é pago' },
+  { field: 'hasLunch', label: 'Almoço' },
+  { field: 'isLunchPaid', label: 'Almoço é pago' },
+  { field: 'hasDinner', label: 'Jantar' },
+  { field: 'isDinnerPaid', label: 'Jantar é pago' },
+  { field: 'hasSpa', label: 'Spa' },
+  { field: 'isSpaPaid', label: 'Spa é pago' },
+  { field: 'hasPool', label: 'Piscina' },
+  { field: 'isPoolPaid', label: 'Piscina é paga' },
+  { field: 'hasGym', label: 'Academia' },
+  { field: 'isGymPaid', label: 'Academia é paga' },
+  { field: 'hasWiFi', label: 'Wi-Fi' },
+  { field: 'isWiFiPaid', label: 'Wi-Fi é pago' },
+  { field: 'hasAirConditioning', label: 'Ar-condicionado' },
+  { field: 'isAirConditioningPaid', label: 'Ar-condicionado é pago' },
+  { field: 'hasAccessibilityFeatures', label: 'Acessibilidade' },
+  { field: 'isAccessibilityFeaturesPaid', label: 'Acessibilidade é paga' },
+  { field: 'isPetFriendly', label: 'Aceita Pets' },
+  { field: 'isPetFriendlyPaid', label: 'Taxa para Pets' }
+];
 
-  const offered: { label: string; isPaid?: boolean; field: keyof typeof commodities }[] = [];
-  const notOffered: { label: string; field: keyof typeof commodities }[] = [];
+const HotelReviewSubmit = <H extends HotelFormType, R extends RoomTypeFormType, C extends CommodityFormType>({
+  formData,
+  roomTypes,
+  commodities,
+  commodity,
+  customCommodities,
+  handleSubmit,
+  prevStep,
+}: Props<H, R, C>) => {
+  // Decide qual objeto usar (commodities para create, commodity para edit)
+  const comoditiesObj = commodities ?? commodity;
+
+  console.log("customCommodities")
+  console.log(customCommodities)
+
+  // Se não houver comodities, não renderiza nada
+  if (!comoditiesObj) return null;
+
+  // Monta as listas de ofertados e não ofertados
+  const offered: { label: string; isPaid?: boolean; field: keyof typeof comoditiesObj }[] = [];
+  const notOffered: { label: string; field: keyof typeof comoditiesObj }[] = [];
 
   for (let i = 0; i < comoditiesLabels.length; i += 2) {
     const offerField = comoditiesLabels[i].field;
     const paidField = comoditiesLabels[i + 1]?.field;
     const label = comoditiesLabels[i].label;
-    const isOffered = commodities[offerField];
-    const isPaid = paidField && typeof commodities[paidField] === 'boolean'
-      ? (commodities[paidField] as boolean)
+    const isOffered = comoditiesObj[offerField];
+    const isPaid = paidField && typeof comoditiesObj[paidField] === 'boolean'
+      ? (comoditiesObj[paidField] as boolean)
       : undefined;
     if (isOffered) {
       offered.push({
@@ -117,6 +153,17 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
     }
   }
 
+  // Serviços adicionais: pega do objeto ou da prop customCommodities
+ const customServices =
+  Array.isArray(customCommodities) && customCommodities.length > 0
+    ? customCommodities
+    : Array.isArray((comoditiesObj as any).customCommodities)
+      ? (comoditiesObj as any).customCommodities as CustomCommodityDTO[]
+      : [];
+
+
+      console.log("customServices")
+      console.log(customServices)
   return (
     <div>
       <h5 className="mb-3">Revisar Dados</h5>
@@ -152,15 +199,20 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
         <h6>🧾 Comodidades Ofertadas</h6>
         <div className="row g-2">
           {offered.map((item, idx) => {
-            const icon = comoditiesIcons[item.field];
-            const paidField = comoditiesLabels.find(l => l.field === item.field.replace('has', 'is') + 'Paid')?.field;
+            const icon = comoditiesIcons[item.field as keyof typeof comoditiesIcons];
+            let paidField: keyof typeof comoditiesObj | undefined = undefined;
+            const fieldStr = String(item.field);
+            paidField = comoditiesLabels.find(
+              l => l.field === (fieldStr.startsWith('has') ? fieldStr.replace('has', 'is') + 'Paid' : '')
+            )?.field;
+
             const priceField = paidToPriceField[item.field as string];
-            const isPaid = paidField ? (commodities[paidField as keyof typeof commodities] as boolean) : false;
+            const isPaid = paidField ? (comoditiesObj[paidField as keyof typeof comoditiesObj] as boolean) : false;
             const price =
-              typeof priceField === 'string' && priceField in commodities
-                ? (commodities[priceField as keyof typeof commodities] as number)
+              typeof priceField === 'string' && priceField in comoditiesObj
+                ? (comoditiesObj[priceField as keyof typeof comoditiesObj] as number)
                 : undefined;
-            
+
             return (
               <div key={idx} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div className="card h-100 p-2 d-flex flex-row align-items-center gap-2">
@@ -187,7 +239,8 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
             <h6 className="mt-3">❌ Não Ofertados</h6>
             <div className="row g-2">
               {notOffered.map((item, idx) => {
-                const icon = comoditiesIcons[item.field];
+                const fieldStr = String(item.field);
+                const icon = comoditiesIcons[fieldStr as keyof typeof comoditiesIcons];
                 return (
                   <div key={idx} className="col-12 col-sm-6 col-md-4 col-lg-3">
                     <div className="card h-100 p-2 d-flex flex-row align-items-center gap-2 bg-light text-muted">
@@ -220,11 +273,11 @@ const HotelReviewSubmit: React.FC<Props> = ({ formData, roomTypes, commodities, 
         </div>
       </div>
 
-      {commodities.customCommodities && commodities.customCommodities.length > 0 && (
+      {customServices.length > 0 && (
         <div className="mb-4">
           <h6>🧩 Serviços Adicionais</h6>
           <div className="row g-2">
-            {commodities.customCommodities.map((service, index) => (
+            {customServices.map((service, index) => (
               <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div className="card h-100 p-2 d-flex flex-column gap-1">
                   <span className="fw-bold">{service.name}</span>

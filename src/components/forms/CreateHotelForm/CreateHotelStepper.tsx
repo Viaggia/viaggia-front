@@ -192,8 +192,8 @@ function CreateHotelStepper() {
                             )}
                             {step === 3 && (
                                 <HotelCommoditiesForm
-                                    commoditiesFormData={commoditiesFormData}
-                                    setCommoditiesFormData={setCommoditiesFormData}
+                                    data={commoditiesFormData}
+                                    setData={setCommoditiesFormData}
                                     nextStep={() => setStep(4)}
                                     prevStep={() => setStep(2)}
                                 />
