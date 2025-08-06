@@ -39,11 +39,14 @@ function Login() {
 
   return (
     <div>
+      
       {/* Corpo */}
       <div className="container py-5">
         <div className="row justify-content-center align-items-center">
+          
           {/* Formulário */}
           <div className="col-lg-6 mb-4">
+            
             <div className="card shadow">
               <div className="card-body">
                 <h4 className="card-title text-center mb-4">Faça seu login</h4>
@@ -89,32 +92,38 @@ function Login() {
                   </p>
                   <p className="text-center">ou use uma das seguintes opções</p>
 
-                  {/* Ícones de login alternativo */}
-                  <div className="d-flex justify-content-center gap-3 mt-3">
-                    {[1, 2, 3].map((i) => (
-                      <a key={i} href="https://localhost:7164/api/Accounts/login-google">
-                        <img
-                          src="https://th.bing.com/th/id/R.9083a08e5078931279f9c07bd361b4f2?rik=wR6IQoBKiuF9Ww&pid=ImgRaw&r=0"
-                          alt={"Login com Google"}
-                          className="rounded-circle"
-                          style={{ width: '70px', height: '70px', objectFit: 'cover' }}
-                        />
-                      </a>
-                    ))}
+                  {/* Botão de login com Google */}
+                  <div className="d-flex justify-content-center mt-3">
+                    <a
+                      href="https://localhost:7164/api/Accounts/login-google"
+                      className="d-flex align-items-center gap-2 px-4 py-2 rounded"
+                      style={{
+                        textDecoration: 'none',
+                        backgroundColor: '#fff',
+                        border: '1px solid #ddd',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                        transition: 'background-color 0.3s',
+                      }}
+                    >
+                      <img
+                        src="https://th.bing.com/th/id/R.9083a08e5078931279f9c07bd361b4f2?rik=wR6IQoBKiuF9Ww&pid=ImgRaw&r=0"
+                        alt="Google Logo"
+                        className="rounded-circle"
+                        style={{ width: '30px', height: '30px', objectFit: 'cover' }}
+                      />
+                      <span style={{ color: '#000', fontWeight: '500' }}>Logar com o Google</span>
+                    </a>
                   </div>
+
                 </form>
               </div>
             </div>
           </div>
 
-          {/* Imagem lateral */}
-          <div className="col-lg-6 text-center">
-            <img
-              src="https://i.pinimg.com/736x/99/de/98/99de98eb4e7bd078d39db104da78444e.jpg"
-              alt="imagem-login"
-              className="img-fluid rounded mt-4"
-            />
-          </div>
+         
+
+
         </div>
       </div>
     </div>

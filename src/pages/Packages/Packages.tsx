@@ -1,10 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { Link } from 'react-router-dom'
+import PackageCard from '../../components/cards/PackageCard/PackageCard'
+import CardPackeges from '../../components/ListPackeges/CardPackeges'
+import TravelForm from '../../components/forms/TravelForm/TravelForm'
+
 
 const pacotes = [
   {
     titulo: 'Férias em Fernando de Noronha - PE',
-    imagem: '/img/noronha.jpg',
+    imagem: 'https://tse2.mm.bing.net/th/id/OIP.cqlmSi15LKX4OJof7v88bgHaJ4?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     preco: 'R$ 1.200',
   },
   {
@@ -49,33 +52,38 @@ const pacotes = [
   },
 ]
 
+
+
 function Packages() {
   return (
     <>
-      <h2 className="text-center mb-4 mt-4">Pacotes de viagem imperdíveis</h2>
-
-      <section className="container py-5">
-        <div className="row">
-          {pacotes.map((item, index) => (
-            <div className="col-md-4 mb-4" key={index}>
-              <div className="card h-100 shadow-sm">
-                <img src={item.imagem} className="card-img-top" alt={item.titulo} />
-                <div className="card-body">
-                  <h5 className="card-title">{item.titulo}</h5>
-                  <p className="card-text">Pacote completo por pessoa</p>
-                  <h2 className="text-primary">{item.preco}</h2>
-                  <p className="text-muted" style={{ fontSize: '0.9rem' }}>
-                    *Taxas e impostos não inclusos
-                  </p>
-                  <Link to="/details" className="btn btn-success w-100">
-                    Ver detalhes
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
+    <div>
+    <section
+      className="search-section text-white py-5"
+      style={{
+        backgroundImage: 'url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/d0f4a590131921.5e0eb0ca39ce9.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <section
+        className="search-section text-white py-5"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="container bg-viaggia bg-opacity-100 p-4 rounded">
+          <h2 className="mb-4 text-center">Escolha seu destino</h2>
+          <TravelForm/>
         </div>
       </section>
+
+    </section>
+    <div>
+      <CardPackeges items={pacotes} CardComponent={PackageCard} text={"Pacotes de viagem"} />
+    </div>
+    </div>
     </>
   )
 }
