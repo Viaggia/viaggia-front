@@ -31,6 +31,13 @@ const Payment: React.FC = () => {
   const handleGoToPaymentPending = async () => {
     setLoading(true);
 
+    console.log("hotel")
+    console.log(hotel)
+    console.log("selectedRooms")
+    console.log(selectedRooms)
+    console.log("pkg")
+    console.log(pkg)
+
     try {
       let dto: ReservationCreateDTO | null = null;
 
@@ -54,6 +61,10 @@ const Payment: React.FC = () => {
           isActive: true,
         };
       } else if (hotel && selectedRooms && selectedRooms.length > 0) {
+        console.log("else")
+        console.log("checkInDate", checkInDate)
+        console.log("checkOutDate", checkOutDate)
+        console.log("select", selectedRooms)
         dto = {
           userId: user.id,
           packageId: 0,
@@ -71,10 +82,10 @@ const Payment: React.FC = () => {
         return;
       }
 
-      const result = await createPaymentIntent(dto);
-      if (result.url) {
+      //const result = await createPaymentIntent(dto);
+      /*if (result.url) {
         window.location.href = result.url;
-      }
+      }*/
     } catch (err) {
       alert('Erro ao criar pagamento');
     } finally {

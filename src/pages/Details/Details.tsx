@@ -20,7 +20,11 @@ const Details: React.FC = () => {
 
   const location = useLocation();
 
-   const searchState = location.state || {};
+  console.log("location", location)
+
+  const searchState = location.state || {};
+
+  console.log("searchState", searchState)
 
   const [checkIn, setCheckIn] = useState(
     searchState.checkInDate || getTodayISO()
@@ -41,6 +45,20 @@ const Details: React.FC = () => {
   const [rooms, setRooms] = useState(
     typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1
   );
+
+  useEffect(() => {
+    setCheckIn(searchState.checkInDate || getTodayISO());
+    setCheckOut(searchState.checkOutDate || getFutureISO(7));
+    setAdults(
+      typeof searchState.adults === 'number'
+        ? searchState.adults
+        : typeof searchState.numberOfPeople === 'number'
+          ? Math.max(1, searchState.numberOfPeople - (searchState.children || 0))
+          : 1
+    );
+    setChildren(typeof searchState.children === 'number' ? searchState.children : 0);
+    setRooms(typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1);
+  }, [location.state]);
 
   const handleQuantityChange = (roomTypeId: number, quantity: number) => {
     setSelectedQuantities(prev => ({
@@ -90,27 +108,27 @@ const Details: React.FC = () => {
     .filter(s => !comodities[s.key as keyof typeof comodities])
     .map(s => s.label);
 
- const handleSearch = async () => {
-  try {
-    // Soma adultos + crianças para o filtro
-    const numberOfPeople = adults + children;
-    if (!checkIn || !checkOut) {
-      alert('Selecione as datas de check-in e check-out.');
-      return;
+  const handleSearch = async () => {
+    try {
+      // Soma adultos + crianças para o filtro
+      const numberOfPeople = adults + children;
+      if (!checkIn || !checkOut) {
+        alert('Selecione as datas de check-in e check-out.');
+        return;
+      }
+      const availableRooms = await getAvailableRooms(
+        hotel.hotelId,
+        numberOfPeople,
+        checkIn,
+        checkOut
+      );
+      // Atualiza os quartos do hotel com o resultado filtrado
+      setHotel(prev => prev ? { ...prev, roomTypes: availableRooms } : prev);
+    } catch (error) {
+      alert('Não foi possível buscar quartos disponíveis.');
+      console.error(error);
     }
-    const availableRooms = await getAvailableRooms(
-      hotel.hotelId,
-      numberOfPeople,
-      checkIn,
-      checkOut
-    );
-    // Atualiza os quartos do hotel com o resultado filtrado
-    setHotel(prev => prev ? { ...prev, roomTypes: availableRooms } : prev);
-  } catch (error) {
-    alert('Não foi possível buscar quartos disponíveis.');
-    console.error(error);
-  }
-};
+  };
 
   return (
     <div className="container-fluid py-5">
@@ -156,7 +174,7 @@ const Details: React.FC = () => {
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
           <ServiceList title="Não ofertados" items={naoOfertados} />
-          <ExtraCommoditiesList commoditieServices={hotel.commodities[0]?.CustomCommodities || []} />
+          <ExtraCommoditiesList customCommodities={hotel.commodities[0]?.customCommodities || []} />
         </div>
       </div>
 
@@ -202,7 +220,9 @@ const Details: React.FC = () => {
             navigate('/payment', {
               state: {
                 hotel,
-                selectedRooms
+                selectedRooms,
+                checkInDate: checkIn,
+                checkOutDate: checkOut
               }
             });
           }}

@@ -4,7 +4,6 @@ import { comoditiesIcons } from '../../../utils/commoditiesIcons';
 import { parseCurrencyBRL } from '../../../utils/formatMask';
 import CurrencyInput from '../../Inputs/CurrencyInput';
 
-// Aceita tanto CreateCommodityDTO (sem hotelName) quanto CommodityDTO (edição)
 type CommodityFormType = Omit<CreateCommodityDTO, 'hotelName'> | CommodityDTO;
 
 interface Props<T extends CommodityFormType = CommodityFormType> {
@@ -12,6 +11,8 @@ interface Props<T extends CommodityFormType = CommodityFormType> {
   setData: React.Dispatch<React.SetStateAction<T>>;
   nextStep: () => void;
   prevStep: () => void;
+  setCustomCommodities?: React.Dispatch<React.SetStateAction<CustomCommodityDTO[]>>; // opcional para edição
+  customCommoditiesOverride?: CustomCommodityDTO[];
 }
 
 type BooleanFields = {
@@ -44,12 +45,10 @@ const HotelCommoditiesForm = <T extends CommodityFormType = CommodityFormType>({
   data,
   setData,
   nextStep,
-  prevStep
+  prevStep,
+  setCustomCommodities, 
+  customCommoditiesOverride,
 }: Props<T>) => {
-  console.log("data")
-  console.log(data)
-  console.log("data.customCommodities")
-  console.log(data.customCommodities)
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [serviceDraft, setServiceDraft] = useState<FormCustomCommodity>({
@@ -62,7 +61,8 @@ const HotelCommoditiesForm = <T extends CommodityFormType = CommodityFormType>({
 
   // Helper para garantir que customCommodities nunca é undefined
   const getCustomCommodities = () =>
-    (data.customCommodities ?? []) as CustomCommodityDTO[];
+    (customCommoditiesOverride ?? data.customCommodities ?? []) as CustomCommodityDTO[];
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -112,7 +112,6 @@ const HotelCommoditiesForm = <T extends CommodityFormType = CommodityFormType>({
       return;
     }
 
-    // Para criação, customCommodityId pode ser 0 ou omitido. Para edição, deve ser mantido.
     const newService: CustomCommodityDTO = {
       customCommodityId: serviceDraft.customCommodityId ?? 0,
       name: serviceDraft.name,
@@ -125,22 +124,22 @@ const HotelCommoditiesForm = <T extends CommodityFormType = CommodityFormType>({
       ...(typeof serviceDraft.hotelId === 'number' ? { hotelId: serviceDraft.hotelId } : {}),
     };
 
+    let updated: CustomCommodityDTO[];
     if (editingIndex !== null) {
-      const updated = [...getCustomCommodities()];
+      updated = [...getCustomCommodities()];
       updated[editingIndex] = newService;
-      setData(prev => ({
-        ...prev,
-        customCommodities: updated,
-      }));
     } else {
-      setData(prev => ({
-        ...prev,
-        customCommodities: [
-          ...getCustomCommodities(),
-          newService,
-        ],
-      }));
+      updated = [...getCustomCommodities(), newService];
     }
+
+    setData(prev => ({
+      ...prev,
+      customCommodities: updated,
+    }));
+
+    // Se veio o setter extra, atualize também!
+    if (setCustomCommodities) setCustomCommodities(updated);
+
     setServiceDraft({
       name: '',
       isPaid: false,
@@ -167,6 +166,7 @@ const HotelCommoditiesForm = <T extends CommodityFormType = CommodityFormType>({
   const removeService = (index: number) => {
     const updated = getCustomCommodities().filter((_, i) => i !== index);
     setData(prev => ({ ...prev, customCommodities: updated }));
+    if (setCustomCommodities) setCustomCommodities(updated);
     if (editingIndex === index) {
       handleCancelService();
     }

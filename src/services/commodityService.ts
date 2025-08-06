@@ -44,8 +44,13 @@ export const createCustomCommodity = async (data: {
 export async function updateCommodity(id: number, data: UpdateCommodityDTO) {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
-    formData.append(key.charAt(0).toUpperCase() + key.slice(1), String(value));
+    if (typeof value === 'number') {
+      formData.append(key, value.toString().replace('.', ','));
+    } else {
+      formData.append(key, String(value));
+    }
   });
+
   const response = await api.put(`/api/Commodity/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
@@ -55,8 +60,18 @@ export async function updateCommodity(id: number, data: UpdateCommodityDTO) {
 export async function updateCustomCommodity(id: number, data: UpdateCustomCommodityDTO) {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
-    formData.append(key.charAt(0).toUpperCase() + key.slice(1), String(value));
+    if (typeof value === 'number') {
+      formData.append(key, value.toString().replace('.', ','));
+    } else {
+      formData.append(key, String(value));
+    }
   });
+
+  // Log dos campos enviados
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
+
   const response = await api.put(`/api/CustomCommodity/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });

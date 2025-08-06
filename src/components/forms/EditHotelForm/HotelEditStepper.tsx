@@ -54,6 +54,8 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
                 roomTypesJson: '', // será preenchido no submit
             });
 
+            console.log('hotel', hotel);
+
             setRoomTypes(hotel.roomTypes || []);
             setCommodity(hotel.commodities?.[0] || null);
 
@@ -125,6 +127,8 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
             isActive: commodity.isActive,
         });
 
+        console.log("customCommodities", customCommodities)
+
         // Atualiza custom commodities existentes
         for (const custom of customCommodities) {
             if (custom.customCommodityId) {
@@ -176,16 +180,21 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
             )}
             {step === 3 && commodity && (
                 <HotelCommoditiesForm
-                    data={{
-                        ...commodity,
-                        customCommodities: [
-                            ...(commodity.customCommodities ?? []),
-                            ...customCommodities.filter(
-                                c => !(commodity.customCommodities ?? []).some(cc => cc.customCommodityId === c.customCommodityId)
-                            )
-                        ]
+                    data={commodity}
+                    setData={(updater) => {
+                        // Type guard: nunca permita setar null
+                        if (typeof updater === 'function') {
+                            setCommodity(prev => {
+                                if (!prev) return prev; // não altera se for null
+                                const result = (updater as (prev: CommodityDTO) => CommodityDTO)(prev);
+                                return result;
+                            });
+                        } else if (updater) {
+                            setCommodity(updater);
+                        }
                     }}
-                    setData={setCommodity as React.Dispatch<React.SetStateAction<CommodityDTO>>}
+                    customCommoditiesOverride={customCommodities}
+                    setCustomCommodities={setCustomCommodities}
                     nextStep={() => setStep(4)}
                     prevStep={() => setStep(2)}
                 />
