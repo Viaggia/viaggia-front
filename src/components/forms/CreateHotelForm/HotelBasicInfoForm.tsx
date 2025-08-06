@@ -18,25 +18,27 @@ interface Props {
 }
 
 const HotelBasicInfoForm: React.FC<Props> = ({ formData, setFormData, nextStep }) => {
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     let val: any = type === 'checkbox' ? checked : value;
 
     if (name === 'cnpj') {
-      val = formatCNPJ(value);
+      val = extractCNPJDigits(value); // salva sem formatação
     }
     if (name === 'zipCode') {
-      val = formatCEP(value);
+      val = extractCEPDigits(value); // idem para CEP
     }
     if (name === 'contactPhone') {
-      val = formatPhone(value);
+      val = extractPhoneDigits(value); // idem para telefone
     }
     if (name === 'checkInTime' || name === 'checkOutTime') {
-      val = formatTime(value);
+      val = formatTime(value); // aqui pode manter a formatação
     }
 
     setFormData((prev: any) => ({ ...prev, [name]: val }));
   };
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -47,7 +49,11 @@ const HotelBasicInfoForm: React.FC<Props> = ({ formData, setFormData, nextStep }
 
   const handleNext = () => {
     if (!formData.name) return alert('Nome do hotel é obrigatório.');
-    if (!formData.cnpj || !validateCNPJ(formData.cnpj)) return alert('CNPJ inválido.');
+
+    if (!formData.cnpj || !validateCNPJ(formatCNPJ(formData.cnpj))) {
+      return alert('CNPJ inválido.');
+    }
+
     if (!formData.street) return alert('Rua é obrigatória.');
     if (!formData.city) return alert('Cidade é obrigatória.');
     if (!formData.state) return alert('Estado é obrigatório.');

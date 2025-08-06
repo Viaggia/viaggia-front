@@ -7,7 +7,7 @@ import Carousel from '../../components/cards/Carrossel/CarouselCards';
 import { getHotelById } from '../../services/hotelService';
 import { HotelDTO } from '../../types/Hotel';
 
-const backendUrl = "https://localhost:7164";
+const backendUrl = import.meta.env.VITE_API_URL;
 
 const DetailsPackage: React.FC = () => {
     const navigate = useNavigate();

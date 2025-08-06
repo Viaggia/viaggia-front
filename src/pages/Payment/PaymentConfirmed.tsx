@@ -1,15 +1,32 @@
 import { FaCheckCircle } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { getReservationsByUserId } from '../../services/reserveService';
 
 function PaymentConfirmed() {
-
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      getReservationsByUserId(user.id)
+        .then(setReservations)
+        .finally(() => setLoading(false));
+    }
+  }, [user]);
 
   const handleGoToReservations = () => {
     navigate('/my-reservations');
   };
 
+  // Destaca a reserva mais recente (maior reserveId)
+  const sortedReservations = [...reservations].sort((a, b) => (b.reserveId || 0) - (a.reserveId || 0));
+  const latest = sortedReservations[0];
+  const others = sortedReservations.slice(1);
 
   return (
     <div className="container mt-5 pb-5">
@@ -24,34 +41,45 @@ function PaymentConfirmed() {
             </div>
           </div>
 
-          {/* Informações do cliente */}
+          {/* Reserva mais recente em destaque */}
+          {latest && (
+            <div className="card shadow mb-4 border-primary">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">Sua Reserva Mais Recente</h5>
+              </div>
+              <div className="card-body">
+                <p><strong>Reserva #</strong>{latest.reserveId}</p>
+                <p><strong>Hotel:</strong> {latest.hotelName || latest.hotelId}</p>
+                <p><strong>Check-in:</strong> {latest.checkInDate?.substring(0, 10)}</p>
+                <p><strong>Check-out:</strong> {latest.checkOutDate?.substring(0, 10)}</p>
+                <p><strong>Hóspedes:</strong> {latest.numberOfGuests}</p>
+                <p><strong>Status:</strong> {latest.status}</p>
+                <p><strong>Total:</strong> R$ {Number(latest.totalPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Lista das outras reservas */}
           <div className="mb-4">
-            <h5 className="text-primary">Informações do Cliente</h5>
-            <p><strong>Client ID ou CPF:</strong> Nome Client</p>
-            <p><strong>Hotel ID ou CNPJ:</strong> Nome Hotel</p>
-            <p><strong>Nome do pagante:</strong> Nome pagante</p>
-            <p><strong>CPF do pagante:</strong> CPF pagante</p>
+            <h5 className="text-primary">Minhas Outras Reservas</h5>
+            {loading ? (
+              <div>Carregando reservas...</div>
+            ) : sortedReservations.length === 0 ? (
+              <div>Nenhuma reserva encontrada.</div>
+            ) : others.length === 0 ? (
+              <div>Você não possui outras reservas.</div>
+            ) : (
+              <ul className="list-group">
+                {others.map((reserva, idx) => (
+                  <li key={reserva.reserveId || idx} className="list-group-item">
+                    <strong>Reserva #{reserva.reserveId}</strong> - Hotel: {reserva.hotelName || reserva.hotelId} - Check-in: {reserva.checkInDate?.substring(0, 10)}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
-          {/* Card de resumo do pedido */}
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Resumo do Pedido</h5>
-            </div>
-            <div className="card-body">
-              <p><strong>Pacote:</strong> Nome do Pacote</p>
-              <p><strong>Serviços:</strong> Detalhes dos serviços</p>
-              <p><strong>Taxas:</strong> R$ 100,00</p>
-              <p><strong>Total:</strong> R$ 1.000,00</p>
-            </div>
-            <div className="card-footer text-end">
-              <button className="btn btn-outline-primary" disabled>
-                Pagamento realizado
-              </button>
-            </div>
-          </div>
-
-          {/* Link para o recibo */}
+          {/* Botões */}
           <div className="text-end mt-3">
             <a href="/recibo" className="btn btn-link me-2">
               Ver recibo
@@ -60,9 +88,6 @@ function PaymentConfirmed() {
               Ir para minhas reservas
             </button>
           </div>
-
-
-          {/* Espaço extra no final */}
           <div className="mt-5" />
         </div>
       </div>

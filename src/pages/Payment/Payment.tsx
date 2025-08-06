@@ -3,15 +3,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createPaymentIntent } from '../../services/paymentService';
 import { ReservationCreateDTO } from '../../types/Reservation';
+import { useAuth } from '../../context/AuthContext';
 
 const Payment: React.FC = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
   const { hotel, selectedRooms, pkg } = location.state || {};
+  const { user } = useAuth(); // <-- pega o usuário logado
 
   const isPackage = !!pkg;
-
   const [loading, setLoading] = useState(false);
 
   const total = isPackage
@@ -20,62 +20,67 @@ const Payment: React.FC = () => {
       ? selectedRooms.reduce((sum, room) => sum + (room.price * room.quantity), 0)
       : 0;
 
-  // Exemplo: pegue os dados do usuário logado e das datas conforme sua lógica real
-  const userId = 1; // Troque pelo id real do usuário logado
-  const checkInDate = new Date().toISOString();
-  const checkOutDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  // Pegue as datas da tela anterior ou defina padrão
+  const checkInDate = isPackage
+    ? pkg.packageDates?.[0]?.startDate
+    : location.state?.checkInDate;
+  const checkOutDate = isPackage
+    ? pkg.packageDates?.[0]?.endDate
+    : location.state?.checkOutDate;
 
   const handleGoToPaymentPending = async () => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    let dto: ReservationCreateDTO;
+    try {
+      let dto: ReservationCreateDTO | null = null;
 
-    if (isPackage && pkg) {
-      // Reserva de pacote
-      dto = {
-        userId,
-        userNameReservation: '',
-        packageId: pkg.packageId,
-        roomTypeId: 0, // ou null, conforme seu backend aceita
-        hotelId: pkg.hotelId,
-        checkInDate: pkg.packageDates?.[0]?.startDate || '', // ajuste formato se necessário
-        checkOutDate: pkg.packageDates?.[0]?.endDate || '',
-        totalPrice: pkg.basePrice,
-        numberOfGuests: 2, // ou outro valor padrão
-        status: 'Pendente',
-        isActive: true,
-      };
-    } else if (hotel && selectedRooms && selectedRooms.length > 0) {
-      // Reserva de hotel/quarto avulso
-      dto = {
-        userId,
-        userNameReservation: '',
-        packageId: 0,
-        roomTypeId: selectedRooms[0].roomTypeId,
-        hotelId: hotel.hotelId,
-        checkInDate,
-        checkOutDate,
-        totalPrice: total,
-        numberOfGuests: selectedRooms[0].quantity,
-        status: 'Pendente',
-        isActive: true,
-      };
-    } else {
+      if (!user) {
+        alert('Usuário não autenticado!');
+        setLoading(false);
+        return;
+      }
+
+      if (isPackage && pkg) {
+        dto = {
+          userId: user.id,
+          packageId: pkg.packageId,
+          roomTypeId: 0,
+          hotelId: pkg.hotelId,
+          checkInDate: pkg.packageDates?.[0]?.startDate || '',
+          checkOutDate: pkg.packageDates?.[0]?.endDate || '',
+          totalPrice: pkg.basePrice,
+          numberOfGuests: 2, 
+          status: 'Pendente',
+          isActive: true,
+        };
+      } else if (hotel && selectedRooms && selectedRooms.length > 0) {
+        dto = {
+          userId: user.id,
+          packageId: 0,
+          roomTypeId: selectedRooms[0].roomTypeId,
+          hotelId: hotel.hotelId,
+          checkInDate: checkInDate || new Date().toISOString(),
+          checkOutDate: checkOutDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          totalPrice: total,
+          numberOfGuests: selectedRooms[0].quantity,
+          status: 'Pendente',
+          isActive: true,
+        };
+      } else {
+        setLoading(false);
+        return;
+      }
+
+      const result = await createPaymentIntent(dto);
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (err) {
+      alert('Erro ao criar pagamento');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const result = await createPaymentIntent(dto);
-    if (result.url) {
-      window.location.href = result.url;
-    }
-  } catch (err) {
-    alert('Erro ao criar pagamento');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="container py-5">

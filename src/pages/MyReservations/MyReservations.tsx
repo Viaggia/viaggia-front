@@ -1,76 +1,66 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyReservations.css';
-
-interface Reservation {
-  id: string;
-  titular: string;
-  telefone: string;
-  cpf: string;
-  hotel: string;
-  endereco: string;
-  datas: string;
-  quarto: string;
-  servicos: string[];
-  valoresServicos: number;
-}
-
-const reservas: Reservation[] = [
-  {
-    id: 'reserva1',
-    titular: 'João Silva',
-    telefone: '(81) 91234-5678',
-    cpf: '123.456.789-00',
-    hotel: 'Chalés do Sul',
-    endereco: 'Rua das Montanhas, 123 - Gramado, RS',
-    datas: '05 a 08 de Agosto de 2025',
-    quarto: 'Chalé 07',
-    servicos: ['Café da manhã (+R$40/dia)', 'Massagem (+R$120)'],
-    valoresServicos: 240,
-  },
-];
-
-const diaria = 200;
+import { useAuth } from '../../context/AuthContext';
+import { getReservationsByUserId } from '../../services/reserveService';
+import { Reservation } from '../../types/Reservation';
 
 const MyReservations: React.FC = () => {
-  const [detalheAberto, setDetalheAberto] = useState<string | null>(null);
+  const [detalheAberto, setDetalheAberto] = useState<number | null>(null);
+  const [reservas, setReservas] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const toggleDetalhes = (id: string) => {
+  useEffect(() => {
+    if (user?.id) {
+      getReservationsByUserId(user.id)
+        .then(setReservas)
+        .finally(() => setLoading(false));
+    }
+  }, [user]);
+
+  const toggleDetalhes = (id: number) => {
     setDetalheAberto(detalheAberto === id ? null : id);
   };
+
+  if (loading) {
+    return <div className="reservepag-container">Carregando reservas...</div>;
+  }
 
   return (
     <div className="reservepag-container">
       <h2 className="reservepag-title">Minhas Reservas</h2>
 
-      {reservas.map((reserva) => {
-        const totalDiarias = 3 * diaria;
-        const totalCompra = totalDiarias + reserva.valoresServicos;
+      {reservas.length === 0 ? (
+        <div>Nenhuma reserva encontrada.</div>
+      ) : reservas.map((reserva) => {
+        // Cálculo de total (ajuste conforme sua regra)
+        const totalCompra = reserva.totalPrice || 0;
 
         return (
-          <div className="reservepag-card" key={reserva.id}>
-            <button className="reservepag-toggle" onClick={() => toggleDetalhes(reserva.id)}>
-              <span className="reservepag-toggle-text">Reserva - {reserva.hotel}</span>
+          <div className="reservepag-card" key={reserva.reservationId}>
+            <button className="reservepag-toggle" onClick={() => toggleDetalhes(reserva.reservationId)}>
+              <span className="reservepag-toggle-text">
+                Reserva - {reserva.hotelId ? `Hotel #${reserva.hotelId}` : reserva.packageId ? `Pacote #${reserva.packageId}` : 'Sem identificação'}
+              </span>
               <span className="reservepag-seta">▼</span>
             </button>
 
-            {detalheAberto === reserva.id && (
+            {detalheAberto === reserva.reservationId && (
               <div className="reservepag-detalhes">
-                <p><strong>Nome do Titular:</strong> {reserva.titular}</p>
-                <p><strong>Telefone:</strong> {reserva.telefone}</p>
-                <p><strong>CPF:</strong> {reserva.cpf}</p>
-                <p><strong>Hotel:</strong> {reserva.hotel}</p>
-                <hr />
-                <p><strong>Endereço:</strong> {reserva.endereco}</p>
-                <p><strong>Datas Reservadas:</strong> {reserva.datas}</p>
-                <p><strong>Quarto:</strong> {reserva.quarto}</p>
-                <p><strong>Serviços Adicionais:</strong> {reserva.servicos.join(', ')}</p>
+                <p><strong>ID da Reserva:</strong> {reserva.reservationId}</p>
+                <p><strong>Hotel:</strong> {reserva.hotelId || '-'}</p>
+                <p><strong>Pacote:</strong> {reserva.packageId || '-'}</p>
+                <p><strong>Check-in:</strong> {reserva.checkInDate?.substring(0,10)}</p>
+                <p><strong>Check-out:</strong> {reserva.checkOutDate?.substring(0,10)}</p>
+                <p><strong>Quarto:</strong> {reserva.roomTypeId || '-'}</p>
+                <p><strong>Hóspedes:</strong> {reserva.numberOfGuests}</p>
+                <p><strong>Status:</strong> {reserva.status}</p>
+                <p><strong>Ativa:</strong> {reserva.isActive ? 'Sim' : 'Não'}</p>
                 <p><strong>Resumo de Compra:</strong></p>
                 <ul>
-                  <li>Diária (3 noites): R${totalDiarias}</li>
-                  <li>Serviços: R${reserva.valoresServicos}</li>
-                  <li><strong>Total:</strong> R${totalCompra}</li>
+                  <li><strong>Total:</strong> R${Number(totalCompra).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</li>
                 </ul>
 
                 <div className="reservepag-cancel-wrapper">

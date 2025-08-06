@@ -1,5 +1,5 @@
 import api from './api';
-import { CreateHotelDTO, HotelDTO, HotelFilterParams, HotelRoomTypeDTO, HotelSearchDTO } from '../types/Hotel';
+import { CreateHotelDTO, HotelDTO, HotelFilterParams, HotelRoomTypeDTO, HotelSearchDTO, UpdateHotelDTO } from '../types/Hotel';
 
 export async function getHotels(): Promise<HotelDTO[]> {
   const response = await api.get('/api/Hotel');
@@ -66,10 +66,8 @@ export async function searchHotels(search: HotelSearchDTO): Promise<HotelDTO[]> 
     return response.data.data;
   } catch (error: any) {
     if (error.response && error.response.status === 400) {
-      // Não lança erro, apenas retorna array vazio
       return [];
     }
-    // Só lança erro para outros casos (ex: 500)
     throw error;
   }
 }
@@ -77,4 +75,36 @@ export async function searchHotels(search: HotelSearchDTO): Promise<HotelDTO[]> 
 export async function filterHotels(params: HotelFilterParams): Promise<HotelDTO[]> {
   const response = await api.get('/api/Hotel/filter', { params });
   return response.data.data;
+}
+
+export async function getHotelsByUserId(userId: number): Promise<HotelDTO[]> {
+  const response = await api.get(`/api/Hotel/user/${userId}`);
+  return response.data.data;
+}
+
+export async function updateHotel(id: number, data: UpdateHotelDTO) {
+  const formData = new FormData();
+  formData.append('HotelId', data.hotelId.toString());
+  formData.append('Name', data.name);
+  formData.append('Cnpj', data.cnpj);
+  formData.append('Street', data.street);
+  formData.append('City', data.city);
+  formData.append('State', data.state);
+  formData.append('ZipCode', data.zipCode);
+  formData.append('Description', data.description || '');
+  formData.append('StarRating', data.starRating.toString());
+  formData.append('CheckInTime', data.checkInTime || '');
+  formData.append('CheckOutTime', data.checkOutTime || '');
+  formData.append('ContactPhone', data.contactPhone || '');
+  formData.append('ContactEmail', data.contactEmail || '');
+  formData.append('IsActive', data.isActive.toString());
+  if (data.roomTypesJson) formData.append('RoomTypesJson', data.roomTypesJson);
+  if (data.mediaFiles) {
+    data.mediaFiles.forEach(file => formData.append('MediaFiles', file));
+  }
+
+  const response = await api.put(`/api/Hotel/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
 }

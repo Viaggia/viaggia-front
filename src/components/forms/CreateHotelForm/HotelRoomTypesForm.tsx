@@ -12,12 +12,12 @@ interface Props {
 const roomTypeOptions: RoomTypeEnum[] = ['Single', 'Double', 'Suite', 'Deluxe', 'Family'];
 
 const defaultRoom: CreateHotelRoomTypeDTO = {
-  Name: 'Single',
-  Description: '',
-  Price: 0,
-  Capacity: 1,
-  BedType: '',
-  TotalRooms: 1,
+  name: 'Single',
+  description: '',
+  price: 0,
+  capacity: 1,
+  bedType: '',
+  totalRooms: 1,
 };
 
 const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep, prevStep }) => {
@@ -28,10 +28,10 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
     const { name, value, type } = e.target;
     let parsedValue: string | number = value;
 
-    if (name === 'Price') {
+    if (name === 'price') {
       parsedValue = parseCurrencyBRL(value);
     } else {
-      parsedValue = parseFieldValue(name, value, type, ['Price', 'Capacity', 'TotalRooms']);
+      parsedValue = parseFieldValue(name, value, type, ['price', 'capacity', 'totalRooms']);
     }
 
     setNewRoom(prev => ({ ...prev, [name]: parsedValue }));
@@ -41,10 +41,10 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
     const { name, value, type } = e.target;
     let parsedValue: string | number = value;
 
-    if (name === 'Price') {
+    if (name === 'price') {
       parsedValue = parseCurrencyBRL(value);
     } else {
-      parsedValue = parseFieldValue(name, value, type, ['Price', 'Capacity', 'TotalRooms']);
+      parsedValue = parseFieldValue(name, value, type, ['price', 'capacity', 'totalRooms']);
     }
 
     const updated = [...roomTypes];
@@ -54,11 +54,11 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
 
   const addRoomType = () => {
     if (
-      newRoom.Name &&
-      newRoom.Price > 0 &&
-      newRoom.Capacity > 0 &&
-      newRoom.BedType.trim() !== '' &&
-      newRoom.TotalRooms > 0
+      newRoom.name &&
+      newRoom.price > 0 &&
+      newRoom.capacity > 0 &&
+      newRoom.bedType.trim() !== '' &&
+      newRoom.totalRooms > 0
     ) {
       setRoomTypes([...roomTypes, newRoom]);
       setNewRoom({ ...defaultRoom });
@@ -76,11 +76,11 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
   const validateRoomTypes = () =>
     roomTypes.every(
       room =>
-        room.Name &&
-        room.Price > 0 &&
-        room.Capacity > 0 &&
-        room.BedType.trim() !== '' &&
-        room.TotalRooms > 0
+        room.name &&
+        room.price > 0 &&
+        room.capacity > 0 &&
+        room.bedType.trim() !== '' &&
+        room.totalRooms > 0
     );
 
   return (
@@ -97,8 +97,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
           <div className="mb-2">
             <label className="form-label">Tipo</label>
             <select
-              name="Name"
-              value={newRoom.Name}
+              name="name"
+              value={newRoom.name}
               onChange={handleNewRoomChange}
               className="form-select"
             >
@@ -111,8 +111,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
             <label className="form-label">Descrição</label>
             <input
               type="text"
-              name="Description"
-              value={newRoom.Description}
+              name="description"
+              value={newRoom.description}
               onChange={handleNewRoomChange}
               className="form-control"
             />
@@ -122,8 +122,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
               <label className="form-label">Preço <span className="text-danger">*</span></label>
               <input
                 type="text"
-                name="Price"
-                value={formatCurrencyBRL(newRoom.Price)}
+                name="price"
+                value={formatCurrencyBRL(newRoom.price)}
                 onChange={handleNewRoomChange}
                 className="form-control"
                 required
@@ -134,8 +134,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
               <label className="form-label">Capacidade <span className="text-danger">*</span></label>
               <input
                 type="number"
-                name="Capacity"
-                value={newRoom.Capacity}
+                name="capacity"
+                value={newRoom.capacity}
                 onChange={handleNewRoomChange}
                 className="form-control"
                 required
@@ -145,8 +145,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
               <label className="form-label">Tipo de Cama <span className="text-danger">*</span></label>
               <input
                 type="text"
-                name="BedType"
-                value={newRoom.BedType}
+                name="bedType"
+                value={newRoom.bedType}
                 onChange={handleNewRoomChange}
                 className="form-control"
                 required
@@ -156,8 +156,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
               <label className="form-label">Total de Quartos <span className="text-danger">*</span></label>
               <input
                 type="number"
-                name="TotalRooms"
-                value={newRoom.TotalRooms}
+                name="totalRooms"
+                value={newRoom.totalRooms}
                 onChange={handleNewRoomChange}
                 className="form-control"
                 required
@@ -180,8 +180,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
               <div className="mb-2">
                 <label className="form-label">Tipo</label>
                 <select
-                  name="Name"
-                  value={room.Name}
+                  name="name"
+                  value={room.name}
                   onChange={(e) => handleExistingRoomChange(index, e)}
                   className="form-select"
                 >
@@ -194,8 +194,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
                 <label className="form-label">Descrição</label>
                 <input
                   type="text"
-                  name="Description"
-                  value={room.Description}
+                  name="description"
+                  value={room.description}
                   onChange={(e) => handleExistingRoomChange(index, e)}
                   className="form-control"
                 />
@@ -205,8 +205,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
                   <label className="form-label">Preço</label>
                   <input
                     type="text"
-                    name="Price"
-                    value={formatCurrencyBRL(room.Price)}
+                    name="price"
+                    value={formatCurrencyBRL(room.price)}
                     onChange={e => handleExistingRoomChange(index, e)}
                     className="form-control"
                   />
@@ -215,8 +215,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
                   <label className="form-label">Capacidade</label>
                   <input
                     type="number"
-                    name="Capacity"
-                    value={room.Capacity}
+                    name="capacity"
+                    value={room.capacity}
                     onChange={(e) => handleExistingRoomChange(index, e)}
                     className="form-control"
                   />
@@ -227,8 +227,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
                   <label className="form-label">Tipo de Cama</label>
                   <input
                     type="text"
-                    name="BedType"
-                    value={room.BedType}
+                    name="bedType"
+                    value={room.bedType}
                     onChange={(e) => handleExistingRoomChange(index, e)}
                     className="form-control"
                   />
@@ -237,8 +237,8 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
                   <label className="form-label">Total de Quartos</label>
                   <input
                     type="number"
-                    name="TotalRooms"
-                    value={room.TotalRooms}
+                    name="totalRooms"
+                    value={room.totalRooms}
                     onChange={(e) => handleExistingRoomChange(index, e)}
                     className="form-control"
                   />

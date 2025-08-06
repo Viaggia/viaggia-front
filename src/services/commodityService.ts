@@ -1,51 +1,13 @@
 import api from './api';
-import { CreateCommoditieDTO } from '../types/Hotel';
+import { CreateCommodityDTO, UpdateCommodityDTO, UpdateCustomCommodityDTO } from '../types/Hotel';
 
-export const createCommodities = async (data: CreateCommoditieDTO) => {
+export const createCommodities = async (data: CreateCommodityDTO) => {
   const formData = new FormData();
-  formData.append('HotelName', data.HotelName);
-
-  // Mapeamento dos campos para PascalCase
-  const fieldMap: Record<string, string> = {
-    hasParking: 'HasParking',
-    isParkingPaid: 'IsParkingPaid',
-    parkingPrice: 'ParkingPrice',
-    hasBreakfast: 'HasBreakfast',
-    isBreakfastPaid: 'IsBreakfastPaid',
-    breakfastPrice: 'BreakfastPrice',
-    hasLunch: 'HasLunch',
-    isLunchPaid: 'IsLunchPaid',
-    lunchPrice: 'LunchPrice',
-    hasDinner: 'HasDinner',
-    isDinnerPaid: 'IsDinnerPaid',
-    dinnerPrice: 'DinnerPrice',
-    hasSpa: 'HasSpa',
-    isSpaPaid: 'IsSpaPaid',
-    spaPrice: 'SpaPrice',
-    hasPool: 'HasPool',
-    isPoolPaid: 'IsPoolPaid',
-    poolPrice: 'PoolPrice',
-    hasGym: 'HasGym',
-    isGymPaid: 'IsGymPaid',
-    gymPrice: 'GymPrice',
-    hasWiFi: 'HasWiFi',
-    isWiFiPaid: 'IsWiFiPaid',
-    wiFiPrice: 'WiFiPrice',
-    hasAirConditioning: 'HasAirConditioning',
-    isAirConditioningPaid: 'IsAirConditioningPaid',
-    airConditioningPrice: 'AirConditioningPrice',
-    hasAccessibilityFeatures: 'HasAccessibilityFeatures',
-    isAccessibilityFeaturesPaid: 'IsAccessibilityFeaturesPaid',
-    accessibilityFeaturesPrice: 'AccessibilityFeaturesPrice',
-    isPetFriendly: 'IsPetFriendly',
-    isPetFriendlyPaid: 'IsPetFriendlyPaid',
-    petFriendlyPrice: 'PetFriendlyPrice',
-    isActive: 'IsActive'
-  };
+  formData.append('HotelName', data.hotelName);
 
   Object.entries(data).forEach(([key, value]) => {
-    if (key !== 'CustomCommodities' && fieldMap[key]) {
-      formData.append(fieldMap[key], String(value));
+    if (key !== 'CustomCommodities' && key !== 'HotelName') {
+      formData.append(key, String(value));
     }
   });
 
@@ -78,3 +40,25 @@ export const createCustomCommodity = async (data: {
 
   return response.data;
 };
+
+export async function updateCommodity(id: number, data: UpdateCommodityDTO) {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    formData.append(key.charAt(0).toUpperCase() + key.slice(1), String(value));
+  });
+  const response = await api.put(`/api/Commodity/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+}
+
+export async function updateCustomCommodity(id: number, data: UpdateCustomCommodityDTO) {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    formData.append(key.charAt(0).toUpperCase() + key.slice(1), String(value));
+  });
+  const response = await api.put(`/api/CustomCommodity/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+}
