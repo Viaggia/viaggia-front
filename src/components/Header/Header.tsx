@@ -116,52 +116,7 @@ function Header() {
         </div>
       </div>
 
-      <nav className="navbar navbar-expand-lg navbar-dark bg-viaggia px-4">
-        <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/">
-                <FontAwesomeIcon icon={faHome} /> Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/search">
-                <FontAwesomeIcon icon={faSearch} /> Buscar
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/details">
-                <FontAwesomeIcon icon={faInfoCircle} /> Detalhes
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/payment">
-                <FontAwesomeIcon icon={faCreditCard} /> Pagamento
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/packages">
-                <FontAwesomeIcon icon={faBoxOpen} /> Pacotes
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/promotion">
-                <FontAwesomeIcon icon={faTags} /> Promoções
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/my-reservations">
-                <FontAwesomeIcon icon={faClipboardList} /> Reservas
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/cancel-reservation">
-                <FontAwesomeIcon icon={faBan} /> Cancelamento
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    
 
     </header>
   )
