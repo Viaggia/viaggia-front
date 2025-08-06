@@ -6,7 +6,7 @@ services:
     container_name: viaggia-frontend
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://localhost:7164/api
+      - VITE_API_URL=http://localhost:7164
     ports:
       - "3000:3000"
     volumes:
