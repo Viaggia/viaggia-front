@@ -9,7 +9,7 @@ import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
 import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/forms/DateRangePicker/DateRangePicker';
 
-const backendUrl = "https://localhost:7164";
+const backendUrl = import.meta.env.VITE_API_URL;
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -156,7 +156,13 @@ const Details: React.FC = () => {
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
           <ServiceList title="Não ofertados" items={naoOfertados} />
-          <ExtraCommoditiesList commoditieServices={hotel.commodities[0]?.CustomCommodities || []} />
+          <ExtraCommoditiesList commoditieServices={
+            (hotel.commodities[0]?.customCommodities || []).map(cc => ({
+              serviceName: cc.name,
+              isFree: !cc.isPaid,
+              isActive: cc.isActive
+            }))
+          } />
         </div>
       </div>
 

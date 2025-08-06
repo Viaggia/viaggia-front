@@ -1,4 +1,3 @@
-import { CreateAddressDTO } from "./Address";
 import { MediaDTO } from "./Media";
 import { PackageDTO } from "./Package";
 import { ReviewDTO } from "./Review";
@@ -23,8 +22,8 @@ export interface HotelDTO {
   medias: MediaDTO[];
   reviews: ReviewDTO[];
   packages: PackageDTO[];
-  commodities: CommoditieDTO[];
-  CustomCommodities: CustomCommodityDTO[];
+  commodities: CommodityDTO[];
+  customCommodities: CustomCommodityDTO[];
 }
 
 export interface HotelRoomTypeDTO {
@@ -39,69 +38,79 @@ export interface HotelRoomTypeDTO {
   isActive: boolean;
 }
 
-export interface CommoditieDTO {
-  commoditieId: number;
+export interface CommodityDTO {
+  commodityId: number;
   hotelId: number;
+  hotelName?: string;
   hasParking: boolean;
   isParkingPaid: boolean;
+  parkingPrice: number;
   hasBreakfast: boolean;
   isBreakfastPaid: boolean;
+  breakfastPrice: number;
   hasLunch: boolean;
   isLunchPaid: boolean;
+  lunchPrice: number;
   hasDinner: boolean;
   isDinnerPaid: boolean;
+  dinnerPrice: number;
   hasSpa: boolean;
   isSpaPaid: boolean;
+  spaPrice: number;
   hasPool: boolean;
   isPoolPaid: boolean;
+  poolPrice: number;
   hasGym: boolean;
   isGymPaid: boolean;
+  gymPrice: number;
   hasWiFi: boolean;
   isWiFiPaid: boolean;
+  wiFiPrice: number;
   hasAirConditioning: boolean;
   isAirConditioningPaid: boolean;
+  airConditioningPrice: number;
   hasAccessibilityFeatures: boolean;
   isAccessibilityFeaturesPaid: boolean;
+  accessibilityFeaturesPrice: number;
   isPetFriendly: boolean;
   isPetFriendlyPaid: boolean;
+  petFriendlyPrice: number;
   isActive: boolean;
-  CustomCommodities: CustomCommodityDTO[];
+  customCommodities: CustomCommodityDTO[];
 }
 
 export interface CustomCommodityDTO {
-  CustomCommodityId: number;
-  HotelName: string;
-  Name: string;
-  IsPaid: boolean;
-  Price?: number;
-  Description?: string;
-  IsActive: boolean;
-  CommoditieId: number;
-  HotelId: number;
+  customCommodityId: number;
+  name: string;
+  description?: string;
+  isPaid: boolean;
+  price: number;
+  isActive: boolean;
+  hotelName: string;
+  commoditieId?: number;
+  hotelId?: number;
 }
 
-
 export interface HotelDate {
-  hotelDateId: number
-  startDate: string
-  endDate: string
-  availableRooms: number
-  roomTypeId: number
-  hotelId: number
-  isActive: boolean
+  hotelDateId: number;
+  startDate: string;
+  endDate: string;
+  availableRooms: number;
+  roomTypeId: number;
+  hotelId: number;
+  isActive: boolean;
 }
 
 export interface HotelRoomType {
-  roomTypeId: number
-  name: string
-  description?: string
-  price: number
-  capacity: number
-  bedType: string
-  hotelId: number
-  isActive: boolean
+  roomTypeId: number;
+  name: string;
+  description?: string;
+  price: number;
+  capacity: number;
+  bedType: string;
+  hotelId: number;
+  isActive: boolean;
 }
-
 
 export interface CommoditiesServiceDTO {
   serviceName: string;
@@ -109,44 +118,43 @@ export interface CommoditiesServiceDTO {
   isActive: boolean;
 }
 
-
-export interface CreateCommoditieDTO {
-  HotelName: string;
-  HasParking: boolean;
-  IsParkingPaid: boolean;
-  ParkingPrice: number;
-  HasBreakfast: boolean;
-  IsBreakfastPaid: boolean;
-  BreakfastPrice: number;
-  HasLunch: boolean;
-  IsLunchPaid: boolean;
-  LunchPrice: number;
-  HasDinner: boolean;
-  IsDinnerPaid: boolean;
-  DinnerPrice: number;
-  HasSpa: boolean;
-  IsSpaPaid: boolean;
-  SpaPrice: number;
-  HasPool: boolean;
-  IsPoolPaid: boolean;
-  PoolPrice: number;
-  HasGym: boolean;
-  IsGymPaid: boolean;
-  GymPrice: number;
-  HasWiFi: boolean;
-  IsWiFiPaid: boolean;
-  WiFiPrice: number;
-  HasAirConditioning: boolean;
-  IsAirConditioningPaid: boolean;
-  AirConditioningPrice: number;
-  HasAccessibilityFeatures: boolean;
-  IsAccessibilityFeaturesPaid: boolean;
-  AccessibilityFeaturesPrice: number;
-  IsPetFriendly: boolean;
-  IsPetFriendlyPaid: boolean;
-  PetFriendlyPrice: number;
-  IsActive: boolean;
-  CustomCommodities: Omit<CustomCommodityDTO, 'CustomCommodityId' | 'CommoditieId' | 'HotelId'>[];
+export interface CreateCommodityDTO {
+  hotelName: string;
+  hasParking: boolean;
+  isParkingPaid: boolean;
+  parkingPrice: number;
+  hasBreakfast: boolean;
+  isBreakfastPaid: boolean;
+  breakfastPrice: number;
+  hasLunch: boolean;
+  isLunchPaid: boolean;
+  lunchPrice: number;
+  hasDinner: boolean;
+  isDinnerPaid: boolean;
+  dinnerPrice: number;
+  hasSpa: boolean;
+  isSpaPaid: boolean;
+  spaPrice: number;
+  hasPool: boolean;
+  isPoolPaid: boolean;
+  poolPrice: number;
+  hasGym: boolean;
+  isGymPaid: boolean;
+  gymPrice: number;
+  hasWiFi: boolean;
+  isWiFiPaid: boolean;
+  wiFiPrice: number;
+  hasAirConditioning: boolean;
+  isAirConditioningPaid: boolean;
+  airConditioningPrice: number;
+  hasAccessibilityFeatures: boolean;
+  isAccessibilityFeaturesPaid: boolean;
+  accessibilityFeaturesPrice: number;
+  isPetFriendly: boolean;
+  isPetFriendlyPaid: boolean;
+  petFriendlyPrice: number;
+  isActive: boolean;
+  customCommodities: Omit<CustomCommodityDTO, 'customCommodityId' | 'commoditieId' | 'hotelId'>[];
 }
 
 export interface CreateHotelDTO {
@@ -167,21 +175,20 @@ export interface CreateHotelDTO {
   roomTypesJson: string;
 }
 
-
 export type RoomTypeEnum = 'Single' | 'Double' | 'Suite' | 'Deluxe' | 'Family';
 
 export interface CreateHotelRoomTypeDTO {
-  Name: RoomTypeEnum;
-  Description: string;
-  Price: number;
-  Capacity: number;
-  BedType: string;
-  TotalRooms: number;
+  name: RoomTypeEnum;
+  description: string;
+  price: number;
+  capacity: number;
+  bedType: string;
+  totalRooms: number;
 }
 
 export interface HotelSearchDTO {
   city: string;
-  checkInDate: string; 
+  checkInDate: string;
   checkOutDate: string;
   numberOfPeople: number;
   numberOfRooms: number;
@@ -189,9 +196,75 @@ export interface HotelSearchDTO {
 
 export interface HotelFilterParams {
   commodities?: string[];
-  CustomCommodities?: string[];
+  customCommodities?: string[];
   roomTypes?: string[];
   minPrice?: number;
   maxPrice?: number;
   minCapacity?: number;
+}
+
+export interface UpdateHotelDTO {
+  hotelId: number;
+  name: string;
+  cnpj: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  description?: string;
+  starRating: number;
+  checkInTime?: string;
+  checkOutTime?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  isActive: boolean;
+  mediaFiles?: File[];
+  roomTypesJson?: string;
+}
+
+export interface UpdateCommodityDTO {
+  hotelName: string;
+  hasParking: boolean;
+  isParkingPaid: boolean;
+  parkingPrice: number;
+  hasBreakfast: boolean;
+  isBreakfastPaid: boolean;
+  breakfastPrice: number;
+  hasLunch: boolean;
+  isLunchPaid: boolean;
+  lunchPrice: number;
+  hasDinner: boolean;
+  isDinnerPaid: boolean;
+  dinnerPrice: number;
+  hasSpa: boolean;
+  isSpaPaid: boolean;
+  spaPrice: number;
+  hasPool: boolean;
+  isPoolPaid: boolean;
+  poolPrice: number;
+  hasGym: boolean;
+  isGymPaid: boolean;
+  gymPrice: number;
+  hasWiFi: boolean;
+  isWiFiPaid: boolean;
+  wiFiPrice: number;
+  hasAirConditioning: boolean;
+  isAirConditioningPaid: boolean;
+  airConditioningPrice: number;
+  hasAccessibilityFeatures: boolean;
+  isAccessibilityFeaturesPaid: boolean;
+  accessibilityFeaturesPrice: number;
+  isPetFriendly: boolean;
+  isPetFriendlyPaid: boolean;
+  petFriendlyPrice: number;
+  isActive: boolean;
+}
+
+export interface UpdateCustomCommodityDTO {
+  name: string;
+  hotelName: string;
+  isPaid: boolean;
+  price: number;
+  description?: string;
+  isActive: boolean;
 }

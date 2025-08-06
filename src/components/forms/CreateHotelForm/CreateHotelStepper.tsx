@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CreateCommoditieDTO, CreateHotelDTO, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
+import { CreateCommodityDTO, CreateHotelDTO, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
 import { createHotel } from '../../../services/hotelService';
 import HotelBreadcrumb from './HotelBreadcrumb';
 import HotelBasicInfoForm from './HotelBasicInfoForm';
@@ -34,52 +33,52 @@ function CreateHotelStepper() {
 
     const [roomTypes, setRoomTypes] = useState<CreateHotelRoomTypeDTO[]>([
         {
-            Name: 'Single',
-            Description: '',
-            Price: 0,
-            Capacity: 1,
-            BedType: '',
-            TotalRooms: 1
+            name: 'Single',
+            description: '',
+            price: 0,
+            capacity: 1,
+            bedType: '',
+            totalRooms: 1
         }
     ]);
 
 
-    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommoditieDTO, 'HotelName'>>({
-        HasParking: false,
-        IsParkingPaid: false,
-        HasBreakfast: false,
-        IsBreakfastPaid: false,
-        HasLunch: false,
-        IsLunchPaid: false,
-        HasDinner: false,
-        IsDinnerPaid: false,
-        HasSpa: false,
-        IsSpaPaid: false,
-        HasPool: false,
-        IsPoolPaid: false,
-        HasGym: false,
-        IsGymPaid: false,
-        HasWiFi: false,
-        IsWiFiPaid: false,
-        HasAirConditioning: false,
-        IsAirConditioningPaid: false,
-        HasAccessibilityFeatures: false,
-        IsAccessibilityFeaturesPaid: false,
-        IsPetFriendly: false,
-        IsPetFriendlyPaid: false,
-        IsActive: true,
-        ParkingPrice: 0,
-        BreakfastPrice: 0,
-        LunchPrice: 0,
-        DinnerPrice: 0,
-        SpaPrice: 0,
-        PoolPrice: 0,
-        GymPrice: 0,
-        WiFiPrice: 0,
-        AirConditioningPrice: 0,
-        AccessibilityFeaturesPrice: 0,
-        PetFriendlyPrice: 0,
-        CustomCommodities: []
+    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommodityDTO, 'hotelName'>>({
+        hasParking: false,
+        isParkingPaid: false,
+        hasBreakfast: false,
+        isBreakfastPaid: false,
+        hasLunch: false,
+        isLunchPaid: false,
+        hasDinner: false,
+        isDinnerPaid: false,
+        hasSpa: false,
+        isSpaPaid: false,
+        hasPool: false,
+        isPoolPaid: false,
+        hasGym: false,
+        isGymPaid: false,
+        hasWiFi: false,
+        isWiFiPaid: false,
+        hasAirConditioning: false,
+        isAirConditioningPaid: false,
+        hasAccessibilityFeatures: false,
+        isAccessibilityFeaturesPaid: false,
+        isPetFriendly: false,
+        isPetFriendlyPaid: false,
+        isActive: true,
+        parkingPrice: 0,
+        breakfastPrice: 0,
+        lunchPrice: 0,
+        dinnerPrice: 0,
+        spaPrice: 0,
+        poolPrice: 0,
+        gymPrice: 0,
+        wiFiPrice: 0,
+        airConditioningPrice: 0,
+        accessibilityFeaturesPrice: 0,
+        petFriendlyPrice: 0,
+        customCommodities: []
     });
 
 
@@ -103,12 +102,12 @@ function CreateHotelStepper() {
 
         setRoomTypes([
             {
-                Name: 'Single',
-                Description: '',
-                Price: 0,
-                Capacity: 1,
-                BedType: '',
-                TotalRooms: 1
+                name: 'Single',
+                description: '',
+                price: 0,
+                capacity: 1,
+                bedType: '',
+                totalRooms: 1
             }
         ]);
     };
@@ -129,21 +128,21 @@ function CreateHotelStepper() {
             console.log("hotelResponse", hotelResponse)
 
             // Cria commodity SEM custom
-            const commoditiesPayload: CreateCommoditieDTO = {
+            const commoditiesPayload: CreateCommodityDTO = {
                 ...commoditiesFormData,
-                HotelName: hotelResponse.data.name,
-                CustomCommodities: [] // Não envia custom aqui!
+                hotelName: hotelResponse.data.name,
+                customCommodities: [] // Não envia custom aqui!
             };
             await createCommodities(commoditiesPayload);
 
             // Cria custom commodities individualmente
-            for (const custom of commoditiesFormData.CustomCommodities) {
+            for (const custom of commoditiesFormData.customCommodities) {
                 await createCustomCommodity({
-                    name: custom.Name,
-                    isPaid: custom.IsPaid,
-                    price: custom.Price,
-                    description: custom.Description,
-                    isActive: custom.IsActive,
+                    name: custom.name,
+                    isPaid: custom.isPaid,
+                    price: custom.price,
+                    description: custom.description,
+                    isActive: custom.isActive,
                     hotelName: hotelResponse.data.name
                 });
             }

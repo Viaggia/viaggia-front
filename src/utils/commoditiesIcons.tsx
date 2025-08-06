@@ -10,18 +10,18 @@ import WifiIcon from '@mui/icons-material/Wifi';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import PetsIcon from '@mui/icons-material/Pets';
-import { CreateCommoditieDTO } from '../types/Hotel';
+import { CreateCommodityDTO } from '../types/Hotel';
 
-export const comoditiesIcons: Partial<Record<keyof Omit<CreateCommoditieDTO, 'hotelName'>, React.ReactNode>> = {
-  HasParking: <LocalParkingIcon fontSize="small" />,
-  HasBreakfast: <BreakfastDiningIcon fontSize="small" />,
-  HasLunch: <LunchDiningIcon fontSize="small" />,
-  HasDinner: <DinnerDiningIcon fontSize="small" />,
-  HasSpa: <SpaIcon fontSize="small" />,
-  HasPool: <PoolIcon fontSize="small" />,
-  HasGym: <FitnessCenterIcon fontSize="small" />,
-  HasWiFi: <WifiIcon fontSize="small" />,
-  HasAirConditioning: <AcUnitIcon fontSize="small" />,
-  HasAccessibilityFeatures: <AccessibleIcon fontSize="small" />,
-  IsPetFriendly: <PetsIcon fontSize="small" />,
+export const comoditiesIcons: Partial<Record<keyof Omit<CreateCommodityDTO, 'hotelName'>, React.ReactNode>> = {
+  hasParking: <LocalParkingIcon fontSize="small" />,
+  hasBreakfast: <BreakfastDiningIcon fontSize="small" />,
+  hasLunch: <LunchDiningIcon fontSize="small" />,
+  hasDinner: <DinnerDiningIcon fontSize="small" />,
+  hasSpa: <SpaIcon fontSize="small" />,
+  hasPool: <PoolIcon fontSize="small" />,
+  hasGym: <FitnessCenterIcon fontSize="small" />,
+  hasWiFi: <WifiIcon fontSize="small" />,
+  hasAirConditioning: <AcUnitIcon fontSize="small" />,
+  hasAccessibilityFeatures: <AccessibleIcon fontSize="small" />,
+  isPetFriendly: <PetsIcon fontSize="small" />,
 };
