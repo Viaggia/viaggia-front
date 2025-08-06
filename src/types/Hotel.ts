@@ -69,15 +69,15 @@ export interface CommoditieDTO {
 }
 
 export interface CustomCommodityDTO {
-  customCommodityId: number;
-  hotelName: string;
-  name: string;
-  isPaid: boolean;
-  price?: number;
-  description?: string;
-  isActive: boolean;
-  commoditieId: number;
-  hotelId: number;
+  CustomCommodityId: number;
+  HotelName: string;
+  Name: string;
+  IsPaid: boolean;
+  Price?: number;
+  Description?: string;
+  IsActive: boolean;
+  CommoditieId: number;
+  HotelId: number;
 }
 
 
@@ -146,7 +146,7 @@ export interface CreateCommoditieDTO {
   IsPetFriendlyPaid: boolean;
   PetFriendlyPrice: number;
   IsActive: boolean;
-  CustomCommodities: Omit<CustomCommodityDTO, 'customCommodityId' | 'commoditieId' | 'hotelId'>[];
+  CustomCommodities: Omit<CustomCommodityDTO, 'CustomCommodityId' | 'CommoditieId' | 'HotelId'>[];
 }
 
 export interface CreateHotelDTO {

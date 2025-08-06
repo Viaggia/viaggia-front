@@ -61,8 +61,17 @@ export async function getAvailableRooms(
 }
 
 export async function searchHotels(search: HotelSearchDTO): Promise<HotelDTO[]> {
-  const response = await api.get('/api/Hotel/search', { params: search });
-  return response.data.data;
+  try {
+    const response = await api.get('/api/Hotel/search', { params: search });
+    return response.data.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 400) {
+      // Não lança erro, apenas retorna array vazio
+      return [];
+    }
+    // Só lança erro para outros casos (ex: 500)
+    throw error;
+  }
 }
 
 export async function filterHotels(params: HotelFilterParams): Promise<HotelDTO[]> {

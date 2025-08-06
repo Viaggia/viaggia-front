@@ -139,7 +139,11 @@ function CreateHotelStepper() {
             // Cria custom commodities individualmente
             for (const custom of commoditiesFormData.CustomCommodities) {
                 await createCustomCommodity({
-                    ...custom,
+                    name: custom.Name,
+                    isPaid: custom.IsPaid,
+                    price: custom.Price,
+                    description: custom.Description,
+                    isActive: custom.IsActive,
                     hotelName: hotelResponse.data.name
                 });
             }
