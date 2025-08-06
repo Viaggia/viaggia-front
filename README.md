@@ -1,69 +1,93 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+# 🌐 Viaggia - Front-End do Sistema de Gerenciamento de Pacotes de Viagem
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Este repositório contém o front-end do sistema **Viaggia**, desenvolvido com **React 19**, **TypeScript**, **Vite** e **Tailwind CSS**, com foco em performance, responsividade e integração com o back-end via **API REST**.
 
-## Expanding the ESLint configuration
+## 🚀 Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** (com JSX e Hooks)
+- **TypeScript**
+- **Vite** (build e dev server)
+- **Tailwind CSS** (compatível com PostCSS 7)
+- **Bootstrap 5** + **Bootstrap Icons**
+- **React Router DOM v7**
+- **Axios** (requisições HTTP)
+- **JWT Decode** (decodificação de tokens)
+- **React Input Mask** (máscaras de input)
+- **Font Awesome** e **React Icons**
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📁 Estrutura de Pastas (sugestão)
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+/viaggiafrontend
+│
+├── src/
+│   ├── assets/              # Imagens e arquivos estáticos
+│   ├── components/          # Componentes reutilizáveis
+│   ├── pages/               # Páginas principais (Home, Login, Pacotes, etc.)
+│   ├── services/            # Serviços de API (axios)
+│   ├── types/               # Types customizados
+│   ├── contexts/            # Contextos globais (ex: autenticação)
+│   ├── routes/              # Definição de rotas
+│   ├── utils/               # Funções utilitárias
+│   ├── App.tsx             # Componente principal
+│   ├── main.tsx            # Ponto de entrada
+│
+├── public/                  # Arquivos públicos
+├── index.html               # HTML base
+├── tailwind.config.js       # Configuração do Tailwind
+├── tsconfig.json            # Configuração do TypeScript
+├── vite.config.ts           # Configuração do Vite
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚙️ Como Executar Localmente
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### ✅ Pré-requisitos
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js (versão 18 ou superior)
+- npm ou yarn
+
+### 📦 Instalação
+
+```bash
+git clone https://github.com/seu-usuario/seu-repositorio-frontend.git
+cd viaggiafrontend
+npm install
 ```
+
+### ▶️ Rodar em modo desenvolvimento
+
+```bash
+npm run dev
+```
+
+Acesse no navegador: http://localhost:5173
+
+### 🛠️ Build para produção
+
+```bash
+npm run build
+```
+
+### 🔍 Visualizar build
+
+```bash
+npm run preview
+```
+
+### 🧪 Rodar Lint
+
+```bash
+npm run lint
+```
+
+## 🔐 Autenticação
+
+O front-end utiliza **JWT** para autenticação. O token é armazenado localmente e decodificado com `jwt-decode` para controle de sessão e permissões.
+
+## 🌍 Integração com APIs
+
+As requisições são feitas via `axios` para os endpoints do back-end ASP.NET Core. Os serviços estão organizados na pasta `src/services`.
+
+---

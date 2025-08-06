@@ -55,7 +55,7 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
     <form className="row g-3 d-flex justify-content-center p-3 rounded" onSubmit={handleSubmit}>
       <div className="col-md-2">
         <label className="form-label text-white">Destino</label>
-        <input type="text" className="form-control" placeholder="Digite o destino" value={city} onChange={e => setCity(e.target.value)} />
+        <input type="text" className="form-control" placeholder="Digite a Cidade" value={city} onChange={e => setCity(e.target.value)} />
       </div>
       <div className="col-md-2 d-flex flex-column">
         <label className="form-label text-white">Check-in</label>
@@ -71,14 +71,14 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
                 '& .MuiInputBase-root': {
                   minHeight: '38px',
                   height: '38px',
-                  fontSize: '1rem',
+                  //fontSize: '0.75rem !important',
                   padding: 0,
                 },
-                '& input': {
+                '& .MuiInputBase-input': {
                   minHeight: '36px',
                   height: '36px',
                   padding: '6px 12px',
-                  fontSize: '1rem',
+                  fontSize: '0.75rem !important',
                 }
               },
               InputLabelProps: { style: { color: "#fff" } },
@@ -101,14 +101,14 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
                 '& .MuiInputBase-root': {
                   minHeight: '38px',
                   height: '38px',
-                  fontSize: '1rem',
+                  fontSize: '0.75rem !important',
                   padding: 0,
                 },
                 '& input': {
                   minHeight: '36px',
                   height: '36px',
                   padding: '6px 12px',
-                  fontSize: '1rem',
+                  fontSize: '0.75rem !important',
                 }
               },
               InputLabelProps: { style: { color: "#fff" } },
