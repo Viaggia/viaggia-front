@@ -8,6 +8,7 @@ import { getPackages } from "../../services/packageService";
 import { HotelDTO } from "../../types/Hotel";
 import { getHotels } from "../../services/hotelService";
 import HotelCard from "../../components/cards/HotelCard/HotelCard";
+import { EmptyState } from "../../components/EmptyState/EmptyState";
 
 function Home() {
 
@@ -75,7 +76,7 @@ function Home() {
     };
   });
 
-
+ 
   const promotions = [
     {
       title: 'Desconto no Nordeste',
@@ -99,34 +100,45 @@ function Home() {
 
   return (
     <div>
-    <section
-      className="search-section text-white py-5"
-      style={{
-        backgroundImage: 'url(https://www.budgetair.ie/media/1253/flights-brazil-rio-de-janeiro.jpg?center=0.41,0.47&mode=crop&quality=75&width=1920&height=560&rnd=132211480730000000)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
       <section
         className="search-section text-white py-5"
         style={{
-          display: 'flex',
-          justifyContent: 'center',
+          backgroundImage: 'url(https://www.budgetair.ie/media/1253/flights-brazil-rio-de-janeiro.jpg?center=0.41,0.47&mode=crop&quality=75&width=1920&height=560&rnd=132211480730000000)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       >
-        <div className="container bg-primary bg-opacity-100 p-4 rounded">
-          <h2 className="mb-4 text-center">Escolha seu destino</h2>
-          <TravelForm />
-        </div>
-      </section>
+        <section
+          className="search-section text-white py-5"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <div className="container bg-primary bg-opacity-100 p-4 rounded">
+            <h2 className="mb-4 text-center">Escolha seu destino</h2>
+            <TravelForm />
+          </div>
+        </section>
 
-    </section>
-    <div>
-      <CardCarousel items={carouselPackages} CardComponent={PackageCard} text={"Pacotes Exclusivos"} />
-        <CardCarousel items={carouselHotels} CardComponent={HotelCard} text={"Hospedagens Recomendadas"} />
+      </section>
+      <div>
+        {carouselPackages.length > 0 ? (
+          <CardCarousel items={carouselPackages} CardComponent={PackageCard} text={"Pacotes Exclusivos"} />
+        ) : (
+          <EmptyState message="Nenhum pacote disponível no momento." />
+        )}
+
+        {carouselHotels.length > 0 ? (
+          <CardCarousel items={carouselHotels} CardComponent={HotelCard} text={"Hospedagens Recomendadas"} />
+        ) : (
+          <EmptyState message="Nenhum hotel disponível no momento." />
+        )}
+      </div>
+
+
     </div>
-    </div>
-    
+
   );
 }
 
