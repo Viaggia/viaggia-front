@@ -40,7 +40,7 @@ function Header() {
 
   return (
     <header>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-viaggia px-4">
+      <div className='navbar navbar-expand-lg navbar-dark bg-viaggia px-4'>
         <Link to="/" className="navbar-brand d-flex align-items-center text-white">
           <FaPlaneDeparture className="me-2" />
           <strong>Viaggia</strong>
@@ -114,7 +114,9 @@ function Header() {
             )}
           </div>
         </div>
-      </nav>
+      </div>
+
+    
 
     </header>
   )
