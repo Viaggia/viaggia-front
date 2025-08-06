@@ -3,10 +3,10 @@ import { CreateCommodityDTO, UpdateCommodityDTO, UpdateCustomCommodityDTO } from
 
 export const createCommodities = async (data: CreateCommodityDTO) => {
   const formData = new FormData();
-  formData.append('HotelName', data.hotelName);
+  formData.append('hotelName', data.hotelName);
 
   Object.entries(data).forEach(([key, value]) => {
-    if (key !== 'CustomCommodities' && key !== 'HotelName') {
+    if (key !== 'CustomCommodities' && key !== 'hotelName') {
       formData.append(key, String(value));
     }
   });
@@ -27,12 +27,12 @@ export const createCustomCommodity = async (data: {
   hotelName: string;
 }) => {
   const formData = new FormData();
-  formData.append('Name', data.name);
-  formData.append('IsPaid', String(data.isPaid));
-  formData.append('Price', data.price ? String(data.price) : '0');
-  formData.append('Description', data.description || '');
-  formData.append('IsActive', String(data.isActive));
-  formData.append('HotelName', data.hotelName);
+  formData.append('name', data.name);
+  formData.append('isPaid', String(data.isPaid));
+  formData.append('price', data.price ? String(data.price) : '0');
+  formData.append('description', data.description || '');
+  formData.append('isActive', String(data.isActive));
+  formData.append('hotelName', data.hotelName);
 
   const response = await api.post('/api/CustomCommodity', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }

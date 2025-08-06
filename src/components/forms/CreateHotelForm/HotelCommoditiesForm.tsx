@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { CreateCommodityDTO, CustomCommodityDTO } from '../../../types/Hotel';
+import { CreateCommodityDTO, CommodityDTO, CustomCommodityDTO } from '../../../types/Hotel';
 import { comoditiesIcons } from '../../../utils/commoditiesIcons';
-import { formatCurrencyBRL, parseCurrencyBRL } from '../../../utils/formatMask';
+import { parseCurrencyBRL } from '../../../utils/formatMask';
 import CurrencyInput from '../../Inputs/CurrencyInput';
 
-interface Props {
-  commoditiesFormData: Omit<CreateCommodityDTO, 'hotelName'>;
-  setCommoditiesFormData: React.Dispatch<React.SetStateAction<Omit<CreateCommodityDTO, 'hotelName'>>>;
+// Aceita tanto CreateCommodityDTO (sem hotelName) quanto CommodityDTO (edição)
+type CommodityFormType = Omit<CreateCommodityDTO, 'hotelName'> | CommodityDTO;
+
+interface Props<T extends CommodityFormType = CommodityFormType> {
+  data: T;
+  setData: React.Dispatch<React.SetStateAction<T>>;
   nextStep: () => void;
   prevStep: () => void;
 }
@@ -37,12 +40,16 @@ const priceFields = [
   { paid: 'isPetFriendlyPaid', price: 'petFriendlyPrice', label: 'Preço para Pets', dep: 'isPetFriendly' },
 ];
 
-const HotelCommoditiesForm: React.FC<Props> = ({
-  commoditiesFormData,
-  setCommoditiesFormData,
+const HotelCommoditiesForm = <T extends CommodityFormType = CommodityFormType>({
+  data,
+  setData,
   nextStep,
   prevStep
-}) => {
+}: Props<T>) => {
+  console.log("data")
+  console.log(data)
+  console.log("data.customCommodities")
+  console.log(data.customCommodities)
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [serviceDraft, setServiceDraft] = useState<FormCustomCommodity>({
@@ -53,14 +60,18 @@ const HotelCommoditiesForm: React.FC<Props> = ({
     isActive: true,
   });
 
+  // Helper para garantir que customCommodities nunca é undefined
+  const getCustomCommodities = () =>
+    (data.customCommodities ?? []) as CustomCommodityDTO[];
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setCommoditiesFormData(prev => ({ ...prev, [name]: checked }));
+    setData(prev => ({ ...prev, [name]: checked }));
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCommoditiesFormData(prev => ({
+    setData(prev => ({
       ...prev,
       [name]: parseCurrencyBRL(value)
     }));
@@ -70,19 +81,23 @@ const HotelCommoditiesForm: React.FC<Props> = ({
     const { name, value, type, checked } = e.target;
     setServiceDraft(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : name === 'Price' ? Number(value) : value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   const handleEditService = (index: number) => {
     setEditingIndex(index);
-    const service = commoditiesFormData.customCommodities[index];
+    const service = getCustomCommodities()[index];
     setServiceDraft({
       name: service.name ?? '',
       isPaid: service.isPaid ?? false,
       price: service.price,
       description: service.description ?? '',
       isActive: service.isActive ?? true,
+      customCommodityId: service.customCommodityId,
+      commoditieId: service.commoditieId,
+      hotelId: service.hotelId,
+      hotelName: service.hotelName ?? '',
     });
     setIsAdding(true);
   };
@@ -97,27 +112,31 @@ const HotelCommoditiesForm: React.FC<Props> = ({
       return;
     }
 
-    const newService: Omit<CustomCommodityDTO, 'customCommodityId' | 'commoditieId' | 'hotelId'> = {
+    // Para criação, customCommodityId pode ser 0 ou omitido. Para edição, deve ser mantido.
+    const newService: CustomCommodityDTO = {
+      customCommodityId: serviceDraft.customCommodityId ?? 0,
       name: serviceDraft.name,
       isPaid: serviceDraft.isPaid,
       price: serviceDraft.isPaid ? (serviceDraft.price ?? 0) : 0,
-      description: serviceDraft.description,
-      isActive: serviceDraft.isActive,
-      hotelName: '',
+      description: serviceDraft.description ?? '',
+      hotelName: serviceDraft.hotelName ?? '',
+      isActive: serviceDraft.isActive ?? true,
+      ...(typeof serviceDraft.commoditieId === 'number' ? { commoditieId: serviceDraft.commoditieId } : {}),
+      ...(typeof serviceDraft.hotelId === 'number' ? { hotelId: serviceDraft.hotelId } : {}),
     };
 
     if (editingIndex !== null) {
-      const updated = [...commoditiesFormData.customCommodities];
+      const updated = [...getCustomCommodities()];
       updated[editingIndex] = newService;
-      setCommoditiesFormData(prev => ({
+      setData(prev => ({
         ...prev,
         customCommodities: updated,
       }));
     } else {
-      setCommoditiesFormData(prev => ({
+      setData(prev => ({
         ...prev,
         customCommodities: [
-          ...prev.customCommodities,
+          ...getCustomCommodities(),
           newService,
         ],
       }));
@@ -146,8 +165,8 @@ const HotelCommoditiesForm: React.FC<Props> = ({
   };
 
   const removeService = (index: number) => {
-    const updated = commoditiesFormData.customCommodities.filter((_, i) => i !== index);
-    setCommoditiesFormData(prev => ({ ...prev, customCommodities: updated }));
+    const updated = getCustomCommodities().filter((_, i) => i !== index);
+    setData(prev => ({ ...prev, customCommodities: updated }));
     if (editingIndex === index) {
       handleCancelService();
     }
@@ -200,7 +219,7 @@ const HotelCommoditiesForm: React.FC<Props> = ({
       <div className="row">
         {comoditiesLabels.map(({ field, label }) => {
           const dependency = dependencies[field as string];
-          const isDisabled = dependency ? !commoditiesFormData[dependency as keyof BooleanFields] : false;
+          const isDisabled = dependency ? !data[dependency as keyof BooleanFields] : false;
           const isPaidField = field.endsWith('Paid');
           const icon = !isPaidField ? comoditiesIcons[field as keyof typeof comoditiesIcons] : null;
           const priceField = priceFields.find(p => p.paid === field);
@@ -213,7 +232,7 @@ const HotelCommoditiesForm: React.FC<Props> = ({
                     className="form-check-input"
                     type="checkbox"
                     name={field}
-                    checked={commoditiesFormData[field]}
+                    checked={!!data[field]}
                     onChange={handleChange}
                     disabled={isDisabled}
                     id={`switch-${field}`}
@@ -229,20 +248,19 @@ const HotelCommoditiesForm: React.FC<Props> = ({
                     <CurrencyInput
                       name={priceField.price}
                       label="Preço"
-                      value={commoditiesFormData[priceField.price as keyof typeof commoditiesFormData] as number}
+                      value={data[priceField.price as keyof typeof data] as number}
                       onChange={(val) =>
-                        setCommoditiesFormData((prev) => ({
+                        setData((prev) => ({
                           ...prev,
                           [priceField.price]: val,
                         }))
                       }
                       disabled={
-                        !commoditiesFormData[priceField.dep as keyof typeof commoditiesFormData] ||
-                        !commoditiesFormData[priceField.paid as keyof typeof commoditiesFormData]
+                        !data[priceField.dep as keyof typeof data] ||
+                        !data[priceField.paid as keyof typeof data]
                       }
                       inputStyle={{ width: 100 }}
                     />
-
                   </div>
                 )}
               </div>
@@ -252,7 +270,7 @@ const HotelCommoditiesForm: React.FC<Props> = ({
       </div>
 
       <h6 className="mt-4">Serviços Adicionais</h6>
-      {commoditiesFormData.customCommodities.length === 0 && !isAdding && (
+      {getCustomCommodities().length === 0 && !isAdding && (
         <div className="alert alert-light border mb-3">
           Nenhum serviço adicional cadastrado ainda.
         </div>
@@ -317,7 +335,7 @@ const HotelCommoditiesForm: React.FC<Props> = ({
       )}
 
       {/* Lista de serviços já cadastrados */}
-      {commoditiesFormData.customCommodities.map((service, index) => (
+      {getCustomCommodities().map((service, index) => (
         <div key={index} className="card p-3 mb-3">
           <div className="row align-items-center">
             <div className="col-md-4 mb-2">

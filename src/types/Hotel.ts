@@ -112,12 +112,6 @@ export interface HotelRoomType {
   isActive: boolean;
 }
 
-export interface CommoditiesServiceDTO {
-  serviceName: string;
-  isFree: boolean;
-  isActive: boolean;
-}
-
 export interface CreateCommodityDTO {
   hotelName: string;
   hasParking: boolean;
