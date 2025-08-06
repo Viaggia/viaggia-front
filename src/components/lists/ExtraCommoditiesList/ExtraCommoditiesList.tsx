@@ -1,16 +1,16 @@
 import React from 'react';
-import { CommoditiesServiceDTO } from '../../../types/Hotel';
+import { CustomCommodityDTO } from '../../../types/Hotel';
 
 interface ExtraCommoditiesListProps {
-  commoditieServices: CommoditiesServiceDTO[];
+  customCommodities: CustomCommodityDTO[];
 }
 
-const ExtraCommoditiesList: React.FC<ExtraCommoditiesListProps> = ({ commoditieServices }) => (
+const ExtraCommoditiesList: React.FC<ExtraCommoditiesListProps> = ({ customCommodities }) => (
   <div className="col">
     <h6 className="mb-1">Comodidades Extras</h6>
     <ul className="list-unstyled small mb-0">
-      {commoditieServices.map((cs, i) => (
-        <li key={i}>{cs.serviceName} {cs.isFree ? '(Grátis)' : '(Pago)'}</li>
+      {customCommodities.map((cs, i) => (
+        <li key={i}>{cs.name} {cs.isPaid ? '(Pago)' : '(Grátis)'} {cs.description}</li>
       ))}
     </ul>
   </div>

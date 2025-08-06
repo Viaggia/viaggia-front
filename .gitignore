@@ -39,6 +39,9 @@ dist-ssr/
 # Arquivos temporários de editores (como Vim)
 *.sw?
 
+# TypeScript build info
+tsconfig.tsbuildinfo
+
 # vite
 .vite/
 
