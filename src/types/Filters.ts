@@ -4,8 +4,16 @@ interface FiltrosProps {
   almoco: boolean
   jantar: boolean
   cancelamento: boolean
-  restaurante: boolean
   quarto: boolean
   recepcao: boolean
   estacionamento: boolean
+  SPA: boolean
+  piscina: boolean
+  academia: boolean
+  wifi: boolean
+  arcondicionado?: boolean
+  acessibilidade?: boolean
+  petfriendly?: boolean
+  translado?: boolean
+  bicicleta?: boolean
 }

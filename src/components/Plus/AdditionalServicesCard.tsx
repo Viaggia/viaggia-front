@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const services = [
-  'Passeio de Buggy', 'Almoço', 'Janta ou Café da Manhã', 'Passeio Turístico',
-  'Wi-Fi grátis', 'Aceita animais', 'Tem piscina', 'Sala de jogo', 'Spa',
-  'Academia', 'Estacionamento', 'Acessibilidade'
-];
+interface AdditionalServicesCardProps {
+  pricePerNight: number;
+  serviceValues: { [key: string]: number };
+  services: string[];
+}
 
-const pricePerNight = 200;
-const serviceValues: { [key: string]: number } = {
-  'Passeio de Buggy': 150,
-  'Almoço': 50,
-  'Janta ou Café da Manhã': 40,
-  'Passeio Turístico': 120,
-  'Wi-Fi grátis': 0,
-  'Aceita animais': 0,
-  'Tem piscina': 0,
-  'Sala de jogo': 30,
-  'Spa': 90,
-  'Academia': 40,
-  'Estacionamento': 20,
-  'Acessibilidade': 0,
-};
-
-const AdditionalServicesCard: React.FC = () => {
+const AdditionalServicesCard: React.FC<AdditionalServicesCardProps> = ({ pricePerNight, serviceValues, services }) => {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -46,7 +30,7 @@ const AdditionalServicesCard: React.FC = () => {
     } else {
       setTotalPrice(null);
     }
-  }, [checkIn, checkOut, selectedServices]);
+  }, [checkIn, checkOut, selectedServices, pricePerNight, serviceValues]);
 
   const calculateNights = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
@@ -69,7 +53,6 @@ const AdditionalServicesCard: React.FC = () => {
 
   return (
     <div className="container my-4">
-      
       {/* Datas */}
       <div style={cardStyle} className="mb-3">
         <h5 style={titleStyle}>Selecione suas datas</h5>

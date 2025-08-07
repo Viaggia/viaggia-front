@@ -18,6 +18,9 @@ dist-ssr/
 *.local
 .env  # Contém variáveis de ambiente como URLs e tokens
 
+# 🔨 Arquivos de build do TypeScript (gerados automaticamente)
+tsconfig.tsbuildinfo
+
 # 🧠 Configurações específicas de editores de código
 
 # Visual Studio Code
@@ -38,6 +41,9 @@ dist-ssr/
 
 # Arquivos temporários de editores (como Vim)
 *.sw?
+
+# TypeScript build info
+tsconfig.tsbuildinfo
 
 # vite
 .vite/

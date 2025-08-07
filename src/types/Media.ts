@@ -1,8 +1,5 @@
-export interface Media {
-  mediaId: number
-  mediaUrl: string
-  mediaType: string
-  packageId?: number
-  hotelId?: number
-  isActive: boolean
+export interface MediaDTO {
+  mediaId: number;
+  mediaUrl: string;
+  mediaType: string;
 }
