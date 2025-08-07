@@ -1,0 +1,378 @@
+import React, { useState } from 'react';
+import { CreateCommoditieDTO, CustomCommodityDTO } from '../../../types/Hotel';
+import { comoditiesIcons } from '../../../utils/commoditiesIcons';
+
+interface Props {
+  commoditiesFormData: Omit<CreateCommoditieDTO, 'HotelName'>;
+  setCommoditiesFormData: React.Dispatch<React.SetStateAction<Omit<CreateCommoditieDTO, 'HotelName'>>>;
+  nextStep: () => void;
+  prevStep: () => void;
+}
+
+type BooleanFields = {
+  [K in keyof CreateCommoditieDTO as CreateCommoditieDTO[K] extends boolean ? K : never]: boolean;
+};
+
+type FormCustomCommodity = Partial<CustomCommodityDTO> & {
+  name: string;
+  isPaid: boolean;
+  price?: number;
+  description?: string;
+  isActive: boolean;
+};
+
+const priceFields = [
+  { paid: 'isParkingPaid', price: 'parkingPrice', label: 'Preço do Estacionamento', dep: 'hasParking' },
+  { paid: 'isBreakfastPaid', price: 'breakfastPrice', label: 'Preço do Café da Manhã', dep: 'hasBreakfast' },
+  { paid: 'isLunchPaid', price: 'lunchPrice', label: 'Preço do Almoço', dep: 'hasLunch' },
+  { paid: 'isDinnerPaid', price: 'dinnerPrice', label: 'Preço do Jantar', dep: 'hasDinner' },
+  { paid: 'isSpaPaid', price: 'spaPrice', label: 'Preço do Spa', dep: 'hasSpa' },
+  { paid: 'isPoolPaid', price: 'poolPrice', label: 'Preço da Piscina', dep: 'hasPool' },
+  { paid: 'isGymPaid', price: 'gymPrice', label: 'Preço da Academia', dep: 'hasGym' },
+  { paid: 'isWiFiPaid', price: 'wiFiPrice', label: 'Preço do Wi-Fi', dep: 'hasWiFi' },
+  { paid: 'isAirConditioningPaid', price: 'airConditioningPrice', label: 'Preço do Ar-condicionado', dep: 'hasAirConditioning' },
+  { paid: 'isAccessibilityFeaturesPaid', price: 'accessibilityFeaturesPrice', label: 'Preço da Acessibilidade', dep: 'hasAccessibilityFeatures' },
+  { paid: 'isPetFriendlyPaid', price: 'petFriendlyPrice', label: 'Preço para Pets', dep: 'isPetFriendly' },
+];
+
+const HotelCommoditiesForm: React.FC<Props> = ({
+  commoditiesFormData,
+  setCommoditiesFormData,
+  nextStep,
+  prevStep
+}) => {
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [serviceDraft, setServiceDraft] = useState<FormCustomCommodity>({
+    name: '',
+    isPaid: false,
+    price: undefined,
+    description: '',
+    isActive: true,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setCommoditiesFormData(prev => ({ ...prev, [name]: checked }));
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCommoditiesFormData(prev => ({
+      ...prev,
+      [name]: Number(value)
+    }));
+  };
+
+  const handleServiceDraftChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setServiceDraft(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : name === 'price' ? Number(value) : value
+    }));
+  };
+
+  const handleEditService = (index: number) => {
+    setEditingIndex(index);
+    const service = commoditiesFormData.CustomCommodities[index];
+    setServiceDraft({
+      name: service.name ?? '',
+      isPaid: service.isPaid ?? false,
+      price: service.price,
+      description: service.description ?? '',
+      isActive: service.isActive ?? true,
+    });
+    setIsAdding(true);
+  };
+
+
+  const handleSaveService = () => {
+    if (!serviceDraft.name.trim()) {
+      alert('O nome do serviço é obrigatório.');
+      return;
+    }
+    if (serviceDraft.isPaid && (!serviceDraft.price || serviceDraft.price <= 0)) {
+      alert('Informe o preço do serviço pago.');
+      return;
+    }
+
+    // Garante que só os campos do tipo esperado vão para o array
+    const newService: Omit<CustomCommodityDTO, 'customCommodityId' | 'commoditieId' | 'hotelId'> = {
+      name: serviceDraft.name,
+      isPaid: serviceDraft.isPaid,
+      price: serviceDraft.isPaid ? serviceDraft.price : undefined,
+      description: serviceDraft.description,
+      isActive: serviceDraft.isActive,
+      hotelName: '', // pode ser preenchido no backend
+    };
+
+    if (editingIndex !== null) {
+      const updated = [...commoditiesFormData.CustomCommodities];
+      updated[editingIndex] = newService;
+      setCommoditiesFormData(prev => ({
+        ...prev,
+        CustomCommodities: updated,
+      }));
+    } else {
+      setCommoditiesFormData(prev => ({
+        ...prev,
+        CustomCommodities: [
+          ...prev.CustomCommodities,
+          newService,
+        ],
+      }));
+    }
+    setServiceDraft({
+      name: '',
+      isPaid: false,
+      price: undefined,
+      description: '',
+      isActive: true,
+    });
+    setIsAdding(false);
+    setEditingIndex(null);
+  };
+
+  const handleCancelService = () => {
+    setServiceDraft({
+      name: '',
+      isPaid: false,
+      price: undefined,
+      description: '',
+      isActive: true,
+    });
+    setIsAdding(false);
+    setEditingIndex(null);
+  };
+
+  const removeService = (index: number) => {
+    const updated = commoditiesFormData.CustomCommodities.filter((_, i) => i !== index);
+    setCommoditiesFormData(prev => ({ ...prev, CustomCommodities: updated }));
+    if (editingIndex === index) {
+      handleCancelService();
+    }
+  };
+
+  // Dependências entre comodidades e suas opções pagas
+  const dependencies: Record<string, string> = {
+    isParkingPaid: 'hasParking',
+    isBreakfastPaid: 'hasBreakfast',
+    isLunchPaid: 'hasLunch',
+    isDinnerPaid: 'hasDinner',
+    isSpaPaid: 'hasSpa',
+    isPoolPaid: 'hasPool',
+    isGymPaid: 'hasGym',
+    isWiFiPaid: 'hasWiFi',
+    isAirConditioningPaid: 'hasAirConditioning',
+    isAccessibilityFeaturesPaid: 'hasAccessibilityFeatures',
+    isPetFriendlyPaid: 'isPetFriendly'
+  };
+
+  const comoditiesLabels: { field: keyof BooleanFields; label: string }[] = [
+    { field: 'HasParking', label: 'Estacionamento' },
+    { field: 'IsParkingPaid', label: 'Estacionamento é pago?' },
+    { field: 'HasBreakfast', label: 'Café da Manhã' },
+    { field: 'IsBreakfastPaid', label: 'Café da Manhã é pago?' },
+    { field: 'HasLunch', label: 'Almoço' },
+    { field: 'IsLunchPaid', label: 'Almoço é pago?' },
+    { field: 'HasDinner', label: 'Jantar' },
+    { field: 'IsDinnerPaid', label: 'Jantar é pago?' },
+    { field: 'HasSpa', label: 'Spa' },
+    { field: 'IsSpaPaid', label: 'Spa é pago?' },
+    { field: 'HasPool', label: 'Piscina' },
+    { field: 'IsPoolPaid', label: 'Piscina é paga?' },
+    { field: 'HasGym', label: 'Academia' },
+    { field: 'IsGymPaid', label: 'Academia é paga?' },
+    { field: 'HasWiFi', label: 'Wi-Fi' },
+    { field: 'IsWiFiPaid', label: 'Wi-Fi é pago?' },
+    { field: 'HasAirConditioning', label: 'Ar-condicionado' },
+    { field: 'IsAirConditioningPaid', label: 'Ar-condicionado é pago?' },
+    { field: 'HasAccessibilityFeatures', label: 'Acessibilidade' },
+    { field: 'IsAccessibilityFeaturesPaid', label: 'Acessibilidade é paga?' },
+    { field: 'IsPetFriendly', label: 'Aceita Pets' },
+    { field: 'IsPetFriendlyPaid', label: 'Taxa para Pets?' }
+  ];
+
+  return (
+    <div>
+      <h5 className="mb-4">Comodidades do Hotel</h5>
+
+      <div className="row">
+        {comoditiesLabels.map(({ field, label }) => {
+          const dependency = dependencies[field as string];
+          const isDisabled = dependency ? !commoditiesFormData[dependency as keyof BooleanFields] : false;
+          const isPaidField = field.endsWith('Paid');
+          const icon = !isPaidField ? comoditiesIcons[field as keyof typeof comoditiesIcons] : null;
+
+          return (
+            <div className="col-md-6 mb-3" key={field}>
+              <div className="form-check form-switch d-flex align-items-center m-0">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name={field}
+                  checked={commoditiesFormData[field]}
+                  onChange={handleChange}
+                  disabled={isDisabled}
+                  id={`switch-${field}`}
+                />
+                <label className="form-check-label ms-2 d-flex align-items-center gap-2" htmlFor={`switch-${field}`}>
+                  {icon && <span>{icon}</span>}
+                  {label}
+                </label>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Campos de preço para comodidades pagas */}
+      <div className="row">
+        {priceFields.map(({ paid, price, label, dep }) => {
+          // Garante que o valor é number ou string, senão retorna ""
+          const value = commoditiesFormData[price as keyof typeof commoditiesFormData];
+          return (
+            <div className="col-md-6 mb-3" key={price}>
+              <label className="form-label">{label}</label>
+              <input
+                type="number"
+                className="form-control"
+                name={price}
+                value={
+                  typeof value === 'number' && !isNaN(value)
+                    ? value
+                    : typeof value === 'string'
+                      ? value
+                      : ''
+                }
+                onChange={handlePriceChange}
+                disabled={
+                  !Boolean(commoditiesFormData[dep as keyof typeof commoditiesFormData]) ||
+                  !Boolean(commoditiesFormData[paid as keyof typeof commoditiesFormData])
+                }
+                min={0}
+                placeholder="0,00"
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <h6 className="mt-4">Serviços Adicionais</h6>
+      {commoditiesFormData.CustomCommodities.length === 0 && !isAdding && (
+        <div className="alert alert-light border mb-3">
+          Nenhum serviço adicional cadastrado ainda.
+        </div>
+      )}
+
+      {/* Formulário de adicionar/editar serviço */}
+      {isAdding && (
+        <div className="card p-3 mb-3">
+          <div className="row">
+            <div className="col-md-4 mb-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Nome do Serviço"
+                name="name"
+                value={serviceDraft.name}
+                onChange={handleServiceDraftChange}
+              />
+            </div>
+            <div className="col-md-3 mb-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Descrição"
+                name="description"
+                value={serviceDraft.description}
+                onChange={handleServiceDraftChange}
+              />
+            </div>
+            <div className="col-md-2 mb-2 d-flex align-items-center">
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name="isPaid"
+                  checked={serviceDraft.isPaid}
+                  onChange={handleServiceDraftChange}
+                />
+                <label className="form-check-label ms-1">Pago</label>
+              </div>
+            </div>
+            <div className="col-md-3 mb-2">
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Preço"
+                name="price"
+                value={serviceDraft.price || ''}
+                onChange={handleServiceDraftChange}
+                disabled={!serviceDraft.isPaid}
+                min={0}
+              />
+            </div>
+          </div>
+          <div className="d-flex gap-2 mt-2">
+            <button className="btn btn-success" type="button" onClick={handleSaveService}>
+              Salvar
+            </button>
+            <button className="btn btn-secondary" type="button" onClick={handleCancelService}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Lista de serviços já cadastrados */}
+      {commoditiesFormData.CustomCommodities.map((service, index) => (
+        <div key={index} className="card p-3 mb-3">
+          <div className="row align-items-center">
+            <div className="col-md-4 mb-2">
+              <strong>{service.name}</strong>
+              <div className="text-muted small">{service.description}</div>
+            </div>
+            <div className="col-md-2 mb-2">
+              <span className={`badge ${service.isPaid ? 'bg-warning text-dark' : 'bg-success'}`}>
+                {service.isPaid ? 'Pago' : 'Grátis'}
+              </span>
+              {service.isPaid && service.price ? (
+                <span className="ms-2 text-muted small">R$ {Number(service.price).toFixed(2)}</span>
+              ) : null}
+            </div>
+            <div className="col-md-6 mb-2 text-end">
+              <button
+                className="btn btn-outline-primary btn-sm me-2"
+                type="button"
+                onClick={() => handleEditService(index)}
+              >
+                Editar
+              </button>
+              <button
+                className="btn btn-outline-danger btn-sm"
+                type="button"
+                onClick={() => removeService(index)}
+              >
+                Remover
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {!isAdding && (
+        <button className="btn btn-secondary mb-4" type="button" onClick={() => setIsAdding(true)}>
+          Adicionar Serviço
+        </button>
+      )}
+
+      <div className="d-flex justify-content-between">
+        <button className="btn btn-outline-primary" type="button" onClick={prevStep}>Voltar</button>
+        <button className="btn btn-primary" type="button" onClick={nextStep}>Próximo</button>
+      </div>
+    </div>
+  );
+};
+
+export default HotelCommoditiesForm;

@@ -1,0 +1,155 @@
+import { useState } from 'react';
+import { PackageCreateDTO } from '../../../types/Package';
+import { createPackage } from '../../../services/packageService';
+import ToastForm from '../../Toast/ToastForm';
+
+function CreatePackageForm() {
+  const [showToast, setShowToast] = useState(false);
+
+  const [formData, setFormData] = useState<PackageCreateDTO>({
+    name: '',
+    destination: '',
+    description: '',
+    basePrice: 0,
+    hotelName: '',
+    isActive: true,
+    startDate: '',
+    endDate: '',
+    mediaFiles: []
+  });
+
+  const formatDateInput = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    if (digits.length <= 8) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+
+    let val: string | number = value;
+
+    if (name === 'startDate' || name === 'endDate') {
+      val = formatDateInput(value);
+    } else if (type === 'number') {
+      val = Number(value);
+    }
+
+    setFormData(prev => ({ ...prev, [name]: val }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setFormData(prev => ({ ...prev, mediaFiles: Array.from(files) }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await createPackage(formData);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
+      setFormData({
+        name: '',
+        destination: '',
+        description: '',
+        basePrice: 0,
+        hotelName: '',
+        isActive: true,
+        startDate: '',
+        endDate: '',
+        mediaFiles: []
+      });
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao cadastrar pacote. Verifique os dados e tente novamente.');
+    }
+  };
+
+
+  return (
+    <div className="row m-0">
+      {/* Faixa azul no topo */}
+      <div className="col-12 bg-primary text-white py-3">
+        <div className="container">
+          <h4 className="mb-0">Cadastro de Pacote</h4>
+        </div>
+      </div>
+
+      {/* Conteúdo do formulário */}
+      <div className="col-12 py-5" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="container">
+          <div className="card shadow-sm rounded-4 border-0">
+            <div className="card-body">
+              <ToastForm
+                show={showToast}
+                message="Pacote criado com sucesso!"
+                onClose={() => setShowToast(false)}
+              />
+
+              <form onSubmit={handleSubmit}>
+                {[
+                  { name: 'name', label: 'Nome do Pacote', type: 'text', required: true },
+                  { name: 'destination', label: 'Destino', type: 'text', required: true },
+                  { name: 'description', label: 'Descrição', type: 'textarea', required: false },
+                  { name: 'basePrice', label: 'Preço Base', type: 'number', required: true },
+                  { name: 'hotelName', label: 'Nome do Hotel', type: 'text', required: true },
+                  { name: 'startDate', label: 'Data de Início (DD/MM/AAAA)', type: 'text', required: true },
+                  { name: 'endDate', label: 'Data de Fim (DD/MM/AAAA)', type: 'text', required: true }
+                ].map(({ name, label, type, required }) => (
+                  <div className="mb-3" key={name}>
+                    <label htmlFor={name} className="form-label">
+                      {label} {required && <span className="text-danger">*</span>}
+                    </label>
+                    {type === 'textarea' ? (
+                      <textarea
+                        name={name}
+                        id={name}
+                        value={(formData as any)[name]}
+                        onChange={handleChange}
+                        className="form-control"
+                        required={required}
+                      />
+                    ) : (
+                      <input
+                        type={type}
+                        name={name}
+                        id={name}
+                        value={(formData as any)[name]}
+                        onChange={handleChange}
+                        className="form-control"
+                        required={required}
+                      />
+                    )}
+                  </div>
+                ))}
+                <div className="mb-3">
+                  <label htmlFor="mediaFiles" className="form-label">Imagens</label>
+                  <input
+                    type="file"
+                    name="mediaFiles"
+                    id="mediaFiles"
+                    multiple
+                    onChange={handleFileChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="d-grid gap-2">
+                  <button type="submit" className="btn btn-light text-primary fw-bold">Cadastrar Pacote</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default CreatePackageForm;
