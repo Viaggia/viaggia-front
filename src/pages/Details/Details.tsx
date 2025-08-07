@@ -214,11 +214,8 @@ const Details: React.FC = () => {
       <div>
         {/* Descrição + Mapa */}
         <div className="col-md-8 m-3 mt-0">
-          <p className="fw-bold">{hotel.description}</p>
-
           {/* Mapa com endereço do hotel */}
           <div className="mt-4">
-            <h5>Localização</h5>
             <p>{hotel.street}, {hotel.city}, {hotel.state}</p>
             <Maps address={`${hotel.street}, ${hotel.city}, ${hotel.state}`} />
           </div>

@@ -10,6 +10,7 @@ import ProfileSidebar from '../../components/Sidebars/ProfileSidebar'
 import ProfileMobileMenu from '../../components/Sidebars/ProfileMobileMenu'
 import ProfileUserInfoCard from '../../components/cards/ProfileUserInfoCard/ProfileUserInfoCard'
 import { updateUser } from '../../services/userService'
+import Graphic from '../../components/graphic/Graphic'
 
 function Profile() {
   const { user, role } = useAuth();
@@ -32,6 +33,9 @@ function Profile() {
   const menuOptions = [
     { value: 'meu-perfil', label: 'Meu Perfil' },
     { value: 'minhas-reservas', label: 'Minhas Reservas' },
+    ...(role === 'ADMIN'
+      ? [{ value: 'dashboard', label: 'Dashboard' }]
+      : []),
     ...(role !== 'CLIENT'
       ? [
         { value: 'cadastrar-adm', label: 'Cadastrar Administrador' },
@@ -98,6 +102,21 @@ function Profile() {
         <div className="container mt-5 mb-5">
           {activeButton === 'meu-perfil' && (
             <ProfileUserInfoCard user={user} role={role || ''} />
+          )}
+
+          {activeButton === 'dashboard' && role === 'ADMIN' && (
+            <div>
+              <div className="row mb-4">
+                <div className="col-12">
+                  <h2 className="text-primary">
+                    <i className="fas fa-chart-line me-2"></i>
+                    Dashboard Administrativo
+                  </h2>
+                  <p className="text-muted">Visualize o balanço financeiro da plataforma</p>
+                </div>
+              </div>
+              <Graphic />
+            </div>
           )}
 
           {activeButton === 'cadastrar-adm' && (
