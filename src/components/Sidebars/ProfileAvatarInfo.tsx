@@ -20,7 +20,7 @@ const ProfileAvatarInfo: React.FC<ProfileAvatarInfoProps> = ({
   const backendUrl = import.meta.env.VITE_API_URL;
 
   const getAvatarUrl = () => {
-    if (!user.avatarUrl) return "/img/default.jpg";
+    if (!user.avatarUrl) return "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
     return user.avatarUrl.startsWith("http")
       ? user.avatarUrl
       : backendUrl + user.avatarUrl;
