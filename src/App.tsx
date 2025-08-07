@@ -4,7 +4,6 @@ import Header from './components/Header/Header'
 import AppRoutes from './routes/Router/AppRoutes'
 import Footer from './components/Footer/Footer'
 import { AuthProvider } from './context/AuthContext'
-import PromoBanner from './pages/Banner/PromoBanner'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';

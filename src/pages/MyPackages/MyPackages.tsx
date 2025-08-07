@@ -30,6 +30,8 @@ function MyPackages({ userId }: Props) {
 
     const backendUrl = import.meta.env.VITE_API_URL;
 
+    console.log("packages", packages)
+
     const handleEdit = (packageId: number) => {
         const pkg = packages.find(p => p.packageId === packageId);
         if (pkg) {

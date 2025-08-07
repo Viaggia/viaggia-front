@@ -1,8 +1,11 @@
-import { FaHotel, FaTrash, FaEdit, FaStar, FaRegStar, FaClock, FaBed, FaGift } from 'react-icons/fa';
+import { FaHotel, FaTrash, FaEdit, FaStar, FaRegStar, FaClock, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { HotelDTO, RoomTypeEnum } from '../../../types/Hotel';
 import { formatPhone, formatCNPJ, formatCEP, formatCurrencyBRL } from '../../../utils/formatMask';
 import { comoditiesIcons } from '../../../utils/commoditiesIcons';
 import { useState } from 'react';
+import HotelCommoditiesIcons from './HotelCommoditiesIcons';
+import RoomTypeCardList from './RoomTypeCardList';
+import CustomCommodityCardList from './CustomCommodityCardList';
 
 const comoditiesLabels: Record<string, string> = {
   hasParking: 'Estacionamento',
@@ -40,287 +43,88 @@ function truncateText(text: string, maxLength: number) {
 }
 
 const HotelAdmCard = ({ hotel, onEdit, onDelete, deleting, backendUrl }: Props) => {
-  const [hoveredRoomId, setHoveredRoomId] = useState<number | null>(null);
-  const [hoveredCommodity, setHoveredCommodity] = useState<string | null>(null);
-  const [hoveredCustomCommodityId, setHoveredCustomCommodityId] = useState<number | null>(null);
-
-  const imagem =
-    hotel.medias && hotel.medias.length > 0
-      ? (backendUrl ? backendUrl + hotel.medias[0].mediaUrl : hotel.medias[0].mediaUrl)
-      : '/img/default.jpg';
+  // Carousel state
+  const [imgIndex, setImgIndex] = useState(0);
+  const images = hotel.medias && hotel.medias.length > 0
+    ? hotel.medias.map(m => backendUrl ? backendUrl + m.mediaUrl : m.mediaUrl)
+    : ['/img/default.jpg'];
 
   const enderecoCompleto = `${hotel.street}, ${hotel.city} - ${hotel.state}, CEP: ${formatCEP(hotel.zipCode)}`;
   const hotelCommodities = hotel.commodities?.[0] ?? {};
 
-  // Commodities padrão com hover detalhado
-  const activeIcons = Object.entries(comoditiesIcons)
-    .filter(([key]) => (hotelCommodities as any)[key])
-    .map(([key, icon]) => {
-      let priceKey = key.replace(/^has/, '').replace(/^is/, '');
-      priceKey = priceKey.charAt(0).toLowerCase() + priceKey.slice(1) + 'Price';
-      const price = (hotelCommodities as any)[priceKey];
-
-      return (
-        <span
-          key={key}
-          className="me-2 position-relative"
-          style={{
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            verticalAlign: 'middle',
-            marginBottom: 0
-          }}
-          onMouseEnter={() => setHoveredCommodity(key)}
-          onMouseLeave={() => setHoveredCommodity(null)}
-        >
-          {icon}
-          {hoveredCommodity === key && (
-            <div
-              className="shadow rounded p-2"
-              style={{
-                position: 'absolute',
-                top: '120%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 20,
-                minWidth: 'max-content',
-                maxWidth: 260,
-                background: '#fff',
-                border: '1px solid #e0e0e0',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-                fontSize: '0.95em',
-                textAlign: 'center',
-                whiteSpace: 'normal',
-                padding: '12px 16px'
-              }}
-            >
-              <div style={{ fontWeight: 600, wordBreak: 'break-word' }}>
-                {comoditiesLabels[key] || key}
-              </div>
-              {price !== undefined && price !== null && price > 0 && (
-                <span style={{
-                  background: '#e3f2fd',
-                  color: '#1976d2',
-                  fontWeight: 600,
-                  fontSize: '0.95em',
-                  padding: '2px 5px', // reduzido para igualar à custom
-                  borderRadius: 6,
-                  border: '1px solid #bbdefb',
-                  display: 'inline-block',
-                  minWidth: 38,
-                  maxWidth: 80,
-                  textAlign: 'center',
-                  marginTop: 8,
-                  whiteSpace: 'nowrap'
-                }}>
-                  {formatCurrencyBRL(price)}
-                </span>
-              )}
-            </div>
-          )}
-        </span>
-      );
-    });
-
-  // Mini cards das custom commodities
-  const customCommodityCards = hotel.customCommodities?.map(custom => {
-    const isFree = !custom.price || custom.price === 0;
-    return (
-      <div
-        key={custom.customCommodityId}
-        className="position-relative w-100 mb-1"
-        style={{
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          minWidth: 120,
-          maxWidth: '100%',
-        }}
-        onMouseEnter={() => setHoveredCustomCommodityId(custom.customCommodityId)}
-        onMouseLeave={() => setHoveredCustomCommodityId(null)}
-      >
-        <FaGift className="me-1 text-success" />
-        <span
-          style={{
-            fontWeight: 500,
-            fontSize: '0.97em',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            flexGrow: 1,
-            minWidth: 0,
-            marginRight: 8,
-          }}
-          title={custom.name}
-        >
-          {custom.name}
-        </span>
-        <span
-          style={{
-            background: isFree ? '#e8f5e9' : '#e3f2fd',
-            color: isFree ? '#388e3c' : '#1976d2',
-            fontWeight: 600,
-            fontSize: '0.95em',
-            padding: '2px 5px',
-            borderRadius: 6,
-            border: isFree ? '1px solid #c8e6c9' : '1px solid #bbdefb',
-            display: 'inline-block',
-            minWidth: 38,
-            maxWidth: 80,
-            textAlign: 'center',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {isFree ? 'Grátis' : formatCurrencyBRL(custom.price)}
-        </span>
-        {/* Hover card permanece igual */}
-        {hoveredCustomCommodityId === custom.customCommodityId && (
-          <div
-            className="shadow rounded p-2"
-            style={{
-              position: 'absolute',
-              top: '120%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 20,
-              minWidth: 'max-content',
-              maxWidth: 260,
-              background: '#fff',
-              border: '1px solid #e0e0e0',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-              fontSize: '0.95em',
-              textAlign: 'center',
-              whiteSpace: 'normal',
-              padding: '12px 16px'
-            }}
-          >
-            <div style={{ fontWeight: 600, wordBreak: 'break-word', marginBottom: 4 }}>
-              {custom.name}
-            </div>
-            <div style={{ fontSize: '0.93em', color: '#555', marginBottom: 6 }}>
-              {custom.description}
-            </div>
-            <span
-              style={{
-                background: isFree ? '#e8f5e9' : '#e3f2fd',
-                color: isFree ? '#388e3c' : '#1976d2',
-                fontWeight: 600,
-                fontSize: '0.95em',
-                padding: '2px 5px',
-                borderRadius: 6,
-                border: isFree ? '1px solid #c8e6c9' : '1px solid #bbdefb',
-                display: 'inline-block',
-                minWidth: 38,
-                maxWidth: 80,
-                textAlign: 'center',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              {isFree ? 'Grátis' : formatCurrencyBRL(custom.price)}
-            </span>
-          </div>
-        )}
-      </div>
-    );
-  });
-
-  function getRoomTypeLabel(room: any): string {
-    if (typeof room.name === 'string' && roomTypeLabels[room.name as RoomTypeEnum]) {
-      return roomTypeLabels[room.name as RoomTypeEnum];
-    }
-    const roomTypeEnumValues: RoomTypeEnum[] = ['Single', 'Double', 'Suite', 'Deluxe', 'Family'];
-    if (typeof room.name === 'number' && roomTypeEnumValues[room.name]) {
-      return roomTypeLabels[roomTypeEnumValues[room.name]];
-    }
-    return String(room.name);
+  function handlePrevImg() {
+    setImgIndex(i => (i === 0 ? images.length - 1 : i - 1));
   }
-
-  // Mini cards dos quartos
-  const roomCards = hotel.roomTypes?.map(room => (
-    <div
-      key={room.roomTypeId}
-      className="border rounded px-2 py-1 me-2 mb-2 d-inline-flex align-items-center position-relative"
-      style={{ fontSize: '0.85em', background: '#f8f9fa', minWidth: 120, cursor: 'pointer' }}
-      onMouseEnter={() => setHoveredRoomId(room.roomTypeId)}
-      onMouseLeave={() => setHoveredRoomId(null)}
-    >
-      <FaBed className="me-1 text-secondary" />
-      <span>
-        <strong>{getRoomTypeLabel(room)}</strong>
-        <span className="ms-1">({room.availableRooms}/{room.totalRooms})</span>
-      </span>
-      <span
-        className="ms-2 px-2 py-1 rounded"
-        style={{
-          background: '#e3f2fd',
-          color: '#1976d2',
-          fontWeight: 600,
-          fontSize: '0.85em',
-          marginLeft: 'auto',
-          minWidth: 38, // reduzido para igualar à custom
-          maxWidth: 80,
-          textAlign: 'center',
-          border: '1px solid #bbdefb',
-          whiteSpace: 'nowrap'
-        }}
-      >
-        R$ {room.price}
-      </span>
-      {hoveredRoomId === room.roomTypeId && (
-        <div
-          className="shadow rounded p-2"
-          style={{
-            position: 'absolute',
-            top: '110%',
-            left: 0,
-            zIndex: 10,
-            minWidth: 220,
-            background: '#fff',
-            border: '1px solid #e0e0e0',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-          }}
-        >
-          <div className="mb-1"><strong>{getRoomTypeLabel(room)}</strong></div>
-          <div className="mb-1"><strong>Descrição:</strong> {room.description}</div>
-          <div className="mb-1"><strong>Tipo de cama:</strong> {room.bedType}</div>
-          <div className="mb-1"><strong>Capacidade:</strong> {room.capacity} pessoa{room.capacity !== 1 ? 's' : ''}</div>
-          <div className="mb-1"><strong>Disponíveis:</strong> {room.availableRooms} / {room.totalRooms}</div>
-          <div className="mb-1">
-            <strong>Preço:</strong>
-            <span
-              style={{
-                background: '#e3f2fd',
-                color: '#1976d2',
-                fontWeight: 600,
-                fontSize: '0.95em',
-                padding: '2px 5px',
-                borderRadius: 6,
-                border: '1px solid #bbdefb',
-                display: 'inline-block',
-                minWidth: 38,
-                maxWidth: 80,
-                textAlign: 'center',
-                marginLeft: 6,
-                whiteSpace: 'nowrap'
-              }}
-            >
-              R$ {room.price}
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  ));
+  function handleNextImg() {
+    setImgIndex(i => (i === images.length - 1 ? 0 : i + 1));
+  }
 
   return (
     <div className="card shadow-sm h-100 d-flex flex-column" style={{ minHeight: 480 }}>
-      <img
-        src={imagem}
-        alt={hotel.name}
-        className="card-img-top"
-        style={{ objectFit: 'cover', height: 180 }}
-      />
+      <div style={{ position: 'relative', height: 180 }}>
+        <img
+          src={images[imgIndex]}
+          alt={hotel.name}
+          className="card-img-top"
+          style={{ objectFit: 'cover', height: 180, width: '100%' }}
+        />
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={handlePrevImg}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: 8,
+                transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.7)',
+                border: 'none',
+                borderRadius: '50%',
+                padding: 6,
+                cursor: 'pointer',
+                zIndex: 2
+              }}
+            >
+              <FaChevronLeft />
+            </button>
+            <button
+              type="button"
+              onClick={handleNextImg}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: 8,
+                transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.7)',
+                border: 'none',
+                borderRadius: '50%',
+                padding: 6,
+                cursor: 'pointer',
+                zIndex: 2
+              }}
+            >
+              <FaChevronRight />
+            </button>
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 8,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(0,0,0,0.5)',
+                color: '#fff',
+                borderRadius: 12,
+                fontSize: '0.95em',
+                padding: '2px 10px',
+                zIndex: 2
+              }}
+            >
+              {imgIndex + 1} / {images.length}
+            </div>
+          </>
+        )}
+      </div>
       <div className="card-body d-flex flex-column flex-grow-1">
         {/* Seção de dados principais */}
         <div>
@@ -340,7 +144,12 @@ const HotelAdmCard = ({ hotel, onEdit, onDelete, deleting, backendUrl }: Props) 
           </div>
           {/* Ícones das comodidades padrão */}
           <div className="mb-2 d-flex flex-wrap align-items-center gap-2">
-            {activeIcons}
+            <HotelCommoditiesIcons
+              commodities={hotelCommodities}
+              comoditiesIcons={comoditiesIcons}
+              comoditiesLabels={comoditiesLabels}
+              formatCurrencyBRL={formatCurrencyBRL}
+            />
           </div>
           <hr className="my-2" />
           <p
@@ -400,7 +209,7 @@ const HotelAdmCard = ({ hotel, onEdit, onDelete, deleting, backendUrl }: Props) 
             Quartos disponíveis
           </h6>
           <div className="d-flex flex-wrap">
-            {roomCards}
+            <RoomTypeCardList roomTypes={hotel.roomTypes ?? []} roomTypeLabels={roomTypeLabels} />
           </div>
         </div>
 
@@ -413,7 +222,7 @@ const HotelAdmCard = ({ hotel, onEdit, onDelete, deleting, backendUrl }: Props) 
                 Serviços e comodidades extras
               </h6>
               <div className="d-flex flex-column">
-                {customCommodityCards}
+                <CustomCommodityCardList customCommodities={hotel.customCommodities} />
               </div>
             </div>
           </>

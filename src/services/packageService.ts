@@ -48,7 +48,14 @@ export const updatePackage = async (packageId: number, data: PackageUpdateDTO) =
   formData.append('name', data.name);
   formData.append('destination', data.destination);
   formData.append('description', data.description || '');
-  formData.append('basePrice', data.basePrice.toString());
+
+  // Tratamento do campo basePrice: troca '.' por ','
+  if (typeof data.basePrice === 'number') {
+    formData.append('basePrice', data.basePrice.toString().replace('.', ','));
+  } else {
+    formData.append('basePrice', String(data.basePrice).replace('.', ','));
+  }
+
   formData.append('hotelName', data.hotelName);
   formData.append('isActive', data.isActive.toString());
   if (data.startDate) formData.append('startDate', data.startDate);

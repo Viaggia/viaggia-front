@@ -40,7 +40,7 @@ function Header() {
 
   return (
     <header>
-      <div className='navbar navbar-expand-lg navbar-dark bg-viaggia px-4'>
+      <div className='navbar navbar-expand-lg navbar-dark bg-viaggia px-4 fixed-top' style={{ zIndex: 1040 }}>
         <Link to="/" className="navbar-brand d-flex align-items-center text-white gap-1">
         <img
           src="../../img/logoViaggiaSemNome.png"
