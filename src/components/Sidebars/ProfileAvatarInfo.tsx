@@ -47,6 +47,7 @@ const ProfileAvatarInfo: React.FC<ProfileAvatarInfoProps> = ({
         <div className={`mt-2 text-center ${textColor}`}>
             <h5 className="mb-1">{user.name}</h5>
             <p className="mb-1">{user.email}</p>
+
         </div>
     </div>
 );

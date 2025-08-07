@@ -13,12 +13,13 @@ import { updateUser } from '../../services/userService'
 import MyHotels from '../MyHotels/MyHotels'
 
 function Profile() {
-  const { user, role } = useAuth();
+  const { user, role, setUser } = useAuth();
   const [activeButton, setActiveButton] = useState('meu-perfil')
   const [hover, setHover] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  
 
 
   if (!user) {
@@ -50,18 +51,19 @@ function Profile() {
     }
   };
 
-  const handleAvatarUpload = async () => {
+    const handleAvatarUpload = async () => {
     if (!avatarFile) return;
     setUploading(true);
     try {
-      await updateUser(user.id, { name: user.name }, avatarFile);
-      window.location.reload();
+      const updatedUser = await updateUser(user.id, { name: user.name }, avatarFile);
+      setUser(updatedUser); // atualiza o contexto com os dados mais recentes
     } finally {
       setUploading(false);
       setShowModal(false);
       setAvatarFile(null);
     }
   };
+
 
   return (
     <div className="row m-0">

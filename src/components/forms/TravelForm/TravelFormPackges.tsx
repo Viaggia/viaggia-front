@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
 import { formatDateToISO, parseLocalDate } from "../../../utils/formatMask";
-import { Margin } from "@mui/icons-material";
 
 interface TravelFormProps {
   initialValues?: {
@@ -17,7 +16,7 @@ interface TravelFormProps {
   onSearch?: () => void;
 }
 
-export default function TravelForm({ initialValues, onSearch }: TravelFormProps) {
+export default function TravelFormPackeges({ initialValues, onSearch }: TravelFormProps) {
   const navigate = useNavigate();
   const [city, setCity] = useState(initialValues?.city || '');
 
@@ -55,34 +54,11 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
   return (
     <form className="row g-3 d-flex justify-content-center p-3 rounded" onSubmit={handleSubmit}>
       <div className="col-md-2">
-        <label className="form-label text-white fw-bold fs-5">Destino</label>
-        
-      
-      <input
-      type="text"
-      className="form-control border-primary"
-      style={{
-        borderWidth: '4px',
-        borderStyle: 'solid',
-        borderColor: '#0d6efd',
-        borderRadius: '10px'
-      }}
-      placeholder="Digite o destino"
-      value={city}
-      onChange={e => setCity(e.target.value)}
-    />
-
+        <label className="form-label text-white">Destino</label>
+        <input type="text" className="form-control" placeholder="Digite o destino" value={city} onChange={e => setCity(e.target.value)} />
       </div>
       <div className="col-md-2 d-flex flex-column">
-        <label className="form-label text-white fw-bold fs-5">Check-in</label>
-        <div
-        style={{
-          borderRadius: '10px',
-          padding: '4px', // espaço interno para não cortar o input
-          display: 'inline-block', // evita que a div ocupe toda a largura
-          backgroundColor: '#0d6efd' // fundo branco ao redor
-        }}
-      >
+        <label className="form-label text-white">Check-in</label>
         <DatePicker
           value={checkInDate}
           onChange={setCheckInDate}
@@ -97,18 +73,13 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
                   height: '38px',
                   fontSize: '1rem',
                   padding: 0,
-                  backgroundColor: '#fff',
                 },
                 '& input': {
                   minHeight: '36px',
                   height: '36px',
                   padding: '6px 12px',
                   fontSize: '1rem',
-                  backgroundColor: '#fff',
-                },
-                '& .MuiOutlinedInput-notchedOutline': {
-                  border: 'none', // remove o contorno padrão
-                },
+                }
               },
               InputLabelProps: { style: { color: "#fff" } },
               InputProps: { style: { background: "#fff" } }
@@ -116,18 +87,8 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
           }}
         />
       </div>
-
-      </div>
       <div className="col-md-2 d-flex flex-column">
-        <label className="form-label text-white fw-bold fs-5">Check-out </label>
-        <div
-        style={{
-          borderRadius: '10px',
-          padding: '4px',
-          display: 'inline-block',
-          backgroundColor: '#0d6efd'
-        }}
-      >
+        <label className="form-label text-white">Check-out</label>
         <DatePicker
           value={checkOutDate}
           onChange={setCheckOutDate}
@@ -142,18 +103,13 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
                   height: '38px',
                   fontSize: '1rem',
                   padding: 0,
-                  backgroundColor: '#fff',
                 },
                 '& input': {
                   minHeight: '36px',
                   height: '36px',
                   padding: '6px 12px',
                   fontSize: '1rem',
-                  backgroundColor: '#fff',
-                },
-                '& .MuiOutlinedInput-notchedOutline': {
-                  border: 'none',
-                },
+                }
               },
               InputLabelProps: { style: { color: "#fff" } },
               InputProps: { style: { background: "#fff" } }
@@ -161,49 +117,9 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
           }}
         />
       </div>
-
+      <div className="col-md-1 d-flex align-items-end">
+        <button type="submit" className="btn btn-info botao-buscar-grande px-4">Buscar</button>
       </div>
-      <div className="col-md-1">
-        <label className="form-label text-white fw-bold fs-5">Adultos</label>
-        <input type="number" className="form-control" 
-        style={{
-        borderWidth: '4px',
-        borderStyle: 'solid',
-        borderColor: '#0d6efd',
-        borderRadius: '10px'
-        }} 
-        min="1" value={adults} onChange={e => setAdults(Number(e.target.value))} />
-        </div>
-      <div className="col-md-1">
-        <label className="form-label text-white fw-bold fs-5">Crianças</label>
-        <input type="number" className="form-control" 
-        style={{
-        borderWidth: '4px',
-        borderStyle: 'solid',
-        borderColor: '#0d6efd',
-        borderRadius: '10px'
-        }}  
-        min="0" value={children} onChange={e => setChildren(Number(e.target.value))} />
-      </div>
-      <div className="col-md-1">
-        <label className="form-label text-white fw-bold fs-5">Quartos</label>
-        <input type="number" className="form-control" 
-        style={{
-        borderWidth: '4px',
-        borderStyle: 'solid',
-        borderColor: '#0d6efd',
-        borderRadius: '10px'
-        }} 
-        min="1" value={rooms} onChange={e => setRooms(Number(e.target.value))} />
-      </div>
-
-        {/* Botão Buscar */}
-          <div className="col-12 col-md-2 d-flex align-items-end mb-2">
-            <button type="submit" className="btn btn-info w-100 px-4">
-              Buscar
-            </button>
-          </div>
-
     </form>
   );
 }

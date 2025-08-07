@@ -61,7 +61,7 @@ function Search() {
       <section
         className="search-img text-white py-5 w-100 m-0"
         style={{
-          backgroundImage: 'url(https://www.budgetair.ie/media/1253/flights-brazil-rio-de-janeiro.jpg?center=0.41,0.47&mode=crop&quality=75&width=1920&height=560&rnd=132211480730000000)',
+          backgroundImage: 'url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/d0f4a590131921.5e0eb0ca39ce9.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           minWidth: '100vw',
@@ -74,7 +74,7 @@ function Search() {
             justifyContent: 'center',
           }}
         >
-          <div className="container bg-primary bg-opacity-100 p-4 rounded">
+          <div className="container bg-viaggia bg-opacity-100 p-4 rounded">
             <h2 className="mb-4 text-center">Escolha seu destino</h2>
             <TravelForm initialValues={initialValues} onSearch={handleSearch} />
           </div>
