@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
-import { formatDateToISO, parseLocalDate } from "../../../utils/formatMask";
+import { formatDateToBR, formatDateToISO, parseLocalDate } from "../../../utils/formatMask";
+import { searchPackages } from "../../../services/packageService";
+import { PackageDTO } from "../../../types/Package";
 
 interface TravelFormProps {
   initialValues?: {
@@ -13,43 +15,33 @@ interface TravelFormProps {
     children?: number;
   };
   isSearchPage?: boolean;
-  onSearch?: () => void;
+  onSearch?: (results: PackageDTO[]) => void
 }
+
 
 export default function TravelFormPackeges({ initialValues, onSearch }: TravelFormProps) {
   const navigate = useNavigate();
   const [city, setCity] = useState(initialValues?.city || '');
+  const [checkInDate, setCheckInDate] = useState<Date | null>(parseLocalDate(initialValues?.checkInDate));
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(parseLocalDate(initialValues?.checkOutDate));
+  
+  const formattedCheckIn = formatDateToBR(checkInDate);
+  const formattedCheckOut = formatDateToBR(checkOutDate);
 
-  const [checkInDate, setCheckInDate] = useState<Date | null>(
-    parseLocalDate(initialValues?.checkInDate)
-  );
-  const [checkOutDate, setCheckOutDate] = useState<Date | null>(
-    parseLocalDate(initialValues?.checkOutDate)
-  );
 
-  const [adults, setAdults] = useState(
-    initialValues?.numberOfPeople !== undefined
-      ? Math.max(1, (initialValues.numberOfPeople ?? 1) - (initialValues?.children ?? 0))
-      : 1
-  );
-  const [children, setChildren] = useState(0);
-  const [rooms, setRooms] = useState(initialValues?.numberOfRooms || 1);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  if (onSearch) onSearch();
-  const params = {
-    city,
-    checkInDate: formatDateToISO(checkInDate),
-    checkOutDate: formatDateToISO(checkOutDate),
-    numberOfPeople: (adults + children).toString(),
-    numberOfRooms: rooms.toString(),
-  };
-  navigate({
-    pathname: '/search',
-    search: `?${createSearchParams(params)}`,
-  });
+
+
+  try {
+    const results = await searchPackages(city, formattedCheckIn, formattedCheckOut);
+    console.log('Pacotes encontrados:', results);
+    if (onSearch) onSearch(results); // Atualiza os pacotes na mesma página
+  } catch (error) {
+    console.error('Erro ao buscar pacotes:', error);
+  }
 };
+
 
   return (
     <form className="row g-3 d-flex justify-content-center p-3 rounded" onSubmit={handleSubmit}>
