@@ -37,6 +37,18 @@ export const createPackage = async (data: PackageCreateDTO) => {
   return response.data;
 };
 
+export async function searchPackages(destination: string, startDate: string, endDate: string): Promise<PackageDTO[]> {
+  console.log(destination, startDate, endDate)
+  const response = await api.get('/api/Packages/search', {
+    params: {
+      destination,
+      startDate,
+      endDate,
+    },
+  });
+  return response.data.data;
+}
+
 export async function getPackagesByUserId(): Promise<PackageDTO[]> {
   const response = await api.get('/api/Packages/my-packages');
   return response.data.data;

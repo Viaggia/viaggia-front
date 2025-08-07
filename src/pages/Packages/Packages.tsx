@@ -122,7 +122,7 @@ function Packages() {
                       Escolha seu destino
                     </h2>
                     <div className="container bg-viaggia bg-opacity-100 rounded">
-                      <TravelFormPackeges />
+                      <TravelFormPackeges onSearch={(results) => setPackages(results)} />
                     </div>
                   </div>
           
