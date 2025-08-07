@@ -29,8 +29,7 @@ export interface ReservationCreateDTO {
   reserveRooms: ReserveRoomCreateDTO[];
 }
 
-export interface  ReserveRoomCreateDTO
-{
-    RoomTypeId: number;
-    Quantity: Number;
+export interface ReserveRoomCreateDTO {
+  roomTypeId: number;
+  quantity: number;
 }

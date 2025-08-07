@@ -6,6 +6,7 @@ import api from './api';
 
 export async function createPaymentIntent(data: ReservationCreateDTO): Promise<{ url: string }> {
   try {
+    console.log(data);
     const response = await api.post("https://localhost:7164/api/Payments/create-payment-intent", data);
 
     if (!response.status || response.status !== 200) {

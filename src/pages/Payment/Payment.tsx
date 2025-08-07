@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createPaymentIntent } from '../../services/paymentService';
-import { ReservationCreateDTO } from '../../types/Reservation';
+import { ReservationCreateDTO, ReserveRoomCreateDTO } from '../../types/Reservation';
 import { useAuth } from '../../context/AuthContext';
 
 const Payment: React.FC = () => {
@@ -78,9 +78,20 @@ const Payment: React.FC = () => {
   const handleGoToPaymentPending = async () => {
     // Validação baseada no tipo de reserva
     if (currentReservationType === 'hotel') {
-      if (!hotel || !selectedRooms || selectedRooms.length === 0) return;
+      if (!hotel || !selectedRooms || selectedRooms.length === 0) {
+        alert('Dados do hotel ou quartos selecionados estão incompletos');
+        return;
+      }
     } else if (currentReservationType === 'package') {
-      if (!packageData || !packageData.packageId) return;
+      if (!packageData || !packageData.packageId) {
+        alert('Dados do pacote estão incompletos');
+        return;
+      }
+      // Verificar se o pacote tem hotelId (obrigatório no backend)
+      if (!packageData.hotelId) {
+        alert('Pacote deve ter um hotel associado');
+        return;
+      }
     } else {
       alert('Tipo de reserva não identificado');
       return;
@@ -89,13 +100,13 @@ const Payment: React.FC = () => {
     setLoading(true);
 
     // Função para construir o DTO baseado no tipo de reserva
+    // DTO adequado para o backend C# ReserveCreateDTO
     const buildReservationDTO = (): ReservationCreateDTO => {
       const baseDTO = {
         userId,
-        userNameReservation: user?.name || '',
         checkInDate,
         checkOutDate,
-        totalPrice: total,
+        totalPrice: Math.round(total), // Backend espera int
         numberOfGuests,
         status: 'Pendente',
         isActive: true,
@@ -105,16 +116,24 @@ const Payment: React.FC = () => {
         return {
           ...baseDTO,
           packageId: packageData.packageId,
-          // roomTypeId e hotelId ficam undefined para pacotes
+          hotelId: packageData.hotelId, // Pacotes também precisam do hotelId (obrigatório no backend)
+          reserveRooms: [], // Pacotes podem não ter quartos específicos
         };
       }
 
       if (currentReservationType === 'hotel') {
+        // Constrói a lista de quartos reservados conforme ReserveRoomCreateDTO
+        const reserveRooms: ReserveRoomCreateDTO[] = selectedRooms.map((room: any) => ({
+          roomTypeId: room.roomTypeId,
+          quantity: room.quantity,
+          pricePerNight: room.price,
+        }));
+
         return {
           ...baseDTO,
-          roomTypeId: selectedRooms[0].roomTypeId,
+          packageId: undefined, // undefined para reservas avulsas
           hotelId: hotel.hotelId,
-          // packageId fica undefined para reservas avulsas
+          reserveRooms,
         };
       }
 
