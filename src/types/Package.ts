@@ -31,3 +31,15 @@ export interface PackageCreateDTO {
   mediaFiles: File[];
 }
 
+export interface PackageUpdateDTO {
+  name: string;
+  destination: string;
+  description?: string;
+  basePrice: number;
+  hotelName: string;
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  mediaIdsToDelete: number[];
+  newMediaFiles: File[];
+}
