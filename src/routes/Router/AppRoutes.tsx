@@ -61,9 +61,6 @@ function AppRoutes() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/privacy" element={<PrivacyTerms />} />
       <Route path="/package-details/:packageId" element={<DetailsPackage />} />
-      <Route path="/review/:hotelId" element={<MakeReviewWrapper />} />
-      <Route path="/review" element={<MakeReview hotelId={1} />} />
-
     </Routes>
   )
 }

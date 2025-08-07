@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { PackageCreateDTO, PackageDTO, PackageUpdateDTO } from '../../../types/Package';
 import { createPackage, updatePackage } from '../../../services/packageService';
 import ToastForm from '../../Toast/ToastForm';
-import { getHotels } from '../../../services/hotelService';
+import { getHotels, getHotelsByUserId } from '../../../services/hotelService';
 import { formatCurrencyBRL, formatDateInput, parseCurrencyBRL } from '../../../utils/formatMask';
+import { useAuth } from '../../../context/AuthContext';
 
 type FormMode = 'create' | 'edit';
 
@@ -22,6 +23,7 @@ function CreatePackageForm({
   onClose,
   onSubmitSuccess,
 }: CreatePackageFormProps) {
+  const { user } = useAuth();
   const [showToast, setShowToast] = useState(false);
   const [hotels, setHotels] = useState<{ name: string }[]>([]);
   const [formData, setFormData] = useState<PackageCreateDTO | PackageUpdateDTO>(
@@ -53,8 +55,10 @@ function CreatePackageForm({
   );
 
   useEffect(() => {
-    getHotels().then(hs => setHotels(hs));
-  }, []);
+    if (user?.id) {
+      getHotelsByUserId(user.id).then(hs => setHotels(hs));
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     if (initialData) setFormData(initialData);

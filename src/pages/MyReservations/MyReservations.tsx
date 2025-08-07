@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './MyReservations.css';
 import { useAuth } from '../../context/AuthContext';
 import { getReservationsByUserId } from '../../services/reserveService';
-import { Reservation } from '../../types/Reservation';
+import { ReserveDTO } from '../../types/Reservation';
+import ReservationCard from '../../components/cards/ReservationCard/ReservationCard';
+import MakeReview from '../../pages/Review/MakeReview';
 
 const MyReservations: React.FC = () => {
   const [detalheAberto, setDetalheAberto] = useState<number | null>(null);
-  const [reservas, setReservas] = useState<Reservation[]>([]);
+  const [reservas, setReservas] = useState<ReserveDTO[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedHotelId, setSelectedHotelId] = useState<number | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -22,6 +24,18 @@ const MyReservations: React.FC = () => {
 
   const toggleDetalhes = (id: number) => {
     setDetalheAberto(detalheAberto === id ? null : id);
+  };
+
+  const handleOpenReview = (hotelId: number | undefined) => {
+    if (hotelId) {
+      setSelectedHotelId(hotelId);
+      setShowReviewModal(true);
+    }
+  };
+
+  const handleCloseReview = () => {
+    setShowReviewModal(false);
+    setSelectedHotelId(null);
   };
 
   return (
@@ -44,51 +58,15 @@ const MyReservations: React.FC = () => {
               Explore nossos hotéis e pacotes para fazer sua primeira reserva!
             </div>
           ) : (
-            reservas.map((reserva) => {
-              const totalCompra = reserva.totalPrice || 0;
-              return (
-                <div className="reservepag-card mb-4" key={reserva.reservationId}>
-                  <button
-                    className="reservepag-toggle btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center"
-                    onClick={() => toggleDetalhes(reserva.reservationId)}
-                  >
-                    <span>
-                      <strong>
-                        {reserva.hotelId
-                          ? `Hotel #${reserva.hotelId}`
-                          : reserva.packageId
-                          ? `Pacote #${reserva.packageId}`
-                          : 'Reserva'}
-                      </strong>
-                      <span className="ms-2 text-muted">ID: {reserva.reservationId}</span>
-                    </span>
-                    <span className="reservepag-seta">{detalheAberto === reserva.reservationId ? '▲' : '▼'}</span>
-                  </button>
-                  {detalheAberto === reserva.reservationId && (
-                    <div className="reservepag-detalhes p-3 border rounded bg-light mt-2">
-                      <div className="row mb-2">
-                        <div className="col-md-6">
-                          <p><strong>Check-in:</strong> {reserva.checkInDate?.substring(0,10)}</p>
-                          <p><strong>Check-out:</strong> {reserva.checkOutDate?.substring(0,10)}</p>
-                          <p><strong>Quarto:</strong> {reserva.roomTypeId || '-'}</p>
-                          <p><strong>Hóspedes:</strong> {reserva.numberOfGuests}</p>
-                        </div>
-                        <div className="col-md-6">
-                          <p><strong>Status:</strong> {reserva.status}</p>
-                          <p><strong>Ativa:</strong> {reserva.isActive ? 'Sim' : 'Não'}</p>
-                          <p><strong>Total:</strong> R${Number(totalCompra).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                        </div>
-                      </div>
-                      <div className="reservepag-cancel-wrapper text-end">
-                        <button className="btn btn-danger" onClick={() => navigate('/cancel-reservation')}>
-                          Cancelar minha reserva
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })
+            reservas.map((reserva) => (
+              <ReservationCard
+                key={reserva.reserveId}
+                reserva={reserva}
+                detalheAberto={detalheAberto}
+                toggleDetalhes={toggleDetalhes}
+                onAvaliar={handleOpenReview}
+              />
+            ))
           )}
         </div>
         <div className="card-footer bg-white text-end">
@@ -97,6 +75,24 @@ const MyReservations: React.FC = () => {
           </a>
         </div>
       </div>
+
+      {/* Modal de avaliação */}
+      {showReviewModal && selectedHotelId && (
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Avaliar Hotel</h5>
+                <button type="button" className="btn-close" onClick={handleCloseReview}></button>
+              </div>
+              <div className="modal-body">
+                <MakeReview hotelId={selectedHotelId} />
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show" onClick={handleCloseReview}></div>
+        </div>
+      )}
     </div>
   );
 };

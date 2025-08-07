@@ -39,16 +39,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ userId }) => {
     role === 'ATTENDANT' ? 'requests' : 'my-hotels'
   );
 
-  let buttons;
-  if (role === 'ADMIN') {
-    buttons = adminButtons;
-  } else if (role === 'SERVICE_PROVIDER') {
-    buttons = serviceProviderButtons;
-  } else if (role === 'ATTENDANT') {
-    buttons = attendantButtons;
-  } else {
-    buttons = [];
-  }
+  let buttons: { value: string; label: string }[];
+if (role === 'ADMIN') {
+  buttons = adminButtons;
+} else if (role === 'SERVICE_PROVIDER') {
+  buttons = serviceProviderButtons;
+} else if (role === 'ATTENDANT') {
+  buttons = attendantButtons;
+} else {
+  buttons = [];
+}
 
   return (
     <div>
