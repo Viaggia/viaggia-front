@@ -16,7 +16,6 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
         <div className="d-flex flex-column min-vh-100">
           <Router>
-            <PromoBanner/>
             <Header />
             <main className="flex-grow-1">
               <AppRoutes />

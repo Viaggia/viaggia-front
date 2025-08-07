@@ -7,6 +7,8 @@ import EditHotelForm from '../../components/forms/EditHotelForm/EditHotelForm';
 import HotelEditStepper from '../../components/forms/EditHotelForm/HotelEditStepper';
 import ToastForm from '../../components/Toast/ToastForm';
 
+const backendUrl = import.meta.env.VITE_API_URL;
+
 interface Props {
     userId: number;
 }
@@ -40,6 +42,8 @@ function MyHotels({ userId }: Props) {
             .then(setHotels)
             .finally(() => setLoading(false));
     }, [userId]);
+
+    console.log("hotels", hotels)
 
     useEffect(() => {
         if (editingHotel) {
@@ -181,6 +185,7 @@ function MyHotels({ userId }: Props) {
                                     onEdit={handleEdit}
                                     onDelete={handleDelete}
                                     deleting={deletingId === hotel.hotelId}
+                                    backendUrl={backendUrl}
                                 />
                             </div>
                         ))}
