@@ -40,11 +40,18 @@ function Header() {
 
   return (
     <header>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-viaggia px-4">
-        <Link to="/" className="navbar-brand d-flex align-items-center text-white">
-          <FaPlaneDeparture className="me-2" />
-          <strong>Viaggia</strong>
-        </Link>
+      <div className='navbar navbar-expand-lg navbar-dark bg-viaggia px-4'>
+        <Link to="/" className="navbar-brand d-flex align-items-center text-white gap-1">
+        <img
+          src="../../img/logoViaggiaSemNome.png"
+          alt="Logo"
+          className="d-inline-block align-text-top"
+          style={{ height: '2em' }}
+        />
+        <strong>Viaggia</strong>
+
+      </Link>
+
 
         {/* Botão hamburguer */}
         <button
@@ -114,7 +121,9 @@ function Header() {
             )}
           </div>
         </div>
-      </nav>
+      </div>
+
+    
 
     </header>
   )

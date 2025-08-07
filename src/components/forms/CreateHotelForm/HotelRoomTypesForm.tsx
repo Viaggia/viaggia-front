@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { RoomTypeEnum, CreateHotelRoomTypeDTO } from '../../../types/Hotel';
+import { RoomTypeEnum, CreateHotelRoomTypeDTO, HotelRoomTypeDTO } from '../../../types/Hotel';
 import { formatCurrencyBRL, parseCurrencyBRL, parseFieldValue } from '../../../utils/formatMask';
 
-interface Props {
-  roomTypes: CreateHotelRoomTypeDTO[];
-  setRoomTypes: (data: CreateHotelRoomTypeDTO[]) => void;
+type RoomType = CreateHotelRoomTypeDTO | HotelRoomTypeDTO;
+
+interface Props<T extends RoomType = RoomType> {
+  roomTypes: T[];
+  setRoomTypes: (data: T[]) => void;
   nextStep: () => void;
   prevStep: () => void;
 }
@@ -20,7 +22,35 @@ const defaultRoom: CreateHotelRoomTypeDTO = {
   totalRooms: 1,
 };
 
-const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep, prevStep }) => {
+// Função para garantir que o name seja sempre do tipo RoomTypeEnum válido
+function normalizeRoom(room: RoomType): CreateHotelRoomTypeDTO {
+  let name: RoomTypeEnum;
+
+  if (typeof room.name === 'number') {
+    // Se vier como número, converte para o valor do enum (RoomTypeEnum[])
+    name = roomTypeOptions[room.name - 1] || 'Single';
+  } else if (roomTypeOptions.includes(room.name as RoomTypeEnum)) {
+    name = room.name as RoomTypeEnum;
+  } else {
+    name = 'Single';
+  }
+
+  return {
+    name,
+    description: room.description ?? '',
+    price: room.price ?? 0,
+    capacity: room.capacity ?? 1,
+    bedType: room.bedType ?? '',
+    totalRooms: room.totalRooms ?? 1,
+  };
+}
+
+const HotelRoomTypesForm = <T extends RoomType = RoomType>({
+  roomTypes,
+  setRoomTypes,
+  nextStep,
+  prevStep,
+}: Props<T>) => {
   const [isAdding, setIsAdding] = useState(false);
   const [newRoom, setNewRoom] = useState<CreateHotelRoomTypeDTO>({ ...defaultRoom });
 
@@ -47,9 +77,11 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
       parsedValue = parseFieldValue(name, value, type, ['price', 'capacity', 'totalRooms']);
     }
 
-    const updated = [...roomTypes];
-    updated[index] = { ...updated[index], [name]: parsedValue };
-    setRoomTypes(updated);
+    // Normaliza para garantir compatibilidade
+    const updated = roomTypes.map((room, i) =>
+      i === index ? { ...room, [name]: parsedValue } : room
+    );
+    setRoomTypes(updated as T[]);
   };
 
   const addRoomType = () => {
@@ -60,7 +92,7 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
       newRoom.bedType.trim() !== '' &&
       newRoom.totalRooms > 0
     ) {
-      setRoomTypes([...roomTypes, newRoom]);
+      setRoomTypes([...roomTypes, newRoom] as T[]);
       setNewRoom({ ...defaultRoom });
       setIsAdding(false);
     } else {
@@ -70,18 +102,21 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
 
   const removeRoomType = (index: number) => {
     const updated = roomTypes.filter((_, i) => i !== index);
-    setRoomTypes(updated);
+    setRoomTypes(updated as T[]);
   };
 
   const validateRoomTypes = () =>
-    roomTypes.every(
-      room =>
-        room.name &&
-        room.price > 0 &&
-        room.capacity > 0 &&
-        room.bedType.trim() !== '' &&
-        room.totalRooms > 0
-    );
+    roomTypes.every(room => {
+      const r = normalizeRoom(room);
+      return (
+        r.name &&
+        roomTypeOptions.includes(r.name as RoomTypeEnum) &&
+        r.price > 0 &&
+        r.capacity > 0 &&
+        r.bedType.trim() !== '' &&
+        r.totalRooms > 0
+      );
+    });
 
   return (
     <div>
@@ -173,87 +208,90 @@ const HotelRoomTypesForm: React.FC<Props> = ({ roomTypes, setRoomTypes, nextStep
 
       {/* Cards em grid 2 por linha */}
       <div className="row">
-        {roomTypes.map((room, index) => (
-          <div key={index} className="col-md-6 mb-3">
-            <div className="card p-3 h-100">
-              <h6 className="mb-3">Tipo de Quarto #{index + 1}</h6>
-              <div className="mb-2">
-                <label className="form-label">Tipo</label>
-                <select
-                  name="name"
-                  value={room.name}
-                  onChange={(e) => handleExistingRoomChange(index, e)}
-                  className="form-select"
+        {roomTypes.map((room, index) => {
+          const r = normalizeRoom(room);
+          return (
+            <div key={index} className="col-md-6 mb-3">
+              <div className="card p-3 h-100">
+                <h6 className="mb-3">Tipo de Quarto #{index + 1}</h6>
+                <div className="mb-2">
+                  <label className="form-label">Tipo</label>
+                  <select
+                    name="name"
+                    value={r.name}
+                    onChange={(e) => handleExistingRoomChange(index, e)}
+                    className="form-select"
+                  >
+                    {roomTypeOptions.map(option => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-2">
+                  <label className="form-label">Descrição</label>
+                  <input
+                    type="text"
+                    name="description"
+                    value={r.description}
+                    onChange={(e) => handleExistingRoomChange(index, e)}
+                    className="form-control"
+                  />
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-2">
+                    <label className="form-label">Preço</label>
+                    <input
+                      type="text"
+                      name="price"
+                      value={formatCurrencyBRL(r.price)}
+                      onChange={e => handleExistingRoomChange(index, e)}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-6 mb-2">
+                    <label className="form-label">Capacidade</label>
+                    <input
+                      type="number"
+                      name="capacity"
+                      value={r.capacity}
+                      onChange={(e) => handleExistingRoomChange(index, e)}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-6 mb-2">
+                    <label className="form-label">Tipo de Cama</label>
+                    <input
+                      type="text"
+                      name="bedType"
+                      value={r.bedType}
+                      onChange={(e) => handleExistingRoomChange(index, e)}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-6 mb-2">
+                    <label className="form-label">Total de Quartos</label>
+                    <input
+                      type="number"
+                      name="totalRooms"
+                      value={r.totalRooms}
+                      onChange={(e) => handleExistingRoomChange(index, e)}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-danger mt-2"
+                  onClick={() => removeRoomType(index)}
                 >
-                  {roomTypeOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
+                  Remover
+                </button>
               </div>
-              <div className="mb-2">
-                <label className="form-label">Descrição</label>
-                <input
-                  type="text"
-                  name="description"
-                  value={room.description}
-                  onChange={(e) => handleExistingRoomChange(index, e)}
-                  className="form-control"
-                />
-              </div>
-              <div className="row">
-                <div className="col-6 mb-2">
-                  <label className="form-label">Preço</label>
-                  <input
-                    type="text"
-                    name="price"
-                    value={formatCurrencyBRL(room.price)}
-                    onChange={e => handleExistingRoomChange(index, e)}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-6 mb-2">
-                  <label className="form-label">Capacidade</label>
-                  <input
-                    type="number"
-                    name="capacity"
-                    value={room.capacity}
-                    onChange={(e) => handleExistingRoomChange(index, e)}
-                    className="form-control"
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-6 mb-2">
-                  <label className="form-label">Tipo de Cama</label>
-                  <input
-                    type="text"
-                    name="bedType"
-                    value={room.bedType}
-                    onChange={(e) => handleExistingRoomChange(index, e)}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-6 mb-2">
-                  <label className="form-label">Total de Quartos</label>
-                  <input
-                    type="number"
-                    name="totalRooms"
-                    value={room.totalRooms}
-                    onChange={(e) => handleExistingRoomChange(index, e)}
-                    className="form-control"
-                  />
-                </div>
-              </div>
-              <button
-                type="button"
-                className="btn btn-danger mt-2"
-                onClick={() => removeRoomType(index)}
-              >
-                Remover
-              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {!isAdding && (

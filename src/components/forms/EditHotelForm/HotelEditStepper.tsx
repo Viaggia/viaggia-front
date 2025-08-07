@@ -4,7 +4,7 @@ import HotelBasicInfoForm from '../CreateHotelForm/HotelBasicInfoForm';
 import HotelRoomTypesForm from '../CreateHotelForm/HotelRoomTypesForm';
 import HotelReviewSubmit from '../CreateHotelForm/HotelReviewSubmit';
 import ToastForm from '../../Toast/ToastForm';
-import { HotelDTO, CreateHotelRoomTypeDTO, CreateCommodityDTO } from '../../../types/Hotel';
+import { HotelDTO, HotelRoomTypeDTO, CommodityDTO, CustomCommodityDTO, UpdateHotelDTO, UpdateCommodityDTO, UpdateCustomCommodityDTO } from '../../../types/Hotel';
 import HotelCommoditiesForm from '../CreateHotelForm/HotelCommoditiesForm';
 import { updateCommodity, updateCustomCommodity } from '../../../services/commodityService';
 
@@ -14,52 +14,21 @@ interface Props {
     onHotelUpdated?: (hotel: HotelDTO) => void;
 }
 
-const roomTypeEnumMap = ['Single', 'Double', 'Suite', 'Deluxe', 'Family'] as const;
+// Tipos para edição (incluem IDs)
+type EditRoomType = HotelRoomTypeDTO;
+type EditCommodity = CommodityDTO;
+type EditCustomCommodity = CustomCommodityDTO;
 
 function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(true);
 
-    const [formData, setFormData] = useState<any>(null);
-    const [roomTypes, setRoomTypes] = useState<CreateHotelRoomTypeDTO[]>([]);
+    // Estado com IDs
+    const [formData, setFormData] = useState<UpdateHotelDTO | null>(null);
+    const [roomTypes, setRoomTypes] = useState<EditRoomType[]>([]);
     const [showToast, setShowToast] = useState(false);
-    const [commoditiesFormData, setCommoditiesFormData] = useState<Omit<CreateCommodityDTO, 'hotelName'>>({
-        hasParking: false,
-        isParkingPaid: false,
-        parkingPrice: 0,
-        hasBreakfast: false,
-        isBreakfastPaid: false,
-        breakfastPrice: 0,
-        hasLunch: false,
-        isLunchPaid: false,
-        lunchPrice: 0,
-        hasDinner: false,
-        isDinnerPaid: false,
-        dinnerPrice: 0,
-        hasSpa: false,
-        isSpaPaid: false,
-        spaPrice: 0,
-        hasPool: false,
-        isPoolPaid: false,
-        poolPrice: 0,
-        hasGym: false,
-        isGymPaid: false,
-        gymPrice: 0,
-        hasWiFi: false,
-        isWiFiPaid: false,
-        wiFiPrice: 0,
-        hasAirConditioning: false,
-        isAirConditioningPaid: false,
-        airConditioningPrice: 0,
-        hasAccessibilityFeatures: false,
-        isAccessibilityFeaturesPaid: false,
-        accessibilityFeaturesPrice: 0,
-        isPetFriendly: false,
-        isPetFriendlyPaid: false,
-        petFriendlyPrice: 0,
-        isActive: true,
-        customCommodities: []
-    });
+    const [commodity, setCommodity] = useState<EditCommodity | null>(null);
+    const [customCommodities, setCustomCommodities] = useState<EditCustomCommodity[]>([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -67,6 +36,7 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
             const hotel: HotelDTO = await getHotelById(hotelId);
 
             setFormData({
+                hotelId: hotel.hotelId,
                 name: hotel.name,
                 cnpj: hotel.cnpj,
                 street: hotel.street,
@@ -81,124 +51,95 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
                 contactEmail: hotel.contactEmail || '',
                 isActive: hotel.isActive,
                 mediaFiles: [],
+                roomTypesJson: '', // será preenchido no submit
             });
 
-            setRoomTypes(
-                hotel.roomTypes?.map(rt => ({
-                    name: roomTypeEnumMap[typeof rt.name === 'number' ? rt.name : 0],
-                    description: rt.description || '',
-                    price: Number(rt.price) || 0,
-                    capacity: Number(rt.capacity) || 1,
-                    bedType: rt.bedType || '',
-                    totalRooms: Number(rt.totalRooms) || 1,
-                })) || []
+            console.log('hotel', hotel);
+
+            setRoomTypes(hotel.roomTypes || []);
+            setCommodity(hotel.commodities?.[0] || null);
+
+            // Junta customCommodities da commodity e do hotel (caso existam nos dois)
+            const customs: EditCustomCommodity[] = [
+                ...(hotel.commodities?.[0]?.customCommodities ?? []),
+                ...(hotel.customCommodities ?? [])
+            ];
+            // Remove duplicados por customCommodityId
+            const customsUnique = customs.filter(
+                (item, idx, arr) =>
+                    item.customCommodityId &&
+                    arr.findIndex(i => i.customCommodityId === item.customCommodityId) === idx
             );
-
-            const c = hotel.commodities?.[0];
-            console.log("commodities", c);
-            setCommoditiesFormData({
-                hasParking: c?.hasParking ?? false,
-                isParkingPaid: c?.isParkingPaid ?? false,
-                parkingPrice: c?.parkingPrice ?? 0,
-                hasBreakfast: c?.hasBreakfast ?? false,
-                isBreakfastPaid: c?.isBreakfastPaid ?? false,
-                breakfastPrice: c?.breakfastPrice ?? 0,
-                hasLunch: c?.hasLunch ?? false,
-                isLunchPaid: c?.isLunchPaid ?? false,
-                lunchPrice: c?.lunchPrice ?? 0,
-                hasDinner: c?.hasDinner ?? false,
-                isDinnerPaid: c?.isDinnerPaid ?? false,
-                dinnerPrice: c?.dinnerPrice ?? 0,
-                hasSpa: c?.hasSpa ?? false,
-                isSpaPaid: c?.isSpaPaid ?? false,
-                spaPrice: c?.spaPrice ?? 0,
-                hasPool: c?.hasPool ?? false,
-                isPoolPaid: c?.isPoolPaid ?? false,
-                poolPrice: c?.poolPrice ?? 0,
-                hasGym: c?.hasGym ?? false,
-                isGymPaid: c?.isGymPaid ?? false,
-                gymPrice: c?.gymPrice ?? 0,
-                hasWiFi: c?.hasWiFi ?? false,
-                isWiFiPaid: c?.isWiFiPaid ?? false,
-                wiFiPrice: c?.wiFiPrice ?? 0,
-                hasAirConditioning: c?.hasAirConditioning ?? false,
-                isAirConditioningPaid: c?.isAirConditioningPaid ?? false,
-                airConditioningPrice: c?.airConditioningPrice ?? 0,
-                hasAccessibilityFeatures: c?.hasAccessibilityFeatures ?? false,
-                isAccessibilityFeaturesPaid: c?.isAccessibilityFeaturesPaid ?? false,
-                accessibilityFeaturesPrice: c?.accessibilityFeaturesPrice ?? 0,
-                isPetFriendly: c?.isPetFriendly ?? false,
-                isPetFriendlyPaid: c?.isPetFriendlyPaid ?? false,
-                petFriendlyPrice: c?.petFriendlyPrice ?? 0,
-                isActive: c?.isActive ?? true,
-                customCommodities: [
-                    ...(c?.customCommodities ?? []),
-                    ...(hotel.customCommodities ?? [])
-                ].map(custom => ({
-                    name: custom.name,
-                    isPaid: custom.isPaid,
-                    price: custom.price,
-                    description: custom.description,
-                    isActive: custom.isActive,
-                    hotelName: '',
-                }))
-            });
+            setCustomCommodities(customsUnique);
 
             setLoading(false);
         }
         fetchData();
     }, [hotelId]);
 
+    // Atualiza o hotel, commodity e custom commodities
     const handleSubmit = async () => {
-        // 1. Atualiza o hotel
-        const dto = {
-            hotelId,
-            name: formData.name,
-            cnpj: formData.cnpj,
-            street: formData.street,
-            city: formData.city,
-            state: formData.state,
-            zipCode: formData.zipCode,
-            description: formData.description || '',
-            starRating: Number(formData.starRating),
-            checkInTime: formData.checkInTime || '',
-            checkOutTime: formData.checkOutTime || '',
-            contactPhone: formData.contactPhone || '',
-            contactEmail: formData.contactEmail || '',
-            isActive: Boolean(formData.isActive),
-            mediaFiles: formData.mediaFiles || [],
+        if (!formData || !commodity) return;
+
+        // Atualiza hotel
+        const dto: UpdateHotelDTO = {
+            ...formData,
             roomTypesJson: JSON.stringify(roomTypes),
         };
-        await updateHotel(hotelId, dto);
+        await updateHotel(formData.hotelId, dto);
 
-        // 2. Atualiza a commodity principal
-        // Pegue o commodityId do hotel carregado (você já tem no objeto hotel)
-        const hotel = await getHotelById(hotelId);
-        console.log("Loaded hotel:", hotel);
-        const commodityId = hotel.commodities?.[0]?.commodityId;
-        console.log("hotel.commodities:", hotel.commodities);
-        console.log("Updating commodity with ID:", commodityId);
-        if (commodityId) {
-            await updateCommodity(commodityId, {
-                hotelName: hotel.name,
-                ...commoditiesFormData
-            });
-        }
+        // Atualiza commodity
+        await updateCommodity(commodity.commodityId, {
+            hotelName: formData.name,
+            hasParking: commodity.hasParking,
+            isParkingPaid: commodity.isParkingPaid,
+            parkingPrice: commodity.parkingPrice,
+            hasBreakfast: commodity.hasBreakfast,
+            isBreakfastPaid: commodity.isBreakfastPaid,
+            breakfastPrice: commodity.breakfastPrice,
+            hasLunch: commodity.hasLunch,
+            isLunchPaid: commodity.isLunchPaid,
+            lunchPrice: commodity.lunchPrice,
+            hasDinner: commodity.hasDinner,
+            isDinnerPaid: commodity.isDinnerPaid,
+            dinnerPrice: commodity.dinnerPrice,
+            hasSpa: commodity.hasSpa,
+            isSpaPaid: commodity.isSpaPaid,
+            spaPrice: commodity.spaPrice,
+            hasPool: commodity.hasPool,
+            isPoolPaid: commodity.isPoolPaid,
+            poolPrice: commodity.poolPrice,
+            hasGym: commodity.hasGym,
+            isGymPaid: commodity.isGymPaid,
+            gymPrice: commodity.gymPrice,
+            hasWiFi: commodity.hasWiFi,
+            isWiFiPaid: commodity.isWiFiPaid,
+            wiFiPrice: commodity.wiFiPrice,
+            hasAirConditioning: commodity.hasAirConditioning,
+            isAirConditioningPaid: commodity.isAirConditioningPaid,
+            airConditioningPrice: commodity.airConditioningPrice,
+            hasAccessibilityFeatures: commodity.hasAccessibilityFeatures,
+            isAccessibilityFeaturesPaid: commodity.isAccessibilityFeaturesPaid,
+            accessibilityFeaturesPrice: commodity.accessibilityFeaturesPrice,
+            isPetFriendly: commodity.isPetFriendly,
+            isPetFriendlyPaid: commodity.isPetFriendlyPaid,
+            petFriendlyPrice: commodity.petFriendlyPrice,
+            isActive: commodity.isActive,
+        });
 
-        // 3. Atualiza cada custom commodity
-        if (commoditiesFormData.customCommodities && commoditiesFormData.customCommodities.length > 0) {
-            for (const custom of commoditiesFormData.customCommodities) {
-                // Só atualize se já existir customCommodityId (senão é novo, aí seria POST)
-                if ((custom as any).customCommodityId) {
-                    await updateCustomCommodity((custom as any).customCommodityId, {
-                        name: custom.name,
-                        hotelName: hotel.name,
-                        isPaid: custom.isPaid,
-                        price: custom.price,
-                        description: custom.description,
-                        isActive: custom.isActive,
-                    });
-                }
+        console.log("customCommodities", customCommodities)
+
+        // Atualiza custom commodities existentes
+        for (const custom of customCommodities) {
+            if (custom.customCommodityId) {
+                await updateCustomCommodity(custom.customCommodityId, {
+                    name: custom.name,
+                    hotelName: formData.name,
+                    isPaid: custom.isPaid,
+                    price: custom.price,
+                    description: custom.description,
+                    isActive: custom.isActive,
+                });
             }
         }
 
@@ -213,7 +154,7 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
         }, 2000);
     };
 
-    if (loading || !formData) return <div>Carregando...</div>;
+    if (loading || !formData || !commodity) return <div>Carregando...</div>;
 
     return (
         <div>
@@ -223,7 +164,11 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
                 onClose={() => setShowToast(false)}
             />
             {step === 1 && (
-                <HotelBasicInfoForm formData={formData} setFormData={setFormData} nextStep={() => setStep(2)} />
+                <HotelBasicInfoForm
+                    formData={formData}
+                    setFormData={setFormData}
+                    nextStep={() => setStep(2)}
+                />
             )}
             {step === 2 && (
                 <HotelRoomTypesForm
@@ -233,19 +178,42 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
                     prevStep={() => setStep(1)}
                 />
             )}
-            {step === 3 && (
+            {step === 3 && commodity && (
                 <HotelCommoditiesForm
-                    commoditiesFormData={commoditiesFormData}
-                    setCommoditiesFormData={setCommoditiesFormData}
+                    data={commodity}
+                    setData={(updater) => {
+                        // Type guard: nunca permita setar null
+                        if (typeof updater === 'function') {
+                            setCommodity(prev => {
+                                if (!prev) return prev; // não altera se for null
+                                const result = (updater as (prev: CommodityDTO) => CommodityDTO)(prev);
+                                return result;
+                            });
+                        } else if (updater) {
+                            setCommodity(updater);
+                        }
+                    }}
+                    customCommoditiesOverride={customCommodities}
+                    setCustomCommodities={setCustomCommodities}
                     nextStep={() => setStep(4)}
                     prevStep={() => setStep(2)}
                 />
             )}
             {step === 4 && (
                 <HotelReviewSubmit
-                    formData={{ ...formData, roomTypesJson: JSON.stringify(roomTypes) }}
+                    formData={{
+                        ...formData,
+                        roomTypesJson: JSON.stringify(roomTypes),
+                        mediaFiles: formData.mediaFiles ?? [],
+                    }}
                     roomTypes={roomTypes}
-                    commodities={commoditiesFormData}
+                    commodity={commodity}
+                    customCommodities={[
+                        ...(commodity?.customCommodities ?? []),
+                        ...customCommodities.filter(
+                            c => !(commodity?.customCommodities ?? []).some(cc => cc.customCommodityId === c.customCommodityId)
+                        )
+                    ]}
                     handleSubmit={handleSubmit}
                     prevStep={() => setStep(3)}
                 />

@@ -23,6 +23,7 @@ import Contact from '../../pages/Contact/Contact'
 import PrivacyTerms from '../../pages/PrivacyTerms/PrivacyTerms'
 import DetailsPackage from '../../pages/DetailsPackage/DetailsPackage'
 import PaymentCanceled from '../../pages/Payment/PaymentCanceled'
+import MakeReview from '../../pages/Review/MakeReview'
 
 
 
@@ -53,6 +54,8 @@ function AppRoutes() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/privacy" element={<PrivacyTerms />} />
       <Route path="/package-details/:packageId" element={<DetailsPackage />} />
+      <Route path="/hotel/review" element={<MakeReview />} />
+      
 
     </Routes>
   )

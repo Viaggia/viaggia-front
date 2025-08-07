@@ -94,5 +94,5 @@ export interface UpdateUserDTO {
   companyLegalName?: string;
   employerCompanyName?: string;
   employeeId?: string;
-  // avatar?: File; // Se quiser permitir upload de imagem
+  avatar?: File; // Se quiser permitir upload de imagem
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getHotelsByUserId, updateHotel } from '../../services/hotelService';
+import { deleteHotel, getHotelsByUserId, updateHotel } from '../../services/hotelService';
 import { HotelDTO, UpdateHotelDTO } from '../../types/Hotel';
 import { FaHotel } from 'react-icons/fa';
 import HotelAdmCard from '../../components/cards/HotelAdmCard/HotelAdmCard';
@@ -69,8 +69,7 @@ function MyHotels({ userId }: Props) {
         if (!window.confirm('Tem certeza que deseja excluir este hotel? Esta ação não pode ser desfeita.')) return;
         setDeletingId(hotelId);
         try {
-            // Implemente a função de exclusão no seu hotelService e chame aqui
-            // await deleteHotel(hotelId);
+            await deleteHotel(hotelId); // Chama o backend
             setHotels(hotels.filter(h => h.hotelId !== hotelId));
         } finally {
             setDeletingId(null);

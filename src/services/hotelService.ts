@@ -108,3 +108,7 @@ export async function updateHotel(id: number, data: UpdateHotelDTO) {
   });
   return response.data;
 }
+
+export async function deleteHotel(id: number) {
+  await api.delete(`/api/Hotel/${id}`);
+}
