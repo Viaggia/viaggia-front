@@ -5,6 +5,7 @@ import { getReservationsByUserId } from '../../services/reserveService';
 import { ReserveDTO } from '../../types/Reservation';
 import ReservationCard from '../../components/cards/ReservationCard/ReservationCard';
 import MakeReview from '../../pages/Review/MakeReview';
+import ToastForm from '../../components/Toast/ToastForm';
 
 const MyReservations: React.FC = () => {
   const [detalheAberto, setDetalheAberto] = useState<number | null>(null);
@@ -12,6 +13,14 @@ const MyReservations: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedHotelId, setSelectedHotelId] = useState<number | null>(null);
+
+  // Toast state
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+
   const { user } = useAuth();
 
   useEffect(() => {
@@ -36,6 +45,21 @@ const MyReservations: React.FC = () => {
   const handleCloseReview = () => {
     setShowReviewModal(false);
     setSelectedHotelId(null);
+  };
+
+  // Função chamada pelo MakeReview ao sucesso
+  const handleReviewSuccess = (message?: string) => {
+    setShowReviewModal(false);
+    setSelectedHotelId(null);
+    setToast({
+      show: true,
+      message: message || 'Avaliação enviada com sucesso!',
+      type: 'success',
+    });
+
+    setTimeout(() => {
+      setToast((prev) => ({ ...prev, show: false }));
+    }, 3000);
   };
 
   return (
@@ -78,21 +102,55 @@ const MyReservations: React.FC = () => {
 
       {/* Modal de avaliação */}
       {showReviewModal && selectedHotelId && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Avaliar Hotel</h5>
-                <button type="button" className="btn-close" onClick={handleCloseReview}></button>
-              </div>
-              <div className="modal-body">
-                <MakeReview hotelId={selectedHotelId} />
+        <>
+          {/* Backdrop customizado */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              background: 'rgba(0,0,0,0.5)',
+              zIndex: 1040,
+              pointerEvents: 'none'
+            }}
+          />
+          {/* Modal */}
+          <div
+            className="modal fade show"
+            style={{
+              display: 'block',
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1050,
+              minWidth: 350,
+              maxWidth: 600,
+              width: '90%',
+            }}
+            tabIndex={-1}
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Avaliar Hotel</h5>
+                  <button type="button" className="btn-close" onClick={handleCloseReview}></button>
+                </div>
+                <div className="modal-body">
+                  <MakeReview hotelId={selectedHotelId} onSuccess={handleReviewSuccess} />
+                </div>
               </div>
             </div>
           </div>
-          <div className="modal-backdrop fade show" onClick={handleCloseReview}></div>
-        </div>
+        </>
       )}
+
+      {/* Toast global */}
+      <ToastForm
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
     </div>
   );
 };

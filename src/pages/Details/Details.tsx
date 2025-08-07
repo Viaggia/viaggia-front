@@ -13,6 +13,7 @@ import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/for
 import ReviewCard from '../../components/cards/ReviewCard/Review';
 import { ReviewDTO } from '../../types/Review';
 import { getReviewsByHotel } from '../../services/reviewServices'; // ajuste conforme seu serviço
+import { getUserById } from '../../services/userService';
 
 const backendUrl = "https://localhost:7164";
 
@@ -23,17 +24,13 @@ const Details: React.FC = () => {
   const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
   const [showError, setShowError] = useState(false);
 
-  // Estado para reviews
-  const [reviews, setReviews] = useState<ReviewDTO[]>([]); // Ajuste o tipo se tiver seu DTO
+  const [reviews, setReviews] = useState<ReviewDTO[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
 
   const location = useLocation();
 
-  console.log("location", location)
-
   const searchState = location.state || {};
-
-  console.log("searchState", searchState)
+  const [userMap, setUserMap] = useState<{ [userId: number]: { name: string } }>({});
 
   const [checkIn, setCheckIn] = useState(
     searchState.checkInDate || getTodayISO()
@@ -88,23 +85,37 @@ const Details: React.FC = () => {
 
   // Busca os reviews ao carregar o hotel
   useEffect(() => {
-    async function fetchReviews() {
+    async function fetchReviewsAndUsers() {
       if (!hotelId) return;
       setLoadingReviews(true);
       try {
         const data = await getReviewsByHotel(Number(hotelId));
-        console.log('Reviews carregadas:', data);
         setReviews(data);
+
+        // Busca os usuários únicos das reviews
+        const uniqueUserIds = Array.from(new Set(data.map(r => r.userId)));
+        const userPromises = uniqueUserIds.map(id => getUserById(id).catch(() => null));
+        const users = await Promise.all(userPromises);
+
+        // Monta o mapa userId -> nome
+        const map: { [userId: number]: { name: string } } = {};
+        users.forEach((user, idx) => {
+          if (user) map[uniqueUserIds[idx]] = { name: user.name };
+        });
+        setUserMap(map);
+
       } catch (error) {
-        console.error('Erro ao carregar reviews:', error);
         setReviews([]);
+        setUserMap({});
       } finally {
         setLoadingReviews(false);
       }
     }
-    fetchReviews();
+    fetchReviewsAndUsers();
   }, [hotelId]);
 
+
+  console.log("reviews,", reviews)
   if (!hotel) return <div>Carregando...</div>;
 
   const images = hotel.medias.map(m => backendUrl + m.mediaUrl);
@@ -265,11 +276,27 @@ const Details: React.FC = () => {
       <div className="container mt-5">
         <h3>Avaliações dos hóspedes</h3>
         {loadingReviews && <p>Carregando avaliações...</p>}
-        {!loadingReviews && reviews.length === 0 && <p>Este hotel ainda não possui avaliações.</p>}
+        {!loadingReviews && reviews.length === 0 && (
+          <div className="card border-0 shadow-sm my-4 text-center bg-light">
+            <div className="card-body py-4">
+              <i className="bi bi-chat-dots" style={{ fontSize: 40, color: "#0d6efd" }}></i>
+              <h5 className="mt-3 mb-2 text-secondary">Nenhuma avaliação disponível</h5>
+              <p className="mb-0 text-muted">
+                Este hotel ainda não possui avaliações de hóspedes.<br />
+                Seja o primeiro a compartilhar sua experiência!
+              </p>
+            </div>
+          </div>
+        )}
         <div className="row">
           {reviews.map(review => (
             <div key={review.reviewId} className="col-md-6 col-lg-4 mb-4">
-              <ReviewCard review={review} />
+              <ReviewCard
+                review={{
+                  ...review,
+                  userName: userMap[review.userId]?.name || 'Usuário Anônimo'
+                }}
+              />
             </div>
           ))}
         </div>

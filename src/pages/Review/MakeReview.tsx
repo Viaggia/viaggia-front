@@ -9,12 +9,14 @@ import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfi
 
 import { createReview } from '../../services/reviewServices';
 import { useAuth } from '../../context/AuthContext';
+import ToastForm from '../../components/Toast/ToastForm';
 
 interface MakeReviewProps {
   hotelId: number;
+  onSuccess?: () => void;
 }
 
-function MakeReview({ hotelId }: MakeReviewProps) {
+function MakeReview({ hotelId, onSuccess }: MakeReviewProps) {
   const StyledRating = styled(Rating)(({ theme }) => ({
     '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
       color: theme.palette.action.disabled,
@@ -28,24 +30,24 @@ function MakeReview({ hotelId }: MakeReviewProps) {
     };
   } = {
     1: {
-      icon: <SentimentVeryDissatisfiedIcon color="error" sx={{ fontSize: '60px' }} />,
-      label: 'Very Dissatisfied',
+      icon: <SentimentVeryDissatisfiedIcon sx={{ color: '#d32f2f', fontSize: '60px' }} />,
+      label: 'Muito insatisfeito',
     },
     2: {
-      icon: <SentimentDissatisfiedIcon color="error" sx={{ fontSize: '60px' }} />,
-      label: 'Dissatisfied',
+      icon: <SentimentDissatisfiedIcon sx={{ color: '#f57c00', fontSize: '60px' }} />,
+      label: 'Insatisfeito',
     },
     3: {
-      icon: <SentimentSatisfiedIcon color="warning" sx={{ fontSize: '60px' }} />,
-      label: 'Neutral',
+      icon: <SentimentSatisfiedIcon sx={{ color: '#FFD600', fontSize: '60px' }} />,
+      label: 'Neutro',
     },
     4: {
-      icon: <SentimentSatisfiedAltIcon color="success" sx={{ fontSize: '60px' }} />,
-      label: 'Satisfied',
+      icon: <SentimentSatisfiedAltIcon sx={{ color: '#8BC34A', fontSize: '60px' }} />,
+      label: 'Satisfeito',
     },
     5: {
-      icon: <SentimentVerySatisfiedIcon color="success" sx={{ fontSize: '60px' }} />,
-      label: 'Very Satisfied',
+      icon: <SentimentVerySatisfiedIcon sx={{ color: '#388e3c', fontSize: '60px' }} />,
+      label: 'Muito satisfeito',
     },
   };
 
@@ -57,51 +59,39 @@ function MakeReview({ hotelId }: MakeReviewProps) {
   const [rating, setRating] = React.useState<number | null>(2);
   const [feedback, setFeedback] = React.useState('');
   const [loading, setLoading] = React.useState(false);
-  const [message, setMessage] = React.useState<string | null>(null);
+
+  // Toast state
+  const [toast, setToast] = React.useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
+    show: false,
+    message: '',
+    type: 'success',
+  });
 
   const { user } = useAuth();
 
   const handleSubmit = async () => {
     if (!rating) {
-      setMessage('Por favor, selecione uma avaliação.');
+      setToast({ show: true, message: 'Por favor, selecione uma avaliação.', type: 'error' });
       return;
     }
     setLoading(true);
-    setMessage(null);
     try {
       const reviewData = {
+        hotelId,
         userId: user?.id || 0,
         rating,
         comment: feedback,
-        reviewType: "Hotel" // Corrigido: deve ser "Hotel"
+        reviewType: "Hotel"
       };
 
-      console.log('Enviando dados da review:', reviewData);
-      console.log('User:', user);
-
-      // chama o serviço de review com hotelId e dados da review
-      await createReview(hotelId, reviewData);
-      setMessage('Avaliação enviada com sucesso! Obrigado pelo feedback.');
+      await createReview(reviewData);
+      setToast({ show: true, message: 'Avaliação enviada com sucesso! Obrigado pelo feedback.', type: 'success' });
       setRating(2);
       setFeedback('');
+      if (onSuccess) onSuccess();
     } catch (error: unknown) {
-      console.error('Erro ao enviar avaliação:', error);
-
-      // Type guard para AxiosError
-      const axiosError = error as { response?: { data?: { message?: string; title?: string; errors?: Record<string, string[]> } } };
-      console.error('Resposta do servidor:', axiosError?.response?.data);
-      console.error('Erros de validação:', axiosError?.response?.data?.errors);
-
-      // Log detalhado dos erros de validação
-      if (axiosError?.response?.data?.errors) {
-        Object.keys(axiosError.response.data.errors).forEach(key => {
-          console.error(`Erro no campo ${key}:`, axiosError.response?.data?.errors?.[key]);
-        });
-      }
-
       let errorMessage = 'Erro ao enviar avaliação. Tente novamente mais tarde.';
-
-      // Se há erros de validação, mostrar o primeiro erro
+      const axiosError = error as { response?: { data?: { message?: string; title?: string; errors?: Record<string, string[]> } } };
       if (axiosError?.response?.data?.errors) {
         const errors = axiosError.response.data.errors;
         const firstErrorKey = Object.keys(errors)[0];
@@ -114,8 +104,7 @@ function MakeReview({ hotelId }: MakeReviewProps) {
       } else if (axiosError?.response?.data?.title) {
         errorMessage = axiosError.response.data.title;
       }
-
-      setMessage(errorMessage);
+      setToast({ show: true, message: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -162,11 +151,12 @@ function MakeReview({ hotelId }: MakeReviewProps) {
         </button>
       </div>
 
-      {message && (
-        <div className={`mt-3 alert ${message.includes('sucesso') ? 'alert-success' : 'alert-danger'}`} role="alert">
-          {message}
-        </div>
-      )}
+      <ToastForm
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
     </div>
   );
 }
