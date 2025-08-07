@@ -94,11 +94,13 @@ function Home() {
         className="container position-relative"
         style={{ paddingTop: "37vh", zIndex: 1 }}
       >
-        <div className="">
+        <div>
           <h2 className="mb-4 text-center text-white fw-bold fs-1">
             Escolha seu destino
           </h2>
-          <TravelForm />
+          <div className="container bg-viaggia bg-opacity-100 rounded">
+            <TravelForm />
+          </div>
         </div>
 
         {/* Carrosséis com EmptyState */}
