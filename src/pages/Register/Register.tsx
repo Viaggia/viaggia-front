@@ -9,6 +9,7 @@ import { Validation } from '../../components/Validation/Validation'
 import { getCountriesForDropdown, getCountryByDDI, popularCountries, type CountryData } from '../../utils/countryData'
 import ReactFlagsSelect from 'react-flags-select'
 import './Register.css'
+import { extractPhoneDigits } from '../../utils/formatMask'
 
 function Register() {
   const navigate = useNavigate()
@@ -67,7 +68,7 @@ function Register() {
   const [showPhoneRequirements, setShowPhoneRequirements] = useState(false)
   const [showNameRequirements, setShowNameRequirements] = useState(false)
   const [showCpfRequirements, setShowCpfRequirements] = useState(false)
-  
+
   // Toast states
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -123,7 +124,7 @@ function Register() {
 
   function formatPhone(value: string, country: CountryData): string {
     const digits = value.replace(/\D/g, '');
-    
+
     // Use the country-specific formatter
     return country.format(digits);
   }
@@ -145,22 +146,22 @@ function Register() {
     if (name === 'password') {
       validatePassword(value);
     }
-    
+
     // Validate email in real time
     if (name === 'email') {
       validateEmail(value);
     }
-    
+
     // Validate phone in real time
     if (name === 'phoneNumber') {
       validatePhone(formattedValue, selectedCountry);
     }
-    
+
     // Validate name in real time
     if (name === 'name') {
       validateName(value);
     }
-    
+
     // Validate CPF in real time
     if (name === 'cpf') {
       validateCpf(formattedValue);
@@ -196,7 +197,7 @@ function Register() {
     const hasAtSymbol = email.includes('@');
     const hasDomain = email.includes('.') && email.indexOf('.') > email.indexOf('@');
     const hasValidFormat = emailRegex.test(email);
-    
+
     setEmailValidation({
       isValid: hasValidFormat,
       hasAtSymbol,
@@ -207,16 +208,16 @@ function Register() {
 
   const validatePhone = (phone: string, country: CountryData) => {
     const digits = phone.replace(/\D/g, '');
-    
+
     let hasValidLength = false;
     let hasValidFormat = false;
     let isComplete = false;
-    
+
     // Check if the phone length matches the country's expected lengths
     hasValidLength = country.phoneLength.some(length => digits.length >= length - 2 && digits.length <= length + 2);
     hasValidFormat = digits.length > 0; // Basic format check - can be enhanced per country
     isComplete = country.phoneLength.includes(digits.length);
-    
+
     setPhoneValidation({
       isValid: hasValidFormat && hasValidLength && isComplete,
       hasValidLength,
@@ -231,7 +232,7 @@ function Register() {
     const hasMinLength = trimmedName.length >= 2;
     const hasNoNumbers = !/\d/.test(trimmedName);
     const hasValidFormat = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(trimmedName) && trimmedName.split(' ').length >= 2;
-    
+
     setNameValidation({
       isValid: hasMinLength && hasNoNumbers && hasValidFormat,
       hasMinLength,
@@ -244,7 +245,7 @@ function Register() {
     const digits = cpf.replace(/\D/g, '');
     const hasValidLength = digits.length === 11;
     const hasValidFormat = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(cpf);
-    
+
     // CPF validation algorithm - COMMENTED OUT FOR EASIER TESTING
     // const isValidCpf = (cpfDigits: string) => {
     //   if (cpfDigits.length !== 11) return false;
@@ -270,7 +271,7 @@ function Register() {
     //   
     //   return digit2 === parseInt(cpfDigits[10]);
     // };
-    
+
     // For testing purposes, we'll skip the mathematical validation
     // const isValidCpfResult = hasValidLength ? isValidCpf(digits) : false;
     const isValidCpfResult = hasValidLength;
@@ -306,7 +307,7 @@ function Register() {
   const getValidationClass = (fieldName: string) => {
     const fieldValue = formData[fieldName as keyof typeof formData];
     if (!fieldValue) return validationClasses.default;
-    
+
     switch (fieldName) {
       case 'password':
         return isPasswordValid() ? validationClasses.success : validationClasses.error;
@@ -326,7 +327,7 @@ function Register() {
   const getValidationStyle = (fieldName: string) => {
     const fieldValue = formData[fieldName as keyof typeof formData];
     if (!fieldValue) return validationStyles.default;
-    
+
     switch (fieldName) {
       case 'password':
         return isPasswordValid() ? validationStyles.success : validationStyles.error;
@@ -408,36 +409,36 @@ function Register() {
       // Prepare the form data with the complete phone number including DDI
       const submissionData = {
         ...formData,
-        phoneNumber: selectedCountry.ddi + ' ' + formData.phoneNumber
+        phoneNumber: `${selectedCountry.ddi.replace(/\D/g, '')}${extractPhoneDigits(formData.phoneNumber)}`
       };
 
       const response = await register(submissionData)
       console.log('Cadastro realizado com sucesso:', response)
       showSuccessToast('Cadastro realizado com sucesso! Redirecionando para o login...')
-      
+
       // Delay navigation to show the success message
       setTimeout(() => {
         navigate('/login')
       }, 2000)
     } catch (error: any) {
       console.error('Registration error:', error)
-      
+
       // Log the full error response for debugging
       if (error.response) {
         console.log('Error response:', error.response)
         console.log('Error response data:', error.response.data)
         console.log('Error response status:', error.response.status)
       }
-      
+
       // Check if it's an Axios error with response data
       if (error.response && error.response.data) {
         let errorMessage = 'Erro desconhecido do servidor';
-        
+
         // Handle ASP.NET Core validation errors
         if (error.response.data.errors) {
           const errors = error.response.data.errors;
           const errorMessages = [];
-          
+
           // Extract all validation error messages
           for (const field in errors) {
             if (Array.isArray(errors[field])) {
@@ -446,7 +447,7 @@ function Register() {
               errorMessages.push(errors[field]);
             }
           }
-          
+
           errorMessage = errorMessages.join('. ');
         }
         // Handle custom API response format
@@ -457,7 +458,7 @@ function Register() {
         else if (error.response.data.title) {
           errorMessage = error.response.data.title;
         }
-        
+
         showErrorToast(errorMessage)
       } else if (error.message) {
         showErrorToast(error.message)
@@ -471,137 +472,137 @@ function Register() {
     <div>
       <div className="container py-5">
         <div className="row justify-content-center align-items-center">
-        <div className="col-lg-6 mb-4">
-          <div className="card shadow">
-            <div className="card-body">
-              <h4 className="card-title text-center mb-4">Faça seu Cadastro</h4>
-              <form onSubmit={handleSubmit}>
-                {formFields.map(({ name, label, type, maxLength }) => (
-                  <div className="mb-3" key={name}>
-                    <label htmlFor={name} className="form-label">{label}</label>
-                    {name === 'phoneNumber' ? (
-                      <div className="input-group">
-                        <div className="phone-input-group">
-                          <div className="flag-select-container">
-                            <ReactFlagsSelect
-                              selected={selectedCountry.code}
-                              onSelect={handleCountryChange}
-                              countries={getCountriesForDropdown().map(c => c.code)}
-                              customLabels={getCountriesForDropdown().reduce((acc, country) => {
-                                acc[country.code] = `${country.ddi}`;
-                                return acc;
-                              }, {} as Record<string, string>)}
-                              placeholder="Country"
-                              searchable
-                              searchPlaceholder="DDI"
-                              className="flag-select"
-                              showSelectedLabel={true}
-                              showOptionLabel={true}
-                              optionsSize={14}
-                              selectButtonClassName="btn btn-outline-secondary"
+          <div className="col-lg-6 mb-4">
+            <div className="card shadow">
+              <div className="card-body">
+                <h4 className="card-title text-center mb-4">Faça seu Cadastro</h4>
+                <form onSubmit={handleSubmit}>
+                  {formFields.map(({ name, label, type, maxLength }) => (
+                    <div className="mb-3" key={name}>
+                      <label htmlFor={name} className="form-label">{label}</label>
+                      {name === 'phoneNumber' ? (
+                        <div className="input-group">
+                          <div className="phone-input-group">
+                            <div className="flag-select-container">
+                              <ReactFlagsSelect
+                                selected={selectedCountry.code}
+                                onSelect={handleCountryChange}
+                                countries={getCountriesForDropdown().map(c => c.code)}
+                                customLabels={getCountriesForDropdown().reduce((acc, country) => {
+                                  acc[country.code] = `${country.ddi}`;
+                                  return acc;
+                                }, {} as Record<string, string>)}
+                                placeholder="Country"
+                                searchable
+                                searchPlaceholder="DDI"
+                                className="flag-select"
+                                showSelectedLabel={true}
+                                showOptionLabel={true}
+                                optionsSize={14}
+                                selectButtonClassName="btn btn-outline-secondary"
+                              />
+                            </div>
+                            <input
+                              type={type}
+                              name={name}
+                              id={name}
+                              value={formData[name as keyof typeof formData] || ''}
+                              onChange={handleChange}
+                              onFocus={() => setShowPhoneRequirements(true)}
+                              onBlur={() => setShowPhoneRequirements(false)}
+                              required={true}
+                              placeholder="Digite seu telefone"
+                              className={`form-control phone-input ${getValidationClass('phoneNumber')}`}
+                              maxLength={maxLength}
+                              style={getValidationStyle('phoneNumber')}
                             />
                           </div>
-                          <input
-                            type={type}
-                            name={name}
-                            id={name}
-                            value={formData[name as keyof typeof formData] || ''}
-                            onChange={handleChange}
-                            onFocus={() => setShowPhoneRequirements(true)}
-                            onBlur={() => setShowPhoneRequirements(false)}
-                            required={true}
-                            placeholder="Digite seu telefone"
-                            className={`form-control phone-input ${getValidationClass('phoneNumber')}`}
-                            maxLength={maxLength}
-                            style={getValidationStyle('phoneNumber')}
-                          />
                         </div>
-                      </div>
-                    ) : (
-                      <input
-                        type={type}
-                        name={name}
-                        id={name}
-                        value={formData[name as keyof typeof formData] || ''}
-                        onChange={handleChange}
-                        onFocus={() => {
-                          if (name === 'password') setShowPasswordRequirements(true);
-                          if (name === 'email') setShowEmailRequirements(true);
-                          if (name === 'phoneNumber') setShowPhoneRequirements(true);
-                          if (name === 'name') setShowNameRequirements(true);
-                          if (name === 'cpf') setShowCpfRequirements(true);
-                        }}
-                        onBlur={() => {
-                          if (name === 'password') setShowPasswordRequirements(false);
-                          if (name === 'email') setShowEmailRequirements(false);
-                          if (name === 'phoneNumber') setShowPhoneRequirements(false);
-                          if (name === 'name') setShowNameRequirements(false);
-                          if (name === 'cpf') setShowCpfRequirements(false);
-                        }}
-                        required={true}
-                        className={`form-control ${getValidationClass(name)}`}
-                        maxLength={maxLength}
-                        style={getValidationStyle(name)}
-                      />
-                    )}
-                    
-                    {/* Email requirements */}
-                    <Validation
-                      show={name === 'email' && (showEmailRequirements || !!formData.email)}
-                      title="O email deve ter:"
-                      rules={getEmailValidationRules()}
-                    />
-                    
-                    {/* Phone requirements */}
-                    <Validation
-                      show={name === 'phoneNumber' && (showPhoneRequirements || !!formData.phoneNumber)}
-                      title="O telefone deve ter:"
-                      rules={getPhoneValidationRules()}
-                      examples={getPhoneExamples()}
-                    />
-                    
-                    {/* Name requirements */}
-                    <Validation
-                      show={name === 'name' && (showNameRequirements || !!formData.name)}
-                      title="O nome deve ter:"
-                      rules={getNameValidationRules()}
-                      examples="João Silva, Maria Santos"
-                    />
-                    
-                    {/* CPF requirements */}
-                    <Validation
-                      show={name === 'cpf' && (showCpfRequirements || !!formData.cpf)}
-                      title="O CPF deve ter:"
-                      rules={getCpfValidationRules()}
-                      examples="123.456.789-00"
-                    />
-                    
-                    {/* Password requirements */}
-                    <Validation
-                      show={name === 'password' && (showPasswordRequirements || !!formData.password)}
-                      title="A senha deve conter:"
-                      rules={getPasswordValidationRules()}
-                    />
-                  </div>
-                ))}
+                      ) : (
+                        <input
+                          type={type}
+                          name={name}
+                          id={name}
+                          value={formData[name as keyof typeof formData] || ''}
+                          onChange={handleChange}
+                          onFocus={() => {
+                            if (name === 'password') setShowPasswordRequirements(true);
+                            if (name === 'email') setShowEmailRequirements(true);
+                            if (name === 'phoneNumber') setShowPhoneRequirements(true);
+                            if (name === 'name') setShowNameRequirements(true);
+                            if (name === 'cpf') setShowCpfRequirements(true);
+                          }}
+                          onBlur={() => {
+                            if (name === 'password') setShowPasswordRequirements(false);
+                            if (name === 'email') setShowEmailRequirements(false);
+                            if (name === 'phoneNumber') setShowPhoneRequirements(false);
+                            if (name === 'name') setShowNameRequirements(false);
+                            if (name === 'cpf') setShowCpfRequirements(false);
+                          }}
+                          required={true}
+                          className={`form-control ${getValidationClass(name)}`}
+                          maxLength={maxLength}
+                          style={getValidationStyle(name)}
+                        />
+                      )}
 
-                <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-primary">Cadastrar</button>
-                </div>
-                <p className="mt-3 text-center">
-                  Já é cadastrado? <a href="/login" className="text-decoration-none text-primary">Fazer Login</a>
-                </p>
-              </form>
+                      {/* Email requirements */}
+                      <Validation
+                        show={name === 'email' && (showEmailRequirements || !!formData.email)}
+                        title="O email deve ter:"
+                        rules={getEmailValidationRules()}
+                      />
+
+                      {/* Phone requirements */}
+                      <Validation
+                        show={name === 'phoneNumber' && (showPhoneRequirements || !!formData.phoneNumber)}
+                        title="O telefone deve ter:"
+                        rules={getPhoneValidationRules()}
+                        examples={getPhoneExamples()}
+                      />
+
+                      {/* Name requirements */}
+                      <Validation
+                        show={name === 'name' && (showNameRequirements || !!formData.name)}
+                        title="O nome deve ter:"
+                        rules={getNameValidationRules()}
+                        examples="João Silva, Maria Santos"
+                      />
+
+                      {/* CPF requirements */}
+                      <Validation
+                        show={name === 'cpf' && (showCpfRequirements || !!formData.cpf)}
+                        title="O CPF deve ter:"
+                        rules={getCpfValidationRules()}
+                        examples="123.456.789-00"
+                      />
+
+                      {/* Password requirements */}
+                      <Validation
+                        show={name === 'password' && (showPasswordRequirements || !!formData.password)}
+                        title="A senha deve conter:"
+                        rules={getPasswordValidationRules()}
+                      />
+                    </div>
+                  ))}
+
+                  <div className="d-grid gap-2">
+                    <button type="submit" className="btn btn-primary">Cadastrar</button>
+                  </div>
+                  <p className="mt-3 text-center">
+                    Já é cadastrado? <a href="/login" className="text-decoration-none text-primary">Fazer Login</a>
+                  </p>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
-      
+
       {/* Toast Component */}
-      <ToastForm 
-        show={showToast} 
-        message={toastMessage} 
+      <ToastForm
+        show={showToast}
+        message={toastMessage}
         onClose={closeToast}
         type={toastType}
       />

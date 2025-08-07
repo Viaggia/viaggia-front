@@ -6,6 +6,7 @@ import CreatePackageForm from '../forms/CreatePackageForm/CreatePackageForm';
 import CreateServiceProviderForm from '../forms/CreateServiceProviderForm/CreateServiceProviderForm';
 import MyHotels from '../../pages/MyHotels/MyHotels';
 import MyPackages from '../../pages/MyPackages/MyPackages';
+import { useAuth } from '../../context/AuthContext';
 
 interface AdminPanelProps {
   userId: number;
@@ -13,7 +14,7 @@ interface AdminPanelProps {
 
 const adminButtons = [
   { value: 'my-hotels', label: 'Meus Hotéis' },
-  { value: 'my-packages', label: 'Meus Pacotes' }, // Novo botão
+  { value: 'my-packages', label: 'Meus Pacotes' },
   { value: 'create-admin', label: 'Cadastrar Admin' },
   { value: 'create-attendant', label: 'Cadastrar Atendente' },
   { value: 'create-service-provider', label: 'Cadastrar Prestador de Serviço' },
@@ -21,13 +22,38 @@ const adminButtons = [
   { value: 'create-package', label: 'Cadastrar Pacote' },
 ];
 
+const serviceProviderButtons = [
+  { value: 'my-hotels', label: 'Meus Hotéis' },
+  { value: 'my-packages', label: 'Meus Pacotes' },
+  { value: 'create-hotel', label: 'Cadastrar Hotel' },
+  { value: 'create-package', label: 'Cadastrar Pacote' },
+];
+
+const attendantButtons = [
+  { value: 'requests', label: 'Solicitações' }, // Exclusivo do atendente
+];
+
 const AdminPanel: React.FC<AdminPanelProps> = ({ userId }) => {
-  const [activePanel, setActivePanel] = useState<string>('my-hotels');
+  const { role } = useAuth();
+  const [activePanel, setActivePanel] = useState<string>(
+    role === 'ATTENDANT' ? 'requests' : 'my-hotels'
+  );
+
+  let buttons;
+  if (role === 'ADMIN') {
+    buttons = adminButtons;
+  } else if (role === 'SERVICE_PROVIDER') {
+    buttons = serviceProviderButtons;
+  } else if (role === 'ATTENDANT') {
+    buttons = attendantButtons;
+  } else {
+    buttons = [];
+  }
 
   return (
     <div>
       <div className="d-flex gap-2 mb-4 flex-wrap">
-        {adminButtons.map(btn => (
+        {buttons.map(btn => (
           <button
             key={btn.value}
             className={`btn ${activePanel === btn.value ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -45,6 +71,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ userId }) => {
         {activePanel === 'create-service-provider' && <CreateServiceProviderForm />}
         {activePanel === 'create-hotel' && <CreateHotelStepper />}
         {activePanel === 'create-package' && <CreatePackageForm />}
+        {activePanel === 'requests' && (
+          <div className="card p-4 text-center">
+            <h5>Solicitações</h5>
+            <p className="text-muted">Nenhuma solicitação encontrada.</p>
+          </div>
+        )}
       </div>
     </div>
   );

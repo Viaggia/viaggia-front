@@ -4,6 +4,7 @@ import { ForgotPasswordRequestDTO, ResetPasswordRequestDTO, ValidateTokenRequest
 
 
 export async function register(userData: CreateClientDTO) {
+  console.log('Registering user:', userData)
   const response = await api.post('/api/users/client', userData)
   return response.data
 }

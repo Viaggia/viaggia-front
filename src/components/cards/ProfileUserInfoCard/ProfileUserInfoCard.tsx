@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { User, UpdateUserDTO } from '../../../types/User';
 import { updateUser } from '../../../services/userService';
+import { useAuth } from '../../../context/AuthContext';
 
 interface Props {
     user: User;
@@ -45,6 +46,7 @@ const getFieldsByRole = (role: string) => {
 
 const ProfileUserInfoCard: React.FC<Props> = ({ user, role }) => {
     const fields = getFieldsByRole(role);
+    const { setUser } = useAuth();
 
     const [editField, setEditField] = useState<string | null>(null);
     const [form, setForm] = useState<UpdateUserDTO>({
@@ -77,7 +79,8 @@ const ProfileUserInfoCard: React.FC<Props> = ({ user, role }) => {
         setLoading(true);
         try {
             const updated = await updateUser(user.id, form);
-            setLocalUser(updated); // Atualiza o estado local com o retorno do backend
+            setLocalUser(updated);
+            setUser(updated);
             setEditField(null);
         } finally {
             setLoading(false);

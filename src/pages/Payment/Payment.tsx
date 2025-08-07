@@ -82,10 +82,10 @@ const Payment: React.FC = () => {
         return;
       }
 
-      //const result = await createPaymentIntent(dto);
-      /*if (result.url) {
+      const result = await createPaymentIntent(dto);
+      if (result.url) {
         window.location.href = result.url;
-      }*/
+      }
     } catch (err) {
       alert('Erro ao criar pagamento');
     } finally {
