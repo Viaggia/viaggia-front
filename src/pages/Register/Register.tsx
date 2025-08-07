@@ -103,9 +103,6 @@ function Register() {
             </div>
           </div>
         </div>
-        <div className="col-lg-6 text-center">
-          <img src="https://i.pinimg.com/736x/99/de/98/99de98eb4e7bd078d39db104da78444e.jpg" alt="imagem-register" className="img-fluid rounded" />
-        </div>
       </div>
     </div>
   )
