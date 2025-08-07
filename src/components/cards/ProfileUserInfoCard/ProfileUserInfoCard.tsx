@@ -44,7 +44,7 @@ const getFieldsByRole = (role: string) => {
 };
 
 const ProfileUserInfoCard: React.FC<Props> = ({ user, role }) => {
-     const fields = getFieldsByRole(role);
+    const fields = getFieldsByRole(role);
 
     const [editField, setEditField] = useState<string | null>(null);
     const [form, setForm] = useState<UpdateUserDTO>({
@@ -103,7 +103,11 @@ const ProfileUserInfoCard: React.FC<Props> = ({ user, role }) => {
                                         <input
                                             className="form-control ms-2"
                                             name={key}
-                                            value={form[key as keyof UpdateUserDTO] || ''}
+                                            value={
+                                                typeof form[key as keyof UpdateUserDTO] === 'string' || typeof form[key as keyof UpdateUserDTO] === 'number'
+                                                    ? form[key as keyof UpdateUserDTO] as string | number
+                                                    : ''
+                                            }
                                             onChange={handleChange}
                                             disabled={loading}
                                             style={{ maxWidth: 200 }}

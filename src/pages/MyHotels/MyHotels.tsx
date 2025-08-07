@@ -35,15 +35,12 @@ function MyHotels({ userId }: Props) {
     });
     const [showToast, setShowToast] = useState(false);
 
-    console.log('hotels', hotels);
-
     useEffect(() => {
         getHotelsByUserId(userId)
             .then(setHotels)
             .finally(() => setLoading(false));
     }, [userId]);
 
-    // Preenche o formulário ao abrir o modal de edição
     useEffect(() => {
         if (editingHotel) {
             setEditForm({
@@ -69,7 +66,7 @@ function MyHotels({ userId }: Props) {
         if (!window.confirm('Tem certeza que deseja excluir este hotel? Esta ação não pode ser desfeita.')) return;
         setDeletingId(hotelId);
         try {
-            await deleteHotel(hotelId); // Chama o backend
+            await deleteHotel(hotelId);
             setHotels(hotels.filter(h => h.hotelId !== hotelId));
         } finally {
             setDeletingId(null);
@@ -130,38 +127,66 @@ function MyHotels({ userId }: Props) {
         setTimeout(() => setShowToast(false), 2000);
     };
 
-    if (loading) return <div>Carregando hotéis...</div>;
+    if (loading)
+        return (
+            <div className="container">
+                <div className="card shadow-sm mt-4">
+                    <div className="card-header bg-primary text-white d-flex align-items-center">
+                        <FaHotel size={28} className="me-2" />
+                        <h4 className="mb-0">Meus Hotéis</h4>
+                    </div>
+                    <div className="card-body text-center py-5">
+                        <div className="spinner-border text-primary" role="status"></div>
+                        <div className="mt-3">Carregando hotéis...</div>
+                    </div>
+                </div>
+            </div>
+        );
 
     if (hotels.length === 0)
         return (
-            <div className="text-center my-5">
-                <FaHotel size={48} className="mb-3 text-secondary" />
-                <h5>Nenhum hotel cadastrado ainda.</h5>
-                <p className="text-muted">Clique em "Cadastrar Hotel" para criar seu primeiro hotel.</p>
+            <div className="container">
+                <div className="card shadow-sm mt-4">
+                    <div className="card-header bg-primary text-white d-flex align-items-center">
+                        <FaHotel size={28} className="me-2" />
+                        <h4 className="mb-0">Meus Hotéis</h4>
+                    </div>
+                    <div className="card-body text-center py-5">
+                        <FaHotel size={48} className="mb-3 text-secondary" />
+                        <h5>Nenhum hotel cadastrado ainda.</h5>
+                        <p className="text-muted">Clique em "Cadastrar Hotel" para criar seu primeiro hotel.</p>
+                    </div>
+                </div>
             </div>
         );
 
     return (
-        <div>
+        <div className="container">
             <ToastForm
                 show={showToast}
                 message="Hotel atualizado com sucesso!"
                 onClose={() => setShowToast(false)}
             />
-            <h4>Meus Hotéis</h4>
-            <div className="row g-3">
-                {hotels.map(hotel => (
-                    <div className="col-12 col-md-6 col-lg-4" key={hotel.hotelId}>
-                        <HotelAdmCard
-                            hotel={hotel}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                            deleting={deletingId === hotel.hotelId}
-                        />
+            <div className="card shadow-sm mt-4">
+                <div className="card-header bg-primary text-white d-flex align-items-center">
+                    <FaHotel size={28} className="me-2" />
+                    <h4 className="mb-0">Meus Hotéis</h4>
+                </div>
+                <div className="card-body">
+                    <div className="row g-3">
+                        {hotels.map(hotel => (
+                            <div className="col-12 col-md-6 col-lg-4" key={hotel.hotelId}>
+                                <HotelAdmCard
+                                    hotel={hotel}
+                                    onEdit={handleEdit}
+                                    onDelete={handleDelete}
+                                    deleting={deletingId === hotel.hotelId}
+                                />
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </div>
             </div>
-
             {/* Modal de edição */}
             {showEditModal && editingHotel && (
                 <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>

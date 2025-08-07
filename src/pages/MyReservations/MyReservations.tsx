@@ -24,64 +24,78 @@ const MyReservations: React.FC = () => {
     setDetalheAberto(detalheAberto === id ? null : id);
   };
 
-  if (loading) {
-    return <div className="reservepag-container">Carregando reservas...</div>;
-  }
-
   return (
-    <div className="reservepag-container">
-      <h2 className="reservepag-title">Minhas Reservas</h2>
-
-      {reservas.length === 0 ? (
-        <div>Nenhuma reserva encontrada.</div>
-      ) : reservas.map((reserva) => {
-        // Cálculo de total (ajuste conforme sua regra)
-        const totalCompra = reserva.totalPrice || 0;
-
-        return (
-          <div className="reservepag-card" key={reserva.reservationId}>
-            <button className="reservepag-toggle" onClick={() => toggleDetalhes(reserva.reservationId)}>
-              <span className="reservepag-toggle-text">
-                Reserva - {reserva.hotelId ? `Hotel #${reserva.hotelId}` : reserva.packageId ? `Pacote #${reserva.packageId}` : 'Sem identificação'}
-              </span>
-              <span className="reservepag-seta">▼</span>
-            </button>
-
-            {detalheAberto === reserva.reservationId && (
-              <div className="reservepag-detalhes">
-                <p><strong>ID da Reserva:</strong> {reserva.reservationId}</p>
-                <p><strong>Hotel:</strong> {reserva.hotelId || '-'}</p>
-                <p><strong>Pacote:</strong> {reserva.packageId || '-'}</p>
-                <p><strong>Check-in:</strong> {reserva.checkInDate?.substring(0,10)}</p>
-                <p><strong>Check-out:</strong> {reserva.checkOutDate?.substring(0,10)}</p>
-                <p><strong>Quarto:</strong> {reserva.roomTypeId || '-'}</p>
-                <p><strong>Hóspedes:</strong> {reserva.numberOfGuests}</p>
-                <p><strong>Status:</strong> {reserva.status}</p>
-                <p><strong>Ativa:</strong> {reserva.isActive ? 'Sim' : 'Não'}</p>
-                <p><strong>Resumo de Compra:</strong></p>
-                <ul>
-                  <li><strong>Total:</strong> R${Number(totalCompra).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</li>
-                </ul>
-
-                <div className="reservepag-cancel-wrapper">
-                  <button className="reservepag-cancelar" onClick={() => navigate('/cancel-reservation')}>
-                    Cancelar minha reserva
+    <div className="container">
+      <div className="card shadow-sm mt-4">
+        <div className="card-header bg-primary text-white d-flex align-items-center">
+          <i className="bi bi-calendar2-check me-2" style={{ fontSize: 24 }}></i>
+          <h4 className="mb-0">Minhas Reservas</h4>
+        </div>
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status"></div>
+              <div className="mt-3">Carregando reservas...</div>
+            </div>
+          ) : reservas.length === 0 ? (
+            <div className="alert alert-info text-center my-5">
+              <i className="bi bi-info-circle me-2"></i>
+              Você ainda não possui reservas cadastradas.<br />
+              Explore nossos hotéis e pacotes para fazer sua primeira reserva!
+            </div>
+          ) : (
+            reservas.map((reserva) => {
+              const totalCompra = reserva.totalPrice || 0;
+              return (
+                <div className="reservepag-card mb-4" key={reserva.reservationId}>
+                  <button
+                    className="reservepag-toggle btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center"
+                    onClick={() => toggleDetalhes(reserva.reservationId)}
+                  >
+                    <span>
+                      <strong>
+                        {reserva.hotelId
+                          ? `Hotel #${reserva.hotelId}`
+                          : reserva.packageId
+                          ? `Pacote #${reserva.packageId}`
+                          : 'Reserva'}
+                      </strong>
+                      <span className="ms-2 text-muted">ID: {reserva.reservationId}</span>
+                    </span>
+                    <span className="reservepag-seta">{detalheAberto === reserva.reservationId ? '▲' : '▼'}</span>
                   </button>
+                  {detalheAberto === reserva.reservationId && (
+                    <div className="reservepag-detalhes p-3 border rounded bg-light mt-2">
+                      <div className="row mb-2">
+                        <div className="col-md-6">
+                          <p><strong>Check-in:</strong> {reserva.checkInDate?.substring(0,10)}</p>
+                          <p><strong>Check-out:</strong> {reserva.checkOutDate?.substring(0,10)}</p>
+                          <p><strong>Quarto:</strong> {reserva.roomTypeId || '-'}</p>
+                          <p><strong>Hóspedes:</strong> {reserva.numberOfGuests}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <p><strong>Status:</strong> {reserva.status}</p>
+                          <p><strong>Ativa:</strong> {reserva.isActive ? 'Sim' : 'Não'}</p>
+                          <p><strong>Total:</strong> R${Number(totalCompra).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                        </div>
+                      </div>
+                      <div className="reservepag-cancel-wrapper text-end">
+                        <button className="btn btn-danger" onClick={() => navigate('/cancel-reservation')}>
+                          Cancelar minha reserva
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      <div className="reservepag-whatsapp">
-        <a href="https://wa.me/558196631476" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-            alt="WhatsApp"
-            className="reservepag-whatsapp-icon"
-          />
-        </a>
+              );
+            })
+          )}
+        </div>
+        <div className="card-footer bg-white text-end">
+          <a href="https://wa.me/558196631476" target="_blank" rel="noopener noreferrer" className="btn btn-success">
+            <i className="bi bi-whatsapp me-2"></i> Fale conosco no WhatsApp
+          </a>
+        </div>
       </div>
     </div>
   );

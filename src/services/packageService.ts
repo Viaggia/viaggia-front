@@ -36,3 +36,8 @@ export const createPackage = async (data: PackageCreateDTO) => {
 
   return response.data;
 };
+
+export async function getPackagesByUserId(): Promise<PackageDTO[]> {
+  const response = await api.get('/api/Packages/my-packages');
+  return response.data.data;
+}

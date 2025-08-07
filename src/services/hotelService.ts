@@ -25,7 +25,6 @@ export const createHotel = async (data: CreateHotelDTO) => {
 
   formData.append('RoomTypesJson', data.roomTypesJson);
 
-
   data.mediaFiles.forEach((file) => {
     formData.append('MediaFiles', file);
   });
