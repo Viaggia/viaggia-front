@@ -117,6 +117,171 @@
     font-size: 20px;
 }
 
+/* ReactFlagsSelect styling */
+.flag-select {
+  position: relative;
+  width: 100%;
+}
+
+.flag-select .rfs-btn {
+  height: 38px;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem 0 0 0.375rem;
+  background: white;
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  width: 100%;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.flag-select .rfs-btn:hover {
+  border-color: #86b7fe;
+}
+
+.flag-select .rfs-btn:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+.flag-select .rfs-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 2px;
+}
+
+.flag-select .rfs-option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.flag-select .rfs-option:hover {
+  background-color: #f8f9fa;
+}
+
+.flag-select .rfs-option:first-child {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.flag-select .rfs-option:last-child {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+.flag-select .rfs-label {
+  margin-left: 0.5rem;
+  font-weight: 500;
+}
+
+.flag-select .rfs-flag {
+  width: 20px;
+  height: 15px;
+  margin-right: 8px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.flag-select .rfs-search {
+  padding: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.flag-select .rfs-search input {
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.flag-select .rfs-search input:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+.flag-select .rfs-arrow {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Phone input group styling */
+.phone-input-group {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+}
+
+.phone-input-group .flag-select-container {
+  width: 150px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.phone-input-group .phone-input {
+  flex: 1;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: 0;
+  height: 43px;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.phone-input-group .flag-select-container .flag-select .rfs-btn {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .phone-input-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .phone-input-group .flag-select-container {
+    width: 100%;
+  }
+  
+  .phone-input-group .phone-input {
+    border-radius: 0.375rem;
+  }
+  
+  .flag-select .rfs-btn {
+    border-radius: 0.375rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .phone-input-group .flag-select-container {
+    width: 100%;
+  }
+}
+
 
 
 

@@ -4,13 +4,17 @@ interface ToastProps {
   show: boolean;
   message: string;
   onClose: () => void;
+  type?: 'success' | 'error';
 }
 
-const ToastForm: React.FC<ToastProps> = ({ show, message, onClose }) => {
+const ToastForm: React.FC<ToastProps> = ({ show, message, onClose, type = 'success' }) => {
   if (!show) return null;
+  
+  const bgClass = type === 'error' ? 'bg-danger' : 'bg-success';
+  
   return (
     <div
-      className="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-4 show"
+      className={`toast align-items-center text-white ${bgClass} border-0 position-fixed bottom-0 end-0 m-4 show`}
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
