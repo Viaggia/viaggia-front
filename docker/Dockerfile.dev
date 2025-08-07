@@ -5,13 +5,13 @@ WORKDIR /app
 # Install curl for health checks
 RUN apk add --no-cache curl
 
-# Copy package files
+# Copy package files first
 COPY package*.json ./
 
-# Install all dependencies (including dev)
+# Install dependencies
 RUN npm install
 
-# Copy source code
+# Then copy the rest
 COPY . .
 
 # Expose port
