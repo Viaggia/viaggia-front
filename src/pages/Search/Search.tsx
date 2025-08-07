@@ -57,29 +57,44 @@ function Search() {
   }, [searchParams.toString(), searchKey]);
 
   return (
-    <section className="container-fluid text-dark position-relative px-0">
-      <section
-        className="search-img text-white py-5 w-100 m-0"
-        style={{
-          backgroundImage: 'url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/d0f4a590131921.5e0eb0ca39ce9.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minWidth: '100vw',
-        }}
-      >
-        <section
-          className="search-section text-white py-5"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <div className="container bg-viaggia bg-opacity-100 p-4 rounded">
-            <h2 className="mb-4 text-center">Escolha seu destino</h2>
-            <TravelForm initialValues={initialValues} onSearch={handleSearch} />
+    <div>
+      <div className="position-relative">
+            {/* Imagem de fundo fixa */}
+            <div
+              className="hero-background"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "53vh",
+                backgroundImage:
+                  "url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/d0f4a590131921.5e0eb0ca39ce9.jpg)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                zIndex: 0,
+              }}
+            />
+      
+            {/* Conteúdo sobreposto */}
+            <div
+              className="container position-relative"
+              style={{ paddingTop: "37vh", zIndex: 1 }}
+            >
+              <div>
+                <h2 className="mb-4 text-center text-white fw-bold fs-1">
+                  Escolha seu destino
+                </h2>
+                <div className="container bg-viaggia bg-opacity-100 rounded">
+                  <TravelForm />
+                </div>
+              </div>
+      
+            </div>
           </div>
-        </section>
-      </section>
+    
+    <section className="container-fluid text-dark position-relative px-0">
+      
 
       {/* 🎯 Filtros e cards de hotéis fora da área da imagem */}
       <div className="row gx-0 align-items-start mt-4 position-relative z-1">
@@ -99,6 +114,7 @@ function Search() {
         </div>
       </div>
     </section>
+  </div>
   );
 }
 
