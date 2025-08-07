@@ -9,10 +9,10 @@ const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { hotel, selectedRooms, pkg } = location.state || {};
-  const { user } = useAuth(); // <-- pega o usuário logado
+  const { user } = useAuth();
 
-  const isPackage = !!pkg;
   const [loading, setLoading] = useState(false);
+  const isPackage = !!pkg;
 
   const total = isPackage
     ? pkg.basePrice
@@ -20,7 +20,6 @@ const Payment: React.FC = () => {
       ? selectedRooms.reduce((sum, room) => sum + (room.price * room.quantity), 0)
       : 0;
 
-  // Pegue as datas da tela anterior ou defina padrão
   const checkInDate = isPackage
     ? pkg.packageDates?.[0]?.startDate
     : location.state?.checkInDate;
@@ -30,13 +29,6 @@ const Payment: React.FC = () => {
 
   const handleGoToPaymentPending = async () => {
     setLoading(true);
-
-    console.log("hotel")
-    console.log(hotel)
-    console.log("selectedRooms")
-    console.log(selectedRooms)
-    console.log("pkg")
-    console.log(pkg)
 
     try {
       let dto: ReservationCreateDTO | null = null;
@@ -56,15 +48,11 @@ const Payment: React.FC = () => {
           checkInDate: pkg.packageDates?.[0]?.startDate || '',
           checkOutDate: pkg.packageDates?.[0]?.endDate || '',
           totalPrice: pkg.basePrice,
-          numberOfGuests: 2, 
+          numberOfGuests: 2,
           status: 'Pendente',
           isActive: true,
         };
       } else if (hotel && selectedRooms && selectedRooms.length > 0) {
-        console.log("else")
-        console.log("checkInDate", checkInDate)
-        console.log("checkOutDate", checkOutDate)
-        console.log("select", selectedRooms)
         dto = {
           userId: user.id,
           packageId: 0,
@@ -95,95 +83,78 @@ const Payment: React.FC = () => {
 
   return (
     <div className="container py-5">
-      <div className="row">
-        {/* Coluna Esquerda: Informações e Forma de Pagamento */}
-        <div className="col-md-6 mb-4">
-          <div className="mb-4">
-            <h5>Informações do Cliente</h5>
-            {isPackage ? (
-              <>
-                <p><strong>Pacote:</strong> {pkg.name}</p>
-                <p><strong>Destino:</strong> {pkg.destination}</p>
-                <p><strong>Hotel:</strong> {hotel?.name || pkg.hotelName}</p>
-                <p><strong>Datas:</strong> {pkg.packageDates?.[0]?.startDate} até {pkg.packageDates?.[0]?.endDate}</p>
-              </>
-            ) : (
-              <>
-                <p><strong>Hotel:</strong> {hotel?.name}</p>
-                <p><strong>Cidade:</strong> {hotel?.city} - {hotel?.state}</p>
-              </>
-            )}
+      <h2 className="text-center mb-5 fw-bold">Finalizar Pagamento</h2>
+
+      <div className="row g-4">
+        {/* CARD ÚNICO: Dados do Cliente + Compra */}
+        <div className="col-md-6">
+          <div className="card shadow rounded">
+            <div className="card-header bg-secondary text-white">
+              <h5 className="mb-0">Dados da Reserva</h5>
+            </div>
+            <div className="card-body">
+              <h6 className="mb-3 text-primary">Dados do Cliente</h6>
+              <p><strong>Nome:</strong> {user?.name}</p>
+              <p><strong>Telefone:</strong> {user?.phoneNumber || '(00) 00000-0000'}</p>
+              <p><strong>Email:</strong> {user?.email}</p>
+
+              <hr className="my-4" />
+
+              <h6 className="mb-3 text-primary">Informações da Compra</h6>
+              {isPackage ? (
+                <>
+                  <p><strong>Pacote:</strong> {pkg.name}</p>
+                  <p><strong>Destino:</strong> {pkg.destination}</p>
+                  <p><strong>Hotel:</strong> {hotel?.name || pkg.hotelName}</p>
+                  <p><strong>Datas:</strong> {pkg.packageDates?.[0]?.startDate} até {pkg.packageDates?.[0]?.endDate}</p>
+                </>
+              ) : (
+                <>
+                  <p><strong>Hotel:</strong> {hotel?.name}</p>
+                  <p><strong>Cidade:</strong> {hotel?.city} - {hotel?.state}</p>
+                  <p><strong>Check-in:</strong> {checkInDate}</p>
+                  <p><strong>Check-out:</strong> {checkOutDate}</p>
+                </>
+              )}
+            </div>
           </div>
-
-          <form>
-            <div className="mb-3">
-              <label htmlFor="nomeCompleto" className="form-label">Nome Completo</label>
-              <input type="text" className="form-control" id="nomeCompleto" placeholder="Nome Completo" required />
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="cpforpassport" className="form-label">CPF ou Passport</label>
-              <input type="text" className="form-control" id="cpforpassport" placeholder="CPF ou Passport" required />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Forma de Pagamento</label>
-              <div className="form-check">
-                <input className="form-check-input" type="radio" name="formapagamento" id="boleto" value="boleto" />
-                <label className="form-check-label" htmlFor="boleto">Boleto</label>
-              </div>
-              <div className="form-check">
-                <input className="form-check-input" type="radio" name="formapagamento" id="pix" value="pix" />
-                <label className="form-check-label" htmlFor="pix">Pix</label>
-              </div>
-              <div className="form-check">
-                <input className="form-check-input" type="radio" name="formapagamento" id="cartao" value="cartao" />
-                <label className="form-check-label" htmlFor="cartao">Cartão</label>
-              </div>
-            </div>
-          </form>
         </div>
 
-        {/* Coluna Direita: Resumo do Pagamento */}
+        {/* CARD: Resumo do Pedido */}
         <div className="col-md-6">
-          <div className="card">
+          <div className="card shadow-lg rounded">
             <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Resumo do Pedido</h5>
+              <h5 className="mb-0">Detalhes do Pedido</h5>
             </div>
             <div className="card-body">
               {isPackage ? (
                 <>
                   <p><strong>Pacote:</strong> {pkg.name}</p>
                   <ul className="list-group mb-3">
-                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                    <li className="list-group-item d-flex justify-content-between">
                       <span>Pacote completo</span>
                       <span>R$ {pkg.basePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                     </li>
                   </ul>
-                  <p><strong>Total:</strong> R$ {pkg.basePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </>
               ) : (
                 <>
                   <p><strong>Hotel:</strong> {hotel?.name}</p>
                   <ul className="list-group mb-3">
-                    {Array.isArray(selectedRooms) && selectedRooms.map((room, idx) => (
-                      <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between align-items-center">
-                        <span>
-                          {typeof room.name === 'string' ? room.name : 'Quarto'} ({room.quantity}x)
-                        </span>
-                        <span>
-                          R$ {(room.price * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                        </span>
+                    {Array.isArray(selectedRooms) && selectedRooms.map((room) => (
+                      <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between">
+                        <span>{room.name || 'Quarto'} ({room.quantity}x)</span>
+                        <span>R$ {(room.price * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </li>
                     ))}
                   </ul>
-                  <p><strong>Total:</strong> R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </>
               )}
+              <h5 className="text-end mt-3">Total: R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h5>
             </div>
             <div className="card-footer text-end">
               <button
-                className="btn btn-success"
+                className="btn btn-success px-4 py-2 fw-semibold"
                 onClick={handleGoToPaymentPending}
                 disabled={loading}
               >
