@@ -9,7 +9,12 @@ import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
 import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/forms/DateRangePicker/DateRangePicker';
 
-const backendUrl = import.meta.env.VITE_API_URL;
+// IMPORT DO ReviewCard e do serviço para buscar reviews
+import ReviewCard from '../../components/cards/ReviewCard/Review';
+import { ReviewDTO } from '../../types/Review';
+import { getReviewsByHotel } from '../../services/reviewServices'; // ajuste conforme seu serviço
+
+const backendUrl = "https://localhost:7164";
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -18,9 +23,17 @@ const Details: React.FC = () => {
   const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
   const [showError, setShowError] = useState(false);
 
+  // Estado para reviews
+  const [reviews, setReviews] = useState<ReviewDTO[]>([]); // Ajuste o tipo se tiver seu DTO
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
   const location = useLocation();
 
-   const searchState = location.state || {};
+  console.log("location", location)
+
+  const searchState = location.state || {};
+
+  console.log("searchState", searchState)
 
   const [checkIn, setCheckIn] = useState(
     searchState.checkInDate || getTodayISO()
@@ -42,6 +55,20 @@ const Details: React.FC = () => {
     typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1
   );
 
+  useEffect(() => {
+    setCheckIn(searchState.checkInDate || getTodayISO());
+    setCheckOut(searchState.checkOutDate || getFutureISO(7));
+    setAdults(
+      typeof searchState.adults === 'number'
+        ? searchState.adults
+        : typeof searchState.numberOfPeople === 'number'
+          ? Math.max(1, searchState.numberOfPeople - (searchState.children || 0))
+          : 1
+    );
+    setChildren(typeof searchState.children === 'number' ? searchState.children : 0);
+    setRooms(typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1);
+  }, [location.state]);
+
   const handleQuantityChange = (roomTypeId: number, quantity: number) => {
     setSelectedQuantities(prev => ({
       ...prev,
@@ -56,6 +83,24 @@ const Details: React.FC = () => {
     if (hotelId) {
       getHotelById(Number(hotelId)).then(data => setHotel(data));
     }
+  }, [hotelId]);
+
+  // Busca os reviews ao carregar o hotel
+  useEffect(() => {
+    async function fetchReviews() {
+      if (!hotelId) return;
+      setLoadingReviews(true);
+      try {
+        const data = await getReviewsByHotel(Number(hotelId));
+        setReviews(data);
+      } catch (error) {
+        console.error('Erro ao carregar reviews:', error);
+        setReviews([]);
+      } finally {
+        setLoadingReviews(false);
+      }
+    }
+    fetchReviews();
   }, [hotelId]);
 
   if (!hotel) return <div>Carregando...</div>;
@@ -90,27 +135,27 @@ const Details: React.FC = () => {
     .filter(s => !comodities[s.key as keyof typeof comodities])
     .map(s => s.label);
 
- const handleSearch = async () => {
-  try {
-    // Soma adultos + crianças para o filtro
-    const numberOfPeople = adults + children;
-    if (!checkIn || !checkOut) {
-      alert('Selecione as datas de check-in e check-out.');
-      return;
+  const handleSearch = async () => {
+    try {
+      // Soma adultos + crianças para o filtro
+      const numberOfPeople = adults + children;
+      if (!checkIn || !checkOut) {
+        alert('Selecione as datas de check-in e check-out.');
+        return;
+      }
+      const availableRooms = await getAvailableRooms(
+        hotel.hotelId,
+        numberOfPeople,
+        checkIn,
+        checkOut
+      );
+      // Atualiza os quartos do hotel com o resultado filtrado
+      setHotel(prev => prev ? { ...prev, roomTypes: availableRooms } : prev);
+    } catch (error) {
+      alert('Não foi possível buscar quartos disponíveis.');
+      console.error(error);
     }
-    const availableRooms = await getAvailableRooms(
-      hotel.hotelId,
-      numberOfPeople,
-      checkIn,
-      checkOut
-    );
-    // Atualiza os quartos do hotel com o resultado filtrado
-    setHotel(prev => prev ? { ...prev, roomTypes: availableRooms } : prev);
-  } catch (error) {
-    alert('Não foi possível buscar quartos disponíveis.');
-    console.error(error);
-  }
-};
+  };
 
   return (
     <div className="container-fluid py-5">
@@ -156,13 +201,12 @@ const Details: React.FC = () => {
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
           <ServiceList title="Não ofertados" items={naoOfertados} />
-          <ExtraCommoditiesList commoditieServices={
-            (hotel.commodities[0]?.customCommodities || []).map(cc => ({
+          <ExtraCommoditiesList
+            commoditieServices={hotel.commodities[0]?.customCommodities?.map(cc => ({
               serviceName: cc.name,
-              isFree: !cc.isPaid,
-              isActive: cc.isActive
-            }))
-          } />
+              isFree: !cc.isPaid
+            })) || []}
+          />
         </div>
       </div>
 
@@ -208,7 +252,9 @@ const Details: React.FC = () => {
             navigate('/payment', {
               state: {
                 hotel,
-                selectedRooms
+                selectedRooms,
+                checkInDate: checkIn,
+                checkOutDate: checkOut
               }
             });
           }}
@@ -216,9 +262,20 @@ const Details: React.FC = () => {
           Ir para Pagamento
         </button>
       </div>
-
+      {/* INSERÇÃO DO CARD DE REVIEW ABAIXO DOS QUARTOS */}
+      <div className="container mt-5">
+        <h3>Avaliações dos hóspedes</h3>
+        {loadingReviews && <p>Carregando avaliações...</p>}
+        {!loadingReviews && reviews.length === 0 && <p>Este hotel ainda não possui avaliações.</p>}
+        <div className="row">
+          {reviews.map(review => (
+            <div key={review.reviewId} className="col-md-6 col-lg-4 mb-4">
+              <ReviewCard review={review} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
-
 export default Details;
