@@ -2,6 +2,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import PackageCard from '../../components/cards/PackageCard/PackageCard'
 import CardPackages from '../../components/ListPackages/CardPackages' 
 import TravelForm from '../../components/forms/TravelForm/TravelForm'
+import { PackageDTO } from '../../types/Package'
+import { useEffect, useState } from 'react'
+import { getPackages } from '../../services/packageService'
 
 
 const pacotes = [
@@ -55,6 +58,39 @@ const pacotes = [
 
 
 function Packages() {
+  const [packages, setPackages] = useState<PackageDTO[]>([]);
+  
+  const backendUrl = import.meta.env.VITE_API_URL;
+
+
+  useEffect(() => {
+      const fetchPackages = async () => {
+        try {
+          const data = await getPackages();
+          setPackages(data);
+        } catch (error) {
+          console.error("Erro ao buscar pacotes:", error);
+        }
+      };
+  
+      fetchPackages();
+    }, []);
+
+
+  const cardsPackages = packages.map((pkg) => ({
+    packageId: pkg.packageId,
+    titulo: pkg.name,
+    destino: pkg.destination,
+    descricao: pkg.description,
+    preco: pkg.basePrice,
+    imagem: pkg.medias[0] ? backendUrl + pkg.medias[0].mediaUrl : "/img/default.jpg",
+    datas:
+      pkg.packageDates.length > 0
+        ? `${pkg.packageDates[0].startDate} até ${pkg.packageDates[0].endDate}`
+        : "Datas não informadas",
+  }));
+
+
   return (
     <>
     <div>
@@ -81,7 +117,7 @@ function Packages() {
 
     </section>
     <div>
-      <CardPackages items={pacotes} CardComponent={PackageCard} text={"Pacotes de viagem"} />
+      <CardPackages items={cardsPackages} CardComponent={PackageCard} text={"Pacotes de viagem"} />
     </div>
     </div>
     </>
