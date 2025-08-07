@@ -6,6 +6,7 @@ import HotelAdmCard from '../../components/cards/HotelAdmCard/HotelAdmCard';
 import EditHotelForm from '../../components/forms/EditHotelForm/EditHotelForm';
 import HotelEditStepper from '../../components/forms/EditHotelForm/HotelEditStepper';
 import ToastForm from '../../components/Toast/ToastForm';
+import ConfirmDeleteModal from '../../components/Modals/ConfirmDeleteModal/ConfirmDeleteModal';
 
 const backendUrl = import.meta.env.VITE_API_URL;
 
@@ -37,13 +38,15 @@ function MyHotels({ userId }: Props) {
     });
     const [showToast, setShowToast] = useState(false);
 
+    // Adicione estados para o modal de deleção
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedDeleteId, setSelectedDeleteId] = useState<number | null>(null);
+
     useEffect(() => {
         getHotelsByUserId(userId)
             .then(setHotels)
             .finally(() => setLoading(false));
     }, [userId]);
-
-    console.log("hotels", hotels)
 
     useEffect(() => {
         if (editingHotel) {
@@ -66,15 +69,32 @@ function MyHotels({ userId }: Props) {
         }
     }, [editingHotel]);
 
-    const handleDelete = async (hotelId: number) => {
-        if (!window.confirm('Tem certeza que deseja excluir este hotel? Esta ação não pode ser desfeita.')) return;
-        setDeletingId(hotelId);
+    // Novo: abre o modal de deleção
+    const handleDeleteClick = (hotelId: number) => {
+        setSelectedDeleteId(hotelId);
+        setShowDeleteModal(true);
+    };
+
+    // Novo: confirma deleção
+    const handleConfirmDelete = async () => {
+        if (!selectedDeleteId) return;
+        setDeletingId(selectedDeleteId);
         try {
-            await deleteHotel(hotelId);
-            setHotels(hotels.filter(h => h.hotelId !== hotelId));
+            await deleteHotel(selectedDeleteId);
+            setHotels(hotels.filter(h => h.hotelId !== selectedDeleteId));
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 2000);
         } finally {
             setDeletingId(null);
+            setShowDeleteModal(false);
+            setSelectedDeleteId(null);
         }
+    };
+
+    // Novo: cancela deleção
+    const handleCancelDelete = () => {
+        setShowDeleteModal(false);
+        setSelectedDeleteId(null);
     };
 
     const handleEdit = (hotelId: number) => {
@@ -168,7 +188,7 @@ function MyHotels({ userId }: Props) {
         <div className="container">
             <ToastForm
                 show={showToast}
-                message="Hotel atualizado com sucesso!"
+                message="Hotel atualizado/excluído com sucesso!"
                 onClose={() => setShowToast(false)}
             />
             <div className="card shadow-sm mt-4">
@@ -183,7 +203,7 @@ function MyHotels({ userId }: Props) {
                                 <HotelAdmCard
                                     hotel={hotel}
                                     onEdit={handleEdit}
-                                    onDelete={handleDelete}
+                                    onDelete={handleDeleteClick} // Altere para abrir o modal
                                     deleting={deletingId === hotel.hotelId}
                                     backendUrl={backendUrl}
                                 />
@@ -212,6 +232,15 @@ function MyHotels({ userId }: Props) {
                     </div>
                 </div>
             )}
+            {/* Modal de deleção */}
+            <ConfirmDeleteModal
+                show={showDeleteModal}
+                title="Confirmar Exclusão"
+                message="Tem certeza que deseja excluir este hotel? Esta ação não pode ser desfeita."
+                onCancel={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                loading={deletingId !== null}
+            />
         </div>
     );
 }

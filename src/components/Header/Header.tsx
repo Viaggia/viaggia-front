@@ -72,7 +72,6 @@ function Header() {
             <li className="nav-item"><Link className="nav-link text-white" to="/" onClick={closeNavbar}>Início</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/packages" onClick={closeNavbar}>Pacotes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/promotion" onClick={closeNavbar}>Promoções</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/review" onClick={closeNavbar}>Avaliações</Link></li>
           </ul>
 
           <div className="d-flex">

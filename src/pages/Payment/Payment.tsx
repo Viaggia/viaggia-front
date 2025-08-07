@@ -2,14 +2,21 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createPaymentIntent } from '../../services/paymentService';
-import { ReservationCreateDTO } from '../../types/Reservation';
+import { ReserveCreateDTO } from '../../types/Reservation';
 import { useAuth } from '../../context/AuthContext';
+import { brDateToISO } from '../../utils/formatMask';
+
+type SelectedRoom = { roomTypeId: number; quantity: number; name?: string; price?: number };
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { hotel, selectedRooms, pkg } = location.state || {};
-  const { user } = useAuth(); // <-- pega o usuário logado
+  const { hotel, selectedRooms, pkg } = location.state as {
+    hotel?: any;
+    selectedRooms?: SelectedRoom[];
+    pkg?: any;
+  } || {};
+  const { user } = useAuth();
 
   const isPackage = !!pkg;
   const [loading, setLoading] = useState(false);
@@ -17,10 +24,9 @@ const Payment: React.FC = () => {
   const total = isPackage
     ? pkg.basePrice
     : Array.isArray(selectedRooms)
-      ? selectedRooms.reduce((sum, room) => sum + (room.price * room.quantity), 0)
+      ? selectedRooms.reduce((sum: number, room: SelectedRoom) => sum + ((room.price ?? 0) * room.quantity), 0)
       : 0;
 
-  // Pegue as datas da tela anterior ou defina padrão
   const checkInDate = isPackage
     ? pkg.packageDates?.[0]?.startDate
     : location.state?.checkInDate;
@@ -31,15 +37,8 @@ const Payment: React.FC = () => {
   const handleGoToPaymentPending = async () => {
     setLoading(true);
 
-    console.log("hotel")
-    console.log(hotel)
-    console.log("selectedRooms")
-    console.log(selectedRooms)
-    console.log("pkg")
-    console.log(pkg)
-
     try {
-      let dto: ReservationCreateDTO | null = null;
+      let dto: ReserveCreateDTO | null = null;
 
       if (!user) {
         alert('Usuário não autenticado!');
@@ -48,34 +47,44 @@ const Payment: React.FC = () => {
       }
 
       if (isPackage && pkg) {
+        // Converta as datas do pacote para ISO antes de enviar
+        const checkInISO = checkInDate && checkInDate.includes('/') ? brDateToISO(checkInDate) : checkInDate;
+        const checkOutISO = checkOutDate && checkOutDate.includes('/') ? brDateToISO(checkOutDate) : checkOutDate;
+
         dto = {
           userId: user.id,
           packageId: pkg.packageId,
-          roomTypeId: 0,
           hotelId: pkg.hotelId,
-          checkInDate: pkg.packageDates?.[0]?.startDate || '',
-          checkOutDate: pkg.packageDates?.[0]?.endDate || '',
+          checkInDate: checkInISO || '',
+          checkOutDate: checkOutISO || '',
           totalPrice: pkg.basePrice,
-          numberOfGuests: 2, 
+          numberOfGuests: Array.isArray(selectedRooms)
+            ? selectedRooms.reduce((sum: number, r: SelectedRoom) => sum + r.quantity, 0)
+            : 2,
           status: 'Pendente',
           isActive: true,
+          reserveRooms: Array.isArray(selectedRooms)
+            ? selectedRooms.map((room: SelectedRoom) => ({
+              roomTypeId: room.roomTypeId,
+              quantity: room.quantity
+            }))
+            : []
         };
       } else if (hotel && selectedRooms && selectedRooms.length > 0) {
-        console.log("else")
-        console.log("checkInDate", checkInDate)
-        console.log("checkOutDate", checkOutDate)
-        console.log("select", selectedRooms)
         dto = {
           userId: user.id,
           packageId: 0,
-          roomTypeId: selectedRooms[0].roomTypeId,
           hotelId: hotel.hotelId,
           checkInDate: checkInDate || new Date().toISOString(),
           checkOutDate: checkOutDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           totalPrice: total,
-          numberOfGuests: selectedRooms[0].quantity,
+          numberOfGuests: selectedRooms.reduce((sum: number, r: SelectedRoom) => sum + r.quantity, 0),
           status: 'Pendente',
           isActive: true,
+          reserveRooms: selectedRooms.map((room: SelectedRoom) => ({
+            roomTypeId: room.roomTypeId,
+            quantity: room.quantity
+          }))
         };
       } else {
         setLoading(false);
@@ -92,6 +101,8 @@ const Payment: React.FC = () => {
       setLoading(false);
     }
   };
+
+  console.log("location", location.state)
 
   return (
     <div className="container py-5">
@@ -166,13 +177,13 @@ const Payment: React.FC = () => {
                 <>
                   <p><strong>Hotel:</strong> {hotel?.name}</p>
                   <ul className="list-group mb-3">
-                    {Array.isArray(selectedRooms) && selectedRooms.map((room, idx) => (
+                    {Array.isArray(selectedRooms) && selectedRooms.map((room: SelectedRoom, idx: number) => (
                       <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between align-items-center">
                         <span>
                           {typeof room.name === 'string' ? room.name : 'Quarto'} ({room.quantity}x)
                         </span>
                         <span>
-                          R$ {(room.price * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          R$ {((room.price ?? 0) * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </span>
                       </li>
                     ))}

@@ -9,10 +9,10 @@ import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
 import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/forms/DateRangePicker/DateRangePicker';
 
-// IMPORT DO ReviewCard e do serviço para buscar reviews
-import ReviewCard from '../../components/cards/ReviewCard/Review';
+// IMPORT DO ReviewList
+import ReviewList from '../../components/lists/ReviewList/ReviewList';
 import { ReviewDTO } from '../../types/Review';
-import { getReviewsByHotel } from '../../services/reviewServices'; // ajuste conforme seu serviço
+import { getReviewsByHotel } from '../../services/reviewServices';
 import { getUserById } from '../../services/userService';
 
 const backendUrl = "https://localhost:7164";
@@ -114,8 +114,8 @@ const Details: React.FC = () => {
     fetchReviewsAndUsers();
   }, [hotelId]);
 
+  console.log("hotel", hotel)
 
-  console.log("reviews,", reviews)
   if (!hotel) return <div>Carregando...</div>;
 
   const images = hotel.medias.map(m => backendUrl + m.mediaUrl);
@@ -207,7 +207,6 @@ const Details: React.FC = () => {
         <p className="fw-bold">{hotel.description}</p>
       </div>
 
-
       {/* Serviços e comodidades */}
       <div className="container mt-3">
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 gx-3 gy-3">
@@ -272,35 +271,8 @@ const Details: React.FC = () => {
           Ir para Pagamento
         </button>
       </div>
-      {/* INSERÇÃO DO CARD DE REVIEW ABAIXO DOS QUARTOS */}
-      <div className="container mt-5">
-        <h3>Avaliações dos hóspedes</h3>
-        {loadingReviews && <p>Carregando avaliações...</p>}
-        {!loadingReviews && reviews.length === 0 && (
-          <div className="card border-0 shadow-sm my-4 text-center bg-light">
-            <div className="card-body py-4">
-              <i className="bi bi-chat-dots" style={{ fontSize: 40, color: "#0d6efd" }}></i>
-              <h5 className="mt-3 mb-2 text-secondary">Nenhuma avaliação disponível</h5>
-              <p className="mb-0 text-muted">
-                Este hotel ainda não possui avaliações de hóspedes.<br />
-                Seja o primeiro a compartilhar sua experiência!
-              </p>
-            </div>
-          </div>
-        )}
-        <div className="row">
-          {reviews.map(review => (
-            <div key={review.reviewId} className="col-md-6 col-lg-4 mb-4">
-              <ReviewCard
-                review={{
-                  ...review,
-                  userName: userMap[review.userId]?.name || 'Usuário Anônimo'
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Lista de avaliações dos hóspedes */}
+      <ReviewList reviews={reviews} loading={loadingReviews} userMap={userMap} />
     </div>
   );
 };

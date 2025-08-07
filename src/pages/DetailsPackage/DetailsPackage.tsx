@@ -6,6 +6,7 @@ import { PackageDTO } from '../../types/Package';
 import Carousel from '../../components/cards/Carrossel/CarouselCards';
 import { getHotelById } from '../../services/hotelService';
 import { HotelDTO } from '../../types/Hotel';
+import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 
 const backendUrl = import.meta.env.VITE_API_URL;
 
@@ -15,17 +16,21 @@ const DetailsPackage: React.FC = () => {
     const [pkg, setPkg] = useState<PackageDTO | null>(null);
     const [hotel, setHotel] = useState<HotelDTO | null>(null);
 
-    useEffect(() => {
-        if (pkg?.hotelId) {
-            getHotelById(pkg.hotelId).then(setHotel);
-        }
-    }, [pkg]);
+    // Estado para seleção de quartos
+    const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
+    const [showError, setShowError] = useState(false);
 
     useEffect(() => {
         if (packageId) {
             getPackageById(Number(packageId)).then(data => setPkg(data));
         }
     }, [packageId]);
+
+    useEffect(() => {
+        if (pkg?.hotelId) {
+            getHotelById(pkg.hotelId).then(setHotel);
+        }
+    }, [pkg]);
 
     if (!pkg) return <div>Carregando...</div>;
 
@@ -35,6 +40,28 @@ const DetailsPackage: React.FC = () => {
     const datas = pkg.packageDates.length > 0
         ? `${pkg.packageDates[0].startDate} até ${pkg.packageDates[0].endDate}`
         : 'Datas não informadas';
+
+    // Soma total de quartos selecionados
+    const totalSelected = Object.values(selectedQuantities).reduce((sum, q) => sum + q, 0);
+
+    // Função para alterar quantidade de quartos
+    const handleQuantityChange = (roomTypeId: number, quantity: number) => {
+        setSelectedQuantities(prev => ({
+            ...prev,
+            [roomTypeId]: quantity
+        }));
+        if (showError && quantity > 0) setShowError(false);
+    };
+
+    // Monta array de quartos selecionados para enviar ao pagamento
+    const selectedRooms = hotel?.roomTypes
+        .filter(rt => selectedQuantities[rt.roomTypeId] > 0)
+        .map(rt => ({
+            ...rt,
+            quantity: selectedQuantities[rt.roomTypeId]
+        })) || [];
+
+        console.log("selected rooms", selectedRooms)
 
     return (
         <div className="container-fluid py-5">
@@ -62,10 +89,29 @@ const DetailsPackage: React.FC = () => {
                         </div>
                         <button
                             className="btn btn-primary mt-4 w-100"
-                            onClick={() => navigate('/payment', { state: { pkg, hotel } })}
+                            onClick={() => {
+                                if (totalSelected === 0) {
+                                    setShowError(true);
+                                    return;
+                                }
+                                navigate('/payment', {
+                                    state: {
+                                        pkg,
+                                        hotel,
+                                        selectedRooms,
+                                        checkInDate: pkg.packageDates?.[0]?.startDate,
+                                        checkOutDate: pkg.packageDates?.[0]?.endDate,
+                                    }
+                                });
+                            }}
                         >
                             Comprar Pacote
                         </button>
+                        {showError && (
+                            <div className="alert alert-danger mt-3" role="alert">
+                                Selecione pelo menos um quarto para continuar.
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -91,6 +137,13 @@ const DetailsPackage: React.FC = () => {
                             Ver detalhes do hotel
                         </button>
                     </div>
+                    {/* Listagem de quartos do hotel */}
+                    <RoomTypeList
+                        roomTypes={hotel.roomTypes}
+                        selectedQuantities={selectedQuantities}
+                        onQuantityChange={handleQuantityChange}
+                        showError={showError}
+                    />
                 </div>
             )}
 

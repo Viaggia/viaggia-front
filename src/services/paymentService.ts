@@ -5,6 +5,8 @@ import api from './api';
 //const STRIPE_PROMISE = loadStripe('pk_test_51RsS2MFNInJ77nZ5I1V4R003EqgiNL7M3IMuRlPU3g4rxOH9Qm3i8wvroOYbMGcMAlN3c9bMnrBjfcV9qCBOgeqy00dMNminnL');
 
 export async function createPaymentIntent(data: ReservationCreateDTO): Promise<{ url: string }> {
+
+  console.log("data", data)
   try {
     const response = await api.post("https://localhost:7164/api/Payments/create-payment-intent", data);
 

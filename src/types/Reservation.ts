@@ -47,3 +47,21 @@ export interface ReservationCreateDTO {
   status: string;
   isActive: boolean;
 }
+
+export interface ReserveRoomCreateDTO {
+  roomTypeId: number;
+  quantity: number;
+}
+
+export interface ReserveCreateDTO {
+  userId: number;
+  packageId?: number;
+  hotelId: number;
+  checkInDate: string;
+  checkOutDate: string;
+  totalPrice: number;
+  numberOfGuests: number;
+  status: string;
+  isActive: boolean;
+  reserveRooms: ReserveRoomCreateDTO[];
+}

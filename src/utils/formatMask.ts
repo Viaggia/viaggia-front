@@ -99,3 +99,9 @@ export function formatDateToBR(date: Date | null): string {
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 }
+
+export function brDateToISO(dateStr: string) {
+  if (!dateStr) return '';
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month}-${day}T00:00:00.000Z`;
+}
