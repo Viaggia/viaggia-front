@@ -13,8 +13,11 @@ export async function getReviewsByHotel(hotelId: number): Promise<ReviewDTO[]> {
 /**
  * Cria uma nova review para um hotel
  */
-export async function createReview(hotelId: number, reviewData: CreateReviewDTO): Promise<ReviewDTO> {
-  const response = await api.post(`/api/Hotel/${hotelId}/reviews`, reviewData);
+export async function createReview(hotelId: number, reviewData: Omit<CreateReviewDTO, 'hotelId'>): Promise<ReviewDTO> {
+  const response = await api.post(`/api/Hotel/${hotelId}/reviews`, {
+    ...reviewData,
+    hotelId // Adiciona hotelId apenas aqui se necessário
+  });
   return response.data.data;
 }
 

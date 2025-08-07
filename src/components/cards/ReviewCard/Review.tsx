@@ -50,9 +50,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
           borderBottomLeftRadius: 16,
           userSelect: 'none',
         }}
-        title={review.userName}
+        title={review.userName || 'Usuário Anônimo'}
       >
-        {review.userName.charAt(0).toUpperCase()}
+        {(review.userName || 'A').charAt(0).toUpperCase()}
       </div>
 
       {/* Conteúdo */}
@@ -68,7 +68,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
       >
         <div>
           {/* Nome do usuário */}
-          <h5 className="fw-bold mb-1">{review.userName}</h5>
+          <h5 className="fw-bold mb-1">{review.userName || 'Usuário Anônimo'}</h5>
 
           {/* Avaliação com estrelas */}
           <div className="d-flex align-items-center mb-2">
@@ -83,12 +83,12 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
           </div>
 
           {/* Comentário */}
-          <p style={{ fontSize: 14, color: '#333' }}>{review.comment}</p>
+          <p style={{ fontSize: 14, color: '#333' }}>{review.comment || 'Sem comentário'}</p>
         </div>
 
         {/* Data */}
         <div style={{ fontSize: 12, color: '#888', textAlign: 'right' }}>
-          {formatDate(review.createdAt)}
+          {review.createdAt ? formatDate(review.createdAt) : 'Data não informada'}
         </div>
       </div>
     </div>

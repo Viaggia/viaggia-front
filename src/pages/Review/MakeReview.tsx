@@ -70,10 +70,10 @@ function MakeReview({ hotelId }: MakeReviewProps) {
     setMessage(null);
     try {
       const reviewData = {
-        hotelId: hotelId,
         userId: user?.id || 0,
         rating,
         comment: feedback,
+        reviewType: "Hotel" // Corrigido: deve ser "Hotel"
       };
       
       console.log('Enviando dados da review:', reviewData);
@@ -88,12 +88,32 @@ function MakeReview({ hotelId }: MakeReviewProps) {
       console.error('Erro ao enviar avaliação:', error);
       
       // Type guard para AxiosError
-      const axiosError = error as { response?: { data?: { message?: string; title?: string } } };
+      const axiosError = error as { response?: { data?: { message?: string; title?: string; errors?: Record<string, string[]> } } };
       console.error('Resposta do servidor:', axiosError?.response?.data);
+      console.error('Erros de validação:', axiosError?.response?.data?.errors);
       
-      const errorMessage = axiosError?.response?.data?.message || 
-                          axiosError?.response?.data?.title || 
-                          'Erro ao enviar avaliação. Tente novamente mais tarde.';
+      // Log detalhado dos erros de validação
+      if (axiosError?.response?.data?.errors) {
+        Object.keys(axiosError.response.data.errors).forEach(key => {
+          console.error(`Erro no campo ${key}:`, axiosError.response?.data?.errors?.[key]);
+        });
+      }
+      
+      let errorMessage = 'Erro ao enviar avaliação. Tente novamente mais tarde.';
+      
+      // Se há erros de validação, mostrar o primeiro erro
+      if (axiosError?.response?.data?.errors) {
+        const errors = axiosError.response.data.errors;
+        const firstErrorKey = Object.keys(errors)[0];
+        const firstErrorMessages = errors[firstErrorKey];
+        if (Array.isArray(firstErrorMessages) && firstErrorMessages.length > 0) {
+          errorMessage = firstErrorMessages[0];
+        }
+      } else if (axiosError?.response?.data?.message) {
+        errorMessage = axiosError.response.data.message;
+      } else if (axiosError?.response?.data?.title) {
+        errorMessage = axiosError.response.data.title;
+      }
       
       setMessage(errorMessage);
     } finally {

@@ -16,4 +16,5 @@ export interface CreateReviewDTO {
   userId: number;
   rating: number; // nota da review (ex: 1 a 5)
   comment: string;
+  reviewType: string; // deve ser "Hotel"
 }

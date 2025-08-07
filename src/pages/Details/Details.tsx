@@ -56,17 +56,18 @@ const Details: React.FC = () => {
   );
 
   useEffect(() => {
-    setCheckIn(searchState.checkInDate || getTodayISO());
-    setCheckOut(searchState.checkOutDate || getFutureISO(7));
+    const state = location.state || {};
+    setCheckIn(state.checkInDate || getTodayISO());
+    setCheckOut(state.checkOutDate || getFutureISO(7));
     setAdults(
-      typeof searchState.adults === 'number'
-        ? searchState.adults
-        : typeof searchState.numberOfPeople === 'number'
-          ? Math.max(1, searchState.numberOfPeople - (searchState.children || 0))
+      typeof state.adults === 'number'
+        ? state.adults
+        : typeof state.numberOfPeople === 'number'
+          ? Math.max(1, state.numberOfPeople - (state.children || 0))
           : 1
     );
-    setChildren(typeof searchState.children === 'number' ? searchState.children : 0);
-    setRooms(typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1);
+    setChildren(typeof state.children === 'number' ? state.children : 0);
+    setRooms(typeof state.numberOfRooms === 'number' ? state.numberOfRooms : 1);
   }, [location.state]);
 
   const handleQuantityChange = (roomTypeId: number, quantity: number) => {
@@ -92,6 +93,7 @@ const Details: React.FC = () => {
       setLoadingReviews(true);
       try {
         const data = await getReviewsByHotel(Number(hotelId));
+        console.log('Reviews carregadas:', data);
         setReviews(data);
       } catch (error) {
         console.error('Erro ao carregar reviews:', error);
