@@ -1,65 +1,56 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Form } from 'react-bootstrap'
-
-/*interface FiltrosProps {
-  preco: number
-  cafe: boolean
-  almoco: boolean
-  jantar: boolean
-  cancelamento: boolean
-  restaurante: boolean
-  quarto: boolean
-  recepcao: boolean
-  estacionamento: boolean
-  SPA: boolean
-}
-*/
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
+import { FiltrosProps } from '../../../types/Filters'
 
 interface FiltersSectionProps {
   filtros: FiltrosProps
   setFiltros: React.Dispatch<React.SetStateAction<FiltrosProps>>
+  minPreco: number
+  maxPreco: number
 }
 
-function FiltersSection({ filtros, setFiltros }: FiltersSectionProps) {
+function FiltersSection({ filtros, setFiltros, minPreco, maxPreco }: FiltersSectionProps) {
   return (
-    <aside
-      className="p-4"
-      style={{
-        backgroundColor: '#fff',
-        border: '1px solid #ddd',
-        borderRadius: '12px',
-        maxWidth: '280px',
-        fontSize: '0.95rem',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        position: 'sticky',
-        top: '100px',
-        height: 'fit-content',
-      }}
-    >
-      <div
-        style={{
-          fontSize: '1.5rem',         // aumenta o tamanho da fonte (~24px)
-          fontWeight: '700',          // peso forte
-          marginBottom: '24px',       // espaço inferior
-          color: '#333',              // cor mais escura para destacar
-        }}
-      >
+    <aside className="p-4" style={{
+      backgroundColor: '#fff',
+      border: '1px solid #ddd',
+      borderRadius: '12px',
+      maxWidth: '280px',
+      fontSize: '0.95rem',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      position: 'sticky',
+      top: '100px',
+      height: 'fit-content',
+    }}>
+      <div style={{
+        fontSize: '1.5rem',
+        fontWeight: '700',
+        marginBottom: '24px',
+        color: '#333',
+      }}>
         Filtrar hospedagens
       </div>
 
       {/* Preço */}
       <div style={{ marginTop: '32px', paddingTop: '16px', borderTop: '1px solid #ccc' }}>
         <Form.Label style={{ fontWeight: '500' }}>Preço por noite</Form.Label>
-        <Form.Range
-          min={30}
-          max={50000}
-          value={filtros.preco}
-          onChange={(e) =>
-            setFiltros({ ...filtros, preco: Number(e.target.value) })
-          }
+        <Slider
+          range
+          min={minPreco}
+          max={maxPreco}
+          value={[filtros.precoMin, filtros.precoMax]}
+          onChange={(value: number | number[]) => {
+            if (Array.isArray(value)) {
+              const [precoMin, precoMax] = value;
+              setFiltros({ ...filtros, precoMin, precoMax });
+            }
+          }}
+          step={10}
         />
         <div style={{ fontSize: '0.85rem', color: '#555' }}>
-          Até <strong>R$ {filtros.preco}</strong>
+          De <strong>R$ {filtros.precoMin}</strong> até <strong>R$ {filtros.precoMax}</strong>
         </div>
       </div>
 
@@ -156,22 +147,6 @@ function FiltersSection({ filtros, setFiltros }: FiltersSectionProps) {
           />
           <Form.Check
             type="checkbox"
-            label="Recepção 24h"
-            checked={filtros.recepcao}
-            onChange={(e) =>
-              setFiltros({ ...filtros, recepcao: e.target.checked })
-            }
-          />
-          <Form.Check
-            type="checkbox"
-            label="Serviço de quarto"
-            checked={filtros.quarto}
-            onChange={(e) =>
-              setFiltros({ ...filtros, quarto: e.target.checked })
-            }
-          />
-          <Form.Check
-            type="checkbox"
             label="SPA"
             checked={filtros.SPA}
             onChange={(e) =>
@@ -188,64 +163,8 @@ function FiltersSection({ filtros, setFiltros }: FiltersSectionProps) {
           />
         </div>
       </div>
-
-
-      {/* Serviços Adicionais */}
-      <div style={{ marginTop: '32px', paddingTop: '16px', borderTop: '1px solid #ccc' }}>
-        <Form.Label style={{ fontWeight: '500' }}>Serviços Adicionais</Form.Label>
-        <div className="d-flex flex-column">
-          <Form.Check
-            type="checkbox"
-            label="Translado aeroporto"
-            checked={filtros.translado}
-            onChange={(e) =>
-              setFiltros({ ...filtros, translado: e.target.checked })
-            }
-          />
-          <Form.Check
-            type="checkbox"
-            label="Aluguel de bicicletas"
-            checked={filtros.bicicleta}
-            onChange={(e) =>
-              setFiltros({ ...filtros, bicicleta: e.target.checked })
-            }
-          />
-        </div>
-      </div>
-
     </aside>
   )
 }
 
-function FiltrosWrapper() {
-  const [filtros, setFiltros] = useState<FiltrosProps>({
-    preco: 300,
-    cafe: false,
-    almoco: false,
-    jantar: false,
-    cancelamento: false,
-    quarto: false,
-    recepcao: false,
-    estacionamento: false,
-    SPA: false,
-    piscina: false,
-    academia: false,
-    wifi: false,
-    arcondicionado: false,
-    acessibilidade: false,
-    petfriendly: false,
-    translado: false,
-    bicicleta: false,
-  })
-
-  return (
-    <div
-      className="d-flex justify-content-start"
-      style={{ paddingLeft: '20px', paddingTop: '20px', paddingBottom: '20px', alignItems: 'flex-start' }} // margem interna à esquerda e topo
-    >
-      <FiltersSection filtros={filtros} setFiltros={setFiltros} />
-    </div>
-  )
-}
-
-export default FiltrosWrapper
+export default FiltersSection
