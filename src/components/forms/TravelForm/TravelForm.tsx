@@ -56,22 +56,19 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
     <form className="row g-3 d-flex justify-content-center p-3 rounded" onSubmit={handleSubmit}>
       <div className="col-md-2">
         <label className="form-label text-white fw-bold fs-5">Destino</label>
-        
-      
-      <input
-      type="text"
-      className="form-control border-primary"
-      style={{
-        borderWidth: '4px',
-        borderStyle: 'solid',
-        borderColor: '#0d6efd',
-        borderRadius: '10px'
-      }}
-      placeholder="Digite o destino"
-      value={city}
-      onChange={e => setCity(e.target.value)}
-    />
-
+        <input
+          type="text"
+          className="form-control border-primary"
+          style={{
+            borderWidth: '4px',
+            borderStyle: 'solid',
+            borderColor: '#0d6efd',
+            borderRadius: '10px'
+          }}
+          placeholder="Digite o destino"
+          value={city}
+          onChange={e => setCity(e.target.value)}
+        />
       </div>
       <div className="col-md-2 d-flex flex-column">
         <label className="form-label text-white fw-bold fs-5">Check-in</label>
@@ -95,11 +92,11 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
                 '& .MuiInputBase-root': {
                   minHeight: '38px',
                   height: '38px',
-                  fontSize: '1rem',
+                  //fontSize: '0.75rem !important',
                   padding: 0,
                   backgroundColor: '#fff',
                 },
-                '& input': {
+                '& .MuiInputBase-input': {
                   minHeight: '36px',
                   height: '36px',
                   padding: '6px 12px',
@@ -140,7 +137,7 @@ export default function TravelForm({ initialValues, onSearch }: TravelFormProps)
                 '& .MuiInputBase-root': {
                   minHeight: '38px',
                   height: '38px',
-                  fontSize: '1rem',
+                  fontSize: '0.75rem !important',
                   padding: 0,
                   backgroundColor: '#fff',
                 },

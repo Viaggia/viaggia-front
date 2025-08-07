@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, Typography, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -53,8 +53,16 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   const [open, setOpen] = useState(false);
 
   // Estados locais para edição no modal
-  const checkInValue = checkIn || getTodayISO();
-  const checkOutValue = checkOut || getFutureISO(7);
+  const [checkInValue, setCheckInValue] = useState(checkIn || getTodayISO());
+  const [checkOutValue, setCheckOutValue] = useState(checkOut || getFutureISO(7));
+
+  useEffect(() => {
+    setCheckInValue(checkIn || getTodayISO());
+  }, [checkIn]);
+
+  useEffect(() => {
+    setCheckOutValue(checkOut || getFutureISO(7));
+  }, [checkOut]);
 
   const [localAdults, setLocalAdults] = useState(adults || 2);
   const [localChildren, setLocalChildren] = useState(children || 0);
@@ -81,7 +89,11 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         <DatePicker
           label="Check-in"
           value={checkInValue ? parseLocalDate(checkInValue) : null}
-          onChange={date => onCheckInChange(date ? date.toISOString().split('T')[0] : '')}
+          onChange={date => {
+            const iso = date ? date.toISOString().split('T')[0] : '';
+            setCheckInValue(iso);
+            onCheckInChange(iso);
+          }}
           format="dd/MM/yyyy"
           slotProps={{ textField: { size: 'small', fullWidth: true } }}
         />
@@ -91,7 +103,11 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         <DatePicker
           label="Check-out"
           value={checkOutValue ? parseLocalDate(checkOutValue) : null}
-          onChange={date => onCheckOutChange(date ? date.toISOString().split('T')[0] : '')}
+          onChange={date => {
+            const iso = date ? date.toISOString().split('T')[0] : '';
+            setCheckOutValue(iso);
+            onCheckOutChange(iso);
+          }}
           format="dd/MM/yyyy"
           slotProps={{ textField: { size: 'small', fullWidth: true } }}
         />

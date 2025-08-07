@@ -15,17 +15,17 @@ export async function getPackageById(packageId: number): Promise<PackageDTO> {
 export const createPackage = async (data: PackageCreateDTO) => {
   const formData = new FormData();
 
-  formData.append('Name', data.name);
-  formData.append('Destination', data.destination);
-  formData.append('Description', data.description || '');
-  formData.append('BasePrice', data.basePrice.toString());
-  formData.append('HotelName', data.hotelName);
-  formData.append('IsActive', data.isActive.toString());
-  formData.append('StartDate', data.startDate);
-  formData.append('EndDate', data.endDate);
+  formData.append('name', data.name);
+  formData.append('destination', data.destination);
+  formData.append('description', data.description || '');
+  formData.append('basePrice', data.basePrice.toString());
+  formData.append('hotelName', data.hotelName);
+  formData.append('isActive', data.isActive.toString());
+  formData.append('startDate', data.startDate);
+  formData.append('endDate', data.endDate);
 
   data.mediaFiles.forEach(file => {
-    formData.append('MediaFiles', file);
+    formData.append('mediaFiles', file);
   });
 
   const response = await api.post('/api/Packages', formData, {

@@ -1,6 +1,6 @@
 import { Carousel } from 'react-bootstrap';
 import { HotelDTO } from '../../../types/Hotel';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 interface HotelCardSearchProps {
   hotel: HotelDTO;
@@ -14,6 +14,18 @@ function HotelCardSearch({ hotel }: HotelCardSearchProps) {
   const images = hotel.medias && hotel.medias.length > 0
     ? hotel.medias.map(img => backendUrl + img.mediaUrl)
     : ['/img/default.jpg'];
+
+  const [searchParams] = useSearchParams();
+
+  // Extrai os parâmetros da URL para repassar como state
+  const searchState = {
+    city: searchParams.get('city') || '',
+    checkInDate: searchParams.get('checkInDate') || '',
+    checkOutDate: searchParams.get('checkOutDate') || '',
+    numberOfPeople: searchParams.get('numberOfPeople') ? Number(searchParams.get('numberOfPeople')) : 1,
+    numberOfRooms: searchParams.get('numberOfRooms') ? Number(searchParams.get('numberOfRooms')) : 1,
+    children: searchParams.get('children') ? Number(searchParams.get('children')) : 0,
+  };
 
   return (
     <div className="card mb-5" style={{ width: '100%', borderRadius: '1rem', overflow: 'hidden' }}>
@@ -45,7 +57,7 @@ function HotelCardSearch({ hotel }: HotelCardSearchProps) {
             <Link
               to={`/details/${hotel.hotelId}`}
               className="btn btn-success w-100"
-              state={location.state}
+              state={searchState} // Agora o state nunca estará vazio
             >
               Reservar
             </Link>

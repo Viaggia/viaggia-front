@@ -7,6 +7,7 @@ import { getPackages } from "../../services/packageService";
 import { HotelDTO } from "../../types/Hotel";
 import { getHotels } from "../../services/hotelService";
 import HotelCard from "../../components/cards/HotelCard/HotelCard";
+import { EmptyState } from "../../components/EmptyState/EmptyState";
 
 function Home() {
   const [packages, setPackages] = useState<PackageDTO[]>([]);
@@ -71,51 +72,59 @@ function Home() {
 
   return (
     <div className="position-relative">
-  {/* Imagem de fundo fixa */}
-  <div
-    className="hero-background"
-    style={{
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "53vh",
-      backgroundImage:
-        "url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/d0f4a590131921.5e0eb0ca39ce9.jpg)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      zIndex: 0,
-    }}
-  />
-
-  {/* Conteúdo sobreposto */}
-  <div
-    className="container position-relative"
-    style={{ paddingTop: "37vh", zIndex: 1 }}
-  >
-    <div className="">
-      <h2 className="mb-4 text-center text-white fw-bold fs-1">
-        Escolha seu destino
-      </h2>
-      <TravelForm />
-    </div>
-
-    {/* Carrosséis */}
-    <div className="mt-5 pt-3">
-      <CardCarousel
-        items={carouselPackages}
-        CardComponent={PackageCard}
-        text={"Pacotes Exclusivos"}
+      {/* Imagem de fundo fixa */}
+      <div
+        className="hero-background"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "53vh",
+          backgroundImage:
+            "url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/d0f4a590131921.5e0eb0ca39ce9.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: 0,
+        }}
       />
-      <CardCarousel
-        items={carouselHotels}
-        CardComponent={HotelCard}
-        text={"Hospedagens Recomendadas"}
-      />
-    </div>
-  </div>
-</div>
 
+      {/* Conteúdo sobreposto */}
+      <div
+        className="container position-relative"
+        style={{ paddingTop: "37vh", zIndex: 1 }}
+      >
+        <div className="">
+          <h2 className="mb-4 text-center text-white fw-bold fs-1">
+            Escolha seu destino
+          </h2>
+          <TravelForm />
+        </div>
+
+        {/* Carrosséis com EmptyState */}
+        <div className="mt-5 pt-3">
+          {carouselPackages.length > 0 ? (
+            <CardCarousel
+              items={carouselPackages}
+              CardComponent={PackageCard}
+              text={"Pacotes Exclusivos"}
+            />
+          ) : (
+            <EmptyState message="Nenhum pacote disponível no momento." />
+          )}
+          
+          {carouselHotels.length > 0 ? (
+            <CardCarousel
+              items={carouselHotels}
+              CardComponent={HotelCard}
+              text={"Hospedagens Recomendadas"}
+            />
+          ) : (
+            <EmptyState message="Nenhum hotel disponível no momento." />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
