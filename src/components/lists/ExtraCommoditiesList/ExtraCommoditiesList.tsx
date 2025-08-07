@@ -1,18 +1,16 @@
 import React from 'react';
-import { CustomCommodityDTO, CommoditiesServiceDTO } from '../../../types/Hotel';
+import { CustomCommodityDTO } from '../../../types/Hotel';
 
 interface ExtraCommoditiesListProps {
-  customCommodities?: CustomCommodityDTO[];
-  commoditieServices?: CommoditiesServiceDTO[];
+  customCommodities: CustomCommodityDTO[];
 }
 
 const ExtraCommoditiesList: React.FC<ExtraCommoditiesListProps> = ({ 
-  customCommodities = [], 
-  commoditieServices = [] 
+  customCommodities = []
 }) => {
   // Use customCommodities if available, otherwise fallback to commoditieServices
-  const items = customCommodities.length > 0 ? customCommodities : commoditieServices;
-  
+  const items = customCommodities.length > 0 ? customCommodities : [];
+
   return (
     <div className="col">
       <h6 className="mb-1">Comodidades Extras</h6>
@@ -22,9 +20,7 @@ const ExtraCommoditiesList: React.FC<ExtraCommoditiesListProps> = ({
             <li key={i}>{cs.name} {cs.isPaid ? '(Pago)' : '(Grátis)'} {cs.description}</li>
           ))
         ) : (
-          commoditieServices.map((cs, i) => (
-            <li key={i}>{cs.serviceName} {cs.isFree ? '(Grátis)' : '(Pago)'}</li>
-          ))
+          <li className="text-muted">Nenhuma comodidade extra disponível</li>
         )}
       </ul>
     </div>

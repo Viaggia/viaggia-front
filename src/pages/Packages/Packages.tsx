@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import PackageCard from '../../components/cards/PackageCard/PackageCard'
-import CardPackeges from '../../components/ListPackeges/CardPackeges'
+import CardPackages from '../../components/ListPackages/CardPackages' 
 import TravelForm from '../../components/forms/TravelForm/TravelForm'
 
 
@@ -81,7 +81,7 @@ function Packages() {
 
     </section>
     <div>
-      <CardPackeges items={pacotes} CardComponent={PackageCard} text={"Pacotes de viagem"} />
+      <CardPackages items={pacotes} CardComponent={PackageCard} text={"Pacotes de viagem"} />
     </div>
     </div>
     </>

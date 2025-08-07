@@ -100,14 +100,26 @@ const ProfileUserInfoCard: React.FC<Props> = ({ user, role }) => {
                                     <span className="ms-2">{value || <span className="text-muted">Não informado</span>}</span>
                                 ) : editField === key ? (
                                     <>
-                                        <input
-                                            className="form-control ms-2"
-                                            name={key}
-                                            value={form[key as keyof UpdateUserDTO] || ''}
-                                            onChange={handleChange}
-                                            disabled={loading}
-                                            style={{ maxWidth: 200 }}
-                                        />
+                                        {key === 'avatar' ? (
+                                            <input
+                                                type="file"
+                                                className="form-control ms-2"
+                                                name={key}
+                                                onChange={handleChange}
+                                                disabled={loading}
+                                                style={{ maxWidth: 200 }}
+                                                accept="image/*"
+                                            />
+                                        ) : (
+                                            <input
+                                                className="form-control ms-2"
+                                                name={key}
+                                                value={typeof form[key as keyof UpdateUserDTO] === 'string' ? form[key as keyof UpdateUserDTO] as string : ''}
+                                                onChange={handleChange}
+                                                disabled={loading}
+                                                style={{ maxWidth: 200 }}
+                                            />
+                                        )}
                                         <button
                                             className="btn btn-success btn-sm ms-2"
                                             onClick={() => handleSave(key)}
