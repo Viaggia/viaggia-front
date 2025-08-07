@@ -40,7 +40,7 @@ function Header() {
 
   return (
     <header>
-      <div className='navbar navbar-expand-lg navbar-dark bg-viaggia px-4'>
+      <div className='navbar navbar-expand-lg navbar-dark bg-viaggia px-4 fixed-top' style={{ zIndex: 1040 }}>
         <Link to="/" className="navbar-brand d-flex align-items-center text-white gap-1">
         <img
           src="../../img/logoViaggiaSemNome.png"
@@ -70,9 +70,9 @@ function Header() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item"><Link className="nav-link text-white" to="/" onClick={closeNavbar}>Home</Link></li>
-            <li className="nav-item"><Link className="nav-link text-white" to="/search" onClick={closeNavbar}>Buscar</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/packages" onClick={closeNavbar}>Pacotes</Link></li>
             <li className="nav-item"><Link className="nav-link text-white" to="/promotion" onClick={closeNavbar}>Promoções</Link></li>
+            <li className="nav-item"><Link className="nav-link text-white" to="/review" onClick={closeNavbar}>Avaliações</Link></li>
           </ul>
 
           <div className="d-flex">

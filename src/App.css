@@ -1,0 +1,7 @@
+:root {
+  --header-height: 64px;
+}
+
+main {
+  margin-top: var(--header-height);
+}

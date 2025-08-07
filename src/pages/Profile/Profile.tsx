@@ -1,47 +1,41 @@
-import CreateAdminForm from '../../components/forms/CreateAdminForm/CreateAdminForm'
-import CreateAttendantForm from '../../components/forms/CreateAttendantForm/CreateAttendantForm'
-import CreateHotelStepper from '../../components/forms/CreateHotelForm/CreateHotelStepper'
-import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePackageForm'
-import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm'
-import { useAuth } from '../../context/AuthContext'
-import { useState } from 'react'
-import MyReservations from '../MyReservations/MyReservations'
-import ProfileSidebar from '../../components/Sidebars/ProfileSidebar'
-import ProfileMobileMenu from '../../components/Sidebars/ProfileMobileMenu'
-import ProfileUserInfoCard from '../../components/cards/ProfileUserInfoCard/ProfileUserInfoCard'
-import { updateUser } from '../../services/userService'
-import MyHotels from '../MyHotels/MyHotels'
+import CreateAdminForm from '../../components/forms/CreateAdminForm/CreateAdminForm';
+import CreateAttendantForm from '../../components/forms/CreateAttendantForm/CreateAttendantForm';
+import CreateHotelStepper from '../../components/forms/CreateHotelForm/CreateHotelStepper';
+import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePackageForm';
+import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm';
+import { useAuth } from '../../context/AuthContext';
+import { useState } from 'react';
+import MyReservations from '../MyReservations/MyReservations';
+import ProfileSidebar from '../../components/Sidebars/ProfileSidebar';
+import ProfileMobileMenu from '../../components/Sidebars/ProfileMobileMenu';
+import ProfileUserInfoCard from '../../components/cards/ProfileUserInfoCard/ProfileUserInfoCard';
+import { updateUser } from '../../services/userService';
+import AdminPanel from '../../components/AdminPanel/AdminPanel';
 
 function Profile() {
   const { user, role, setUser } = useAuth();
-  const [activeButton, setActiveButton] = useState('meu-perfil')
-  const [hover, setHover] = useState(false)
-  const [showModal, setShowModal] = useState(false)
+  const [activeButton, setActiveButton] = useState('meu-perfil');
+  const [hover, setHover] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  
-
 
   if (!user) {
     return (
       <div className="container mt-5 mb-5">
         <div className="alert alert-info text-center">Carregando...</div>
       </div>
-    )
+    );
   }
 
+  // Removido todos os botões de cadastro e "Meus Hotéis" do menu principal
   const menuOptions = [
     { value: 'meu-perfil', label: 'Meu Perfil' },
     { value: 'minhas-reservas', label: 'Minhas Reservas' },
     ...(role !== 'CLIENT'
       ? [
-        { value: 'meus-hoteis', label: 'Meus Hotéis' },
-        { value: 'cadastrar-adm', label: 'Cadastrar Administrador' },
-        { value: 'cadastrar-attendant', label: 'Cadastrar Atendente' },
-        { value: 'cadastrar-service-provider', label: 'Cadastrar Prestador de Serviço' },
-        { value: 'cadastrar-hotel', label: 'Cadastrar Hotel' },
-        { value: 'cadastrar-pacote', label: 'Cadastrar Pacote' },
-      ]
+          { value: 'admin-panel', label: 'Painel Administrativo' },
+        ]
       : []),
   ];
 
@@ -51,19 +45,18 @@ function Profile() {
     }
   };
 
-    const handleAvatarUpload = async () => {
+  const handleAvatarUpload = async () => {
     if (!avatarFile) return;
     setUploading(true);
     try {
       const updatedUser = await updateUser(user.id, { name: user.name }, avatarFile);
-      setUser(updatedUser); // atualiza o contexto com os dados mais recentes
+      setUser(updatedUser);
     } finally {
       setUploading(false);
       setShowModal(false);
       setAvatarFile(null);
     }
   };
-
 
   return (
     <div className="row m-0">
@@ -103,44 +96,12 @@ function Profile() {
             <ProfileUserInfoCard user={user} role={role || ''} />
           )}
 
-          {activeButton === 'cadastrar-adm' && (
-            <div>
-              <CreateAdminForm />
-            </div>
-          )}
-
-          {activeButton === 'cadastrar-attendant' && (
-            <div>
-              <CreateAttendantForm />
-            </div>
-          )}
-
           {activeButton === 'minhas-reservas' && (
-            <div>
-              <MyReservations />
-            </div>
+            <MyReservations />
           )}
 
-          {activeButton === 'cadastrar-service-provider' && (
-            <div>
-              <CreateServiceProviderForm />
-            </div>
-          )}
-
-          {activeButton === 'cadastrar-hotel' && (
-            <div>
-              <CreateHotelStepper />
-            </div>
-          )}
-          {activeButton === 'cadastrar-pacote' && (
-            <div>
-              <CreatePackageForm />
-            </div>
-          )}
-          {activeButton === 'meus-hoteis' && (
-            <div>
-              <MyHotels userId={user.id} />
-            </div>
+          {activeButton === 'admin-panel' && (
+            <AdminPanel userId={user.id} />
           )}
         </div>
       </div>
@@ -177,7 +138,7 @@ function Profile() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

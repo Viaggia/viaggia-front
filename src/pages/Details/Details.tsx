@@ -9,7 +9,12 @@ import RoomTypeList from '../../components/lists/RoomTypeList/RoomTypeList';
 import ExtraCommoditiesList from '../../components/lists/ExtraCommoditiesList/ExtraCommoditiesList';
 import DateRangePicker, { getFutureISO, getTodayISO } from '../../components/forms/DateRangePicker/DateRangePicker';
 
-const backendUrl = import.meta.env.VITE_API_URL;
+// IMPORT DO ReviewCard e do serviço para buscar reviews
+import ReviewCard from '../../components/cards/ReviewCard/Review';
+import { ReviewDTO } from '../../types/Review';
+import { getReviewsByHotel } from '../../services/reviewServices'; // ajuste conforme seu serviço
+
+const backendUrl = "https://localhost:7164";
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +22,10 @@ const Details: React.FC = () => {
   const [hotel, setHotel] = useState<HotelDTO | null>(null);
   const [selectedQuantities, setSelectedQuantities] = useState<{ [roomTypeId: number]: number }>({});
   const [showError, setShowError] = useState(false);
+
+  // Estado para reviews
+  const [reviews, setReviews] = useState<ReviewDTO[]>([]); // Ajuste o tipo se tiver seu DTO
+  const [loadingReviews, setLoadingReviews] = useState(true);
 
   const location = useLocation();
 
@@ -47,17 +56,18 @@ const Details: React.FC = () => {
   );
 
   useEffect(() => {
-    setCheckIn(searchState.checkInDate || getTodayISO());
-    setCheckOut(searchState.checkOutDate || getFutureISO(7));
+    const state = location.state || {};
+    setCheckIn(state.checkInDate || getTodayISO());
+    setCheckOut(state.checkOutDate || getFutureISO(7));
     setAdults(
-      typeof searchState.adults === 'number'
-        ? searchState.adults
-        : typeof searchState.numberOfPeople === 'number'
-          ? Math.max(1, searchState.numberOfPeople - (searchState.children || 0))
+      typeof state.adults === 'number'
+        ? state.adults
+        : typeof state.numberOfPeople === 'number'
+          ? Math.max(1, state.numberOfPeople - (state.children || 0))
           : 1
     );
-    setChildren(typeof searchState.children === 'number' ? searchState.children : 0);
-    setRooms(typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1);
+    setChildren(typeof state.children === 'number' ? state.children : 0);
+    setRooms(typeof state.numberOfRooms === 'number' ? state.numberOfRooms : 1);
   }, [location.state]);
 
   const handleQuantityChange = (roomTypeId: number, quantity: number) => {
@@ -74,6 +84,25 @@ const Details: React.FC = () => {
     if (hotelId) {
       getHotelById(Number(hotelId)).then(data => setHotel(data));
     }
+  }, [hotelId]);
+
+  // Busca os reviews ao carregar o hotel
+  useEffect(() => {
+    async function fetchReviews() {
+      if (!hotelId) return;
+      setLoadingReviews(true);
+      try {
+        const data = await getReviewsByHotel(Number(hotelId));
+        console.log('Reviews carregadas:', data);
+        setReviews(data);
+      } catch (error) {
+        console.error('Erro ao carregar reviews:', error);
+        setReviews([]);
+      } finally {
+        setLoadingReviews(false);
+      }
+    }
+    fetchReviews();
   }, [hotelId]);
 
   if (!hotel) return <div>Carregando...</div>;
@@ -174,7 +203,9 @@ const Details: React.FC = () => {
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
           <ServiceList title="Não ofertados" items={naoOfertados} />
-          <ExtraCommoditiesList customCommodities={hotel.commodities[0]?.customCommodities || []} />
+          <ExtraCommoditiesList
+            customCommodities={hotel.commodities[0]?.customCommodities || []}
+          />
         </div>
       </div>
 
@@ -222,7 +253,7 @@ const Details: React.FC = () => {
                 hotel,
                 selectedRooms,
                 checkInDate: checkIn,
-                checkOutDate: checkOut
+                checkOutDate: checkOut,
               }
             });
           }}
@@ -230,9 +261,20 @@ const Details: React.FC = () => {
           Ir para Pagamento
         </button>
       </div>
-
+      {/* INSERÇÃO DO CARD DE REVIEW ABAIXO DOS QUARTOS */}
+      <div className="container mt-5">
+        <h3>Avaliações dos hóspedes</h3>
+        {loadingReviews && <p>Carregando avaliações...</p>}
+        {!loadingReviews && reviews.length === 0 && <p>Este hotel ainda não possui avaliações.</p>}
+        <div className="row">
+          {reviews.map(review => (
+            <div key={review.reviewId} className="col-md-6 col-lg-4 mb-4">
+              <ReviewCard review={review} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
-
 export default Details;

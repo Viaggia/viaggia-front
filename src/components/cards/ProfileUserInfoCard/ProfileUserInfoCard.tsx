@@ -44,7 +44,7 @@ const getFieldsByRole = (role: string) => {
 };
 
 const ProfileUserInfoCard: React.FC<Props> = ({ user, role }) => {
-     const fields = getFieldsByRole(role);
+    const fields = getFieldsByRole(role);
 
     const [editField, setEditField] = useState<string | null>(null);
     const [form, setForm] = useState<UpdateUserDTO>({

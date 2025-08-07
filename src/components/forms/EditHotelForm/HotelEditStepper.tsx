@@ -54,8 +54,6 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
                 roomTypesJson: '', // será preenchido no submit
             });
 
-            console.log('hotel', hotel);
-
             setRoomTypes(hotel.roomTypes || []);
             setCommodity(hotel.commodities?.[0] || null);
 
@@ -126,8 +124,6 @@ function HotelEditStepper({ hotelId, onClose, onHotelUpdated }: Props) {
             petFriendlyPrice: commodity.petFriendlyPrice,
             isActive: commodity.isActive,
         });
-
-        console.log("customCommodities", customCommodities)
 
         // Atualiza custom commodities existentes
         for (const custom of customCommodities) {

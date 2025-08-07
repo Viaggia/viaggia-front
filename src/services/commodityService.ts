@@ -67,11 +67,6 @@ export async function updateCustomCommodity(id: number, data: UpdateCustomCommod
     }
   });
 
-  // Log dos campos enviados
-  for (let pair of formData.entries()) {
-    console.log(pair[0] + ': ' + pair[1]);
-  }
-
   const response = await api.put(`/api/CustomCommodity/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });

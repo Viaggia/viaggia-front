@@ -24,6 +24,13 @@ import PrivacyTerms from '../../pages/PrivacyTerms/PrivacyTerms'
 import DetailsPackage from '../../pages/DetailsPackage/DetailsPackage'
 import PaymentCanceled from '../../pages/Payment/PaymentCanceled'
 import MakeReview from '../../pages/Review/MakeReview'
+import { useParams } from 'react-router-dom'
+
+// Wrapper component para passar hotelId via parâmetros da URL
+const MakeReviewWrapper = () => {
+  const { hotelId } = useParams<{ hotelId: string }>();
+  return <MakeReview hotelId={Number(hotelId) || 1} />;
+};
 
 
 
@@ -54,8 +61,8 @@ function AppRoutes() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/privacy" element={<PrivacyTerms />} />
       <Route path="/package-details/:packageId" element={<DetailsPackage />} />
-      <Route path="/hotel/review" element={<MakeReview />} />
-      
+      <Route path="/review/:hotelId" element={<MakeReviewWrapper />} />
+      <Route path="/review" element={<MakeReview hotelId={1} />} />
 
     </Routes>
   )

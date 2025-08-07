@@ -1,5 +1,5 @@
 import api from './api';
-import { PackageDTO } from '../types/Package';
+import { PackageDTO, PackageUpdateDTO } from '../types/Package';
 import { PackageCreateDTO } from '../types/Package';
 
 export async function getPackages(): Promise<PackageDTO[]> {
@@ -34,5 +34,51 @@ export const createPackage = async (data: PackageCreateDTO) => {
     },
   });
 
+  return response.data;
+};
+
+export async function getPackagesByUserId(): Promise<PackageDTO[]> {
+  const response = await api.get('/api/Packages/my-packages');
+  return response.data.data;
+}
+
+export const updatePackage = async (packageId: number, data: PackageUpdateDTO) => {
+  const formData = new FormData();
+
+  formData.append('name', data.name);
+  formData.append('destination', data.destination);
+  formData.append('description', data.description || '');
+
+  // Tratamento do campo basePrice: troca '.' por ','
+  if (typeof data.basePrice === 'number') {
+    formData.append('basePrice', data.basePrice.toString().replace('.', ','));
+  } else {
+    formData.append('basePrice', String(data.basePrice).replace('.', ','));
+  }
+
+  formData.append('hotelName', data.hotelName);
+  formData.append('isActive', data.isActive.toString());
+  if (data.startDate) formData.append('startDate', data.startDate);
+  if (data.endDate) formData.append('endDate', data.endDate);
+
+  data.mediaIdsToDelete.forEach(id => {
+    formData.append('mediaIdsToDelete', id.toString());
+  });
+
+  data.newMediaFiles.forEach(file => {
+    formData.append('newMediaFiles', file);
+  });
+
+  const response = await api.put(`/api/Packages/${packageId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response.data;
+};
+
+export const deletePackage = async (packageId: number) => {
+  const response = await api.delete(`/api/Packages/${packageId}`);
   return response.data;
 };
