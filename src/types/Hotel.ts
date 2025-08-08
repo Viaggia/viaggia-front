@@ -271,3 +271,9 @@ export interface ComplaintDTO {
   createdAt: string;
   isActive: boolean;
 }
+
+export interface CreateComplaintDTO {
+  userId: number;
+  hotelId: number;
+  comment: string;
+}

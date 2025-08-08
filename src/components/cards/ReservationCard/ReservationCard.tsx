@@ -8,6 +8,7 @@ interface ReservationCardProps {
   detalheAberto: number | null;
   toggleDetalhes: (id: number) => void;
   onAvaliar?: (hotelId: number | undefined) => void;
+  onAlterarReserva?: (hotelId: number | undefined) => void; // Adicione esta linha
 }
 
 const ReservationCard: React.FC<ReservationCardProps> = ({
@@ -15,6 +16,7 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
   detalheAberto,
   toggleDetalhes,
   onAvaliar,
+  onAlterarReserva, // Adicione esta linha
 }) => {
   const navigate = useNavigate();
   const totalCompra = reserva.totalPrice || 0;
@@ -39,10 +41,10 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
             {reserva.packageId && reserva.packageId !== 0
               ? `Pacote #${reserva.packageId}`
               : reserva.hotelId
-              ? hotelName
-                ? `Hotel: ${hotelName}`
-                : `Hotel #${reserva.hotelId}`
-              : 'Reserva'}
+                ? hotelName
+                  ? `Hotel: ${hotelName}`
+                  : `Hotel #${reserva.hotelId}`
+                : 'Reserva'}
           </strong>
           <span className="ms-2 text-muted">ID: {reserva.reserveId}</span>
         </span>
@@ -90,16 +92,10 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
           </div>
           <div className="reservepag-cancel-wrapper text-end d-flex gap-2 justify-content-end">
             <button
-              className="btn btn-danger"
-              onClick={() => navigate('/cancel-reservation')}
-            >
-              Cancelar minha reserva
-            </button>
-            <button
               className="btn btn-warning"
-              onClick={() => navigate(`/edit-reservation/${reserva.reserveId}`)}
+              onClick={() => onAlterarReserva && onAlterarReserva(reserva.hotelId)}
             >
-              Alterar reserva
+              Alterar Reserva
             </button>
             <button
               className="btn btn-success"

@@ -6,6 +6,9 @@ import { ReserveDTO } from '../../types/Reservation';
 import ReservationCard from '../../components/cards/ReservationCard/ReservationCard';
 import MakeReview from '../../pages/Review/MakeReview';
 import ToastForm from '../../components/Toast/ToastForm';
+import ComplaintModal from '../../components/Modals/ComplaintModal/ComplaintModal';
+import { CreateComplaintDTO } from '../../types/Hotel';
+import { createComplaint } from '../../services/hotelService';
 
 const MyReservations: React.FC = () => {
   const [detalheAberto, setDetalheAberto] = useState<number | null>(null);
@@ -13,6 +16,10 @@ const MyReservations: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedHotelId, setSelectedHotelId] = useState<number | null>(null);
+
+  const [showComplaintModal, setShowComplaintModal] = useState(false);
+  const [selectedComplaintHotelId, setSelectedComplaintHotelId] = useState<number | null>(null);
+
 
   // Toast state
   const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
@@ -30,6 +37,42 @@ const MyReservations: React.FC = () => {
         .finally(() => setLoading(false));
     }
   }, [user]);
+
+  const handleOpenComplaint = (hotelId: number | undefined) => {
+    if (hotelId) {
+      setSelectedComplaintHotelId(hotelId);
+      setShowComplaintModal(true);
+    }
+  };
+
+  const handleSubmitComplaint = async (comment: string) => {
+    if (!user || !selectedComplaintHotelId) return;
+    const dto: CreateComplaintDTO = {
+      userId: user.id,
+      hotelId: selectedComplaintHotelId,
+      comment,
+    };
+    try {
+      await createComplaint(selectedComplaintHotelId, dto);
+      setToast({
+        show: true,
+        message: 'Solicitação enviada com sucesso!',
+        type: 'success',
+      });
+    } catch {
+      setToast({
+        show: true,
+        message: 'Erro ao enviar solicitação.',
+        type: 'error',
+      });
+    }
+    setShowComplaintModal(false);
+    setSelectedComplaintHotelId(null);
+
+    setTimeout(() => {
+    setToast((prev) => ({ ...prev, show: false }));
+  }, 3000);
+  };
 
   const toggleDetalhes = (id: number) => {
     setDetalheAberto(detalheAberto === id ? null : id);
@@ -89,6 +132,7 @@ const MyReservations: React.FC = () => {
                 detalheAberto={detalheAberto}
                 toggleDetalhes={toggleDetalhes}
                 onAvaliar={handleOpenReview}
+                onAlterarReserva={handleOpenComplaint}
               />
             ))
           )}
@@ -142,6 +186,14 @@ const MyReservations: React.FC = () => {
             </div>
           </div>
         </>
+      )}
+
+      {showComplaintModal && selectedComplaintHotelId && (
+        <ComplaintModal
+          show={showComplaintModal}
+          onClose={() => setShowComplaintModal(false)}
+          onSubmit={handleSubmitComplaint}
+        />
       )}
 
       {/* Toast global */}
