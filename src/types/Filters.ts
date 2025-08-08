@@ -4,7 +4,6 @@ export interface FiltrosProps {
   cafe: boolean;
   almoco: boolean;
   jantar: boolean;
-  cancelamento: boolean;
   estacionamento: boolean;
   SPA: boolean;
   piscina: boolean;

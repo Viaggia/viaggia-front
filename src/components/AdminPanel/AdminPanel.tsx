@@ -7,6 +7,7 @@ import CreateServiceProviderForm from '../forms/CreateServiceProviderForm/Create
 import MyHotels from '../../pages/MyHotels/MyHotels';
 import MyPackages from '../../pages/MyPackages/MyPackages';
 import { useAuth } from '../../context/AuthContext';
+import RequestsPanel from '../RequestsPanel/RequestsPanel';
 
 interface AdminPanelProps {
   userId: number;
@@ -30,7 +31,7 @@ const serviceProviderButtons = [
 ];
 
 const attendantButtons = [
-  { value: 'requests', label: 'Solicitações' }, // Exclusivo do atendente
+  { value: 'requests', label: 'Solicitações' }, 
 ];
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ userId }) => {
@@ -40,15 +41,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ userId }) => {
   );
 
   let buttons: { value: string; label: string }[];
-if (role === 'ADMIN') {
-  buttons = adminButtons;
-} else if (role === 'SERVICE_PROVIDER') {
-  buttons = serviceProviderButtons;
-} else if (role === 'ATTENDANT') {
-  buttons = attendantButtons;
-} else {
-  buttons = [];
-}
+  if (role === 'ADMIN') {
+    buttons = adminButtons;
+  } else if (role === 'SERVICE_PROVIDER') {
+    buttons = serviceProviderButtons;
+  } else if (role === 'ATTENDANT') {
+    buttons = attendantButtons;
+  } else {
+    buttons = [];
+  }
 
   return (
     <div>
@@ -71,12 +72,7 @@ if (role === 'ADMIN') {
         {activePanel === 'create-service-provider' && <CreateServiceProviderForm />}
         {activePanel === 'create-hotel' && <CreateHotelStepper />}
         {activePanel === 'create-package' && <CreatePackageForm />}
-        {activePanel === 'requests' && (
-          <div className="card p-4 text-center">
-            <h5>Solicitações</h5>
-            <p className="text-muted">Nenhuma solicitação encontrada.</p>
-          </div>
-        )}
+        {activePanel === 'requests' && <RequestsPanel />}
       </div>
     </div>
   );

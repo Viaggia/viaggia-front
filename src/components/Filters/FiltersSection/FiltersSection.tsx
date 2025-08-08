@@ -115,14 +115,6 @@ function FiltersSection({ filtros, setFiltros, minPreco, maxPreco }: FiltersSect
           />
           <Form.Check
             type="checkbox"
-            label="Cancelamento gratuito"
-            checked={filtros.cancelamento}
-            onChange={(e) =>
-              setFiltros({ ...filtros, cancelamento: e.target.checked })
-            }
-          />
-          <Form.Check
-            type="checkbox"
             label="Estacionamento"
             checked={filtros.estacionamento}
             onChange={(e) =>

@@ -1,5 +1,5 @@
 import api from './api';
-import { CreateHotelDTO, HotelDTO, HotelFilterParams, HotelRoomTypeDTO, HotelSearchDTO, UpdateHotelDTO } from '../types/Hotel';
+import { ComplaintDTO, CreateHotelDTO, HotelDTO, HotelFilterParams, HotelRoomTypeDTO, HotelSearchDTO, UpdateHotelDTO } from '../types/Hotel';
 
 export async function getHotels(): Promise<HotelDTO[]> {
   const response = await api.get('/api/Hotel');
@@ -110,4 +110,9 @@ export async function updateHotel(id: number, data: UpdateHotelDTO) {
 
 export async function deleteHotel(id: number) {
   await api.delete(`/api/Hotel/${id}`);
+}
+
+export async function getAllComplaints(): Promise<ComplaintDTO[]> {
+  const response = await api.get('/api/Hotel/complaints');
+  return response.data.data;
 }

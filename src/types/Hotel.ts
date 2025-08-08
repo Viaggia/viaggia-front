@@ -262,3 +262,12 @@ export interface UpdateCustomCommodityDTO {
   description?: string;
   isActive: boolean;
 }
+
+export interface ComplaintDTO {
+  complaintId: number;
+  userId: number;
+  hotelId: number;
+  comment: string;
+  createdAt: string;
+  isActive: boolean;
+}

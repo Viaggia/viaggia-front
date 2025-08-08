@@ -34,7 +34,6 @@ function filterHotels(hotels: HotelDTO[], filtros: FiltrosProps) {
     if (filtros.acessibilidade && !hotel.commodities?.some(c => c.hasAccessibilityFeatures)) return false;
     if (filtros.academia && !hotel.commodities?.some(c => c.hasGym)) return false;
     if (filtros.arcondicionado && !hotel.commodities?.some(c => c.hasAirConditioning)) return false;
-    if (filtros.cancelamento && !hotel.isActive) return false;
     if (filtros.estacionamento && !hotel.commodities?.some(c => c.hasParking)) return false;
     if (filtros.petfriendly && !hotel.commodities?.some(c => c.isPetFriendly)) return false;
     if (filtros.piscina && !hotel.commodities?.some(c => c.hasPool)) return false;
@@ -74,7 +73,6 @@ function Search() {
     cafe: false,
     almoco: false,
     jantar: false,
-    cancelamento: false,
     estacionamento: false,
     SPA: false,
     piscina: false,
@@ -158,7 +156,7 @@ function Search() {
               Escolha seu destino
             </h2>
             <div className="container bg-viaggia bg-opacity-100 rounded">
-              <TravelForm />
+              <TravelForm initialValues={hotelSearchParams} onSearch={handleSearch} />
             </div>
           </div>
 
