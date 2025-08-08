@@ -11,16 +11,41 @@ function NewPassword() {
   const location = useLocation();
   const token = location.state?.token;
 
+  const [passwordValidation, setPasswordValidation] = useState({
+    minLength: false,
+    hasUpper: false,
+    hasLower: false,
+    hasNumber: false,
+    hasSpecial: false
+  });
+
+  const validatePassword = (password: string) => {
+    setPasswordValidation({
+      minLength: password.length >= 8,
+      hasUpper: /[A-Z]/.test(password),
+      hasLower: /[a-z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) {
+
+    const isPasswordValid = Object.values(passwordValidation).every(Boolean);
+    const doPasswordsMatch = newPassword === confirmPassword;
+
+    if (!isPasswordValid) {
+      setError('A senha não atende aos requisitos de segurança.');
+      return;
+    }
+
+    if (!doPasswordsMatch) {
       setError('As senhas não coincidem.');
       return;
     }
 
     try {
-      console.log("token", token)
-      console.log("newpassword, ", newPassword )
       await resetPassword({ token, newPassword, confirmPassword });
       navigate('/login');
     } catch (err) {
@@ -51,10 +76,22 @@ function NewPassword() {
                       placeholder="Nova senha"
                       required
                       value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
+                      onChange={(e) => {
+                        setNewPassword(e.target.value);
+                        validatePassword(e.target.value);
+                      }}
                     />
                     <label htmlFor="newPassword">Nova senha</label>
                   </div>
+
+                  {/* Regras de validação da senha */}
+                  <ul className="text-muted small mb-4">
+                    <li style={{ color: passwordValidation.minLength ? 'green' : 'red' }}>Pelo menos 8 caracteres</li>
+                    <li style={{ color: passwordValidation.hasUpper ? 'green' : 'red' }}>Uma letra maiúscula</li>
+                    <li style={{ color: passwordValidation.hasLower ? 'green' : 'red' }}>Uma letra minúscula</li>
+                    <li style={{ color: passwordValidation.hasNumber ? 'green' : 'red' }}>Um número</li>
+                    <li style={{ color: passwordValidation.hasSpecial ? 'green' : 'red' }}>Um caractere especial (!@#$...)</li>
+                  </ul>
 
                   <div className="form-floating mb-4">
                     <input
@@ -70,16 +107,21 @@ function NewPassword() {
                     <label htmlFor="confirmPassword">Confirme a nova senha</label>
                   </div>
 
+                  {/* Verificação se as senhas coincidem */}
+                  {newPassword && confirmPassword && newPassword !== confirmPassword && (
+                    <p className="text-danger text-center mt-2">As senhas não coincidem.</p>
+                  )}
+
                   <div className="d-grid">
                     <button type="submit" className="btn btn-primary btn-lg">
                       Redefinir Senha
                     </button>
                   </div>
                 </form>
-                {error && <p className="text-danger text-center mt-3">{error}</p>}
+                
               </div>
               <div className="card-footer text-center text-muted small">
-                Certifique-se de que ambas as senhas coincidem antes de continuar.
+                Certifique-se de que ambas as senhas atendem aos requisitos e coincidem antes de continuar.
               </div>
             </div>
           </div>

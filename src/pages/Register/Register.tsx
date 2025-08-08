@@ -15,6 +15,8 @@ function Register() {
   const navigate = useNavigate()
   const location = useLocation()
   const userDataFromGoogle = location.state?.userData
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const [formData, setFormData] = useState<CreateClientDTO>({
     name: '',
@@ -520,7 +522,7 @@ function Register() {
                         </div>
                       ) : (
                         <input
-                          type={type}
+                          type={name === 'password' && showPassword ? 'text' : type}
                           name={name}
                           id={name}
                           value={formData[name as keyof typeof formData] || ''}
@@ -544,7 +546,23 @@ function Register() {
                           maxLength={maxLength}
                           style={getValidationStyle(name)}
                         />
-                      )}
+                          )}
+                        
+                          {name === 'password' && (
+                              <div className="form-check mt-2">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id="togglePassword"
+                                  checked={showPassword}
+                                  onChange={() => setShowPassword(prev => !prev)}
+                                />
+                                <label className="form-check-label" htmlFor="togglePassword">
+                                  Mostrar senha
+                                </label>
+                              </div>
+                            )}
+                      
 
                       {/* Email requirements */}
                       <Validation

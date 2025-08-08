@@ -14,7 +14,7 @@ const ProfileAvatarInfo: React.FC<ProfileAvatarInfoProps> = ({
   hover,
   setHover,
   setShowModal,
-  size = 100,
+  size = 250,
   textColor = 'text-white'
 }) => {
   const backendUrl = import.meta.env.VITE_API_URL;
@@ -54,9 +54,14 @@ const ProfileAvatarInfo: React.FC<ProfileAvatarInfoProps> = ({
         </div>
       </div>
       <div className={`mt-2 text-center ${textColor}`}>
-        <h5 className="mb-1">{user.name}</h5>
-        <p className="mb-1">{user.email}</p>
+        <h5 className="mb-1 text-truncate" style={{ maxWidth: 250 }} title={user.name}>
+          {user.name}
+        </h5>
+        <p className="mb-1 text-truncate" style={{ maxWidth: 250 }} title={user.email}>
+          {user.email}
+        </p>
       </div>
+
     </div>
   );
 };
