@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import { getRoleFromToken, getUserIdFromToken } from '../../utils/jwt';
@@ -12,6 +12,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setUser, setRole } = useAuth();
+  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +22,7 @@ function Login() {
 
       const userId = getUserIdFromToken(response.token);
       const userRole = getRoleFromToken(response.token);
-      
+
       setRole(userRole);
 
       console.log("userRole ", userRole)
@@ -30,7 +31,11 @@ function Login() {
         setUser(user);
       }
 
-      navigate('/');
+      if (location.state?.from === '/payment' && location.state?.paymentState) {
+        navigate('/payment', { state: location.state.paymentState });
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Erro no login:', error);
       alert('Email ou senha incorretos.');
@@ -39,14 +44,14 @@ function Login() {
 
   return (
     <div>
-      
+
       {/* Corpo */}
       <div className="container py-5">
         <div className="row justify-content-center align-items-center">
-          
+
           {/* Formulário */}
           <div className="col-lg-6 mb-4">
-            
+
             <div className="card shadow">
               <div className="card-body">
                 <h4 className="card-title text-center mb-4">Faça seu login</h4>
@@ -121,7 +126,7 @@ function Login() {
             </div>
           </div>
 
-         
+
 
 
         </div>

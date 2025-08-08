@@ -41,10 +41,10 @@ const Payment: React.FC = () => {
       let dto: ReserveCreateDTO | null = null;
 
       if (!user) {
-        alert('Usuário não autenticado!');
-        setLoading(false);
-        return;
-      }
+      navigate('/login', { state: { from: '/payment', paymentState: location.state } });
+      setLoading(false);
+      return;
+    }
 
       if (isPackage && pkg) {
         // Converta as datas do pacote para ISO antes de enviar
