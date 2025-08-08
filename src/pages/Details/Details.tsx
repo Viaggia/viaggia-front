@@ -14,6 +14,7 @@ import ReviewList from '../../components/lists/ReviewList/ReviewList';
 import { ReviewDTO } from '../../types/Review';
 import { getReviewsByHotel } from '../../services/reviewServices';
 import { getUserById } from '../../services/userService';
+import Maps from '../../components/Map/Map';
 
 const backendUrl = "https://localhost:7164";
 
@@ -273,6 +274,18 @@ const Details: React.FC = () => {
       </div>
       {/* Lista de avaliações dos hóspedes */}
       <ReviewList reviews={reviews} loading={loadingReviews} userMap={userMap} />
+
+      <div>
+        {/* Descrição + Mapa */}
+        <div className="col-md-8 m-3 mt-0">
+          {/* Mapa com endereço do hotel */}
+          <div className="mt-4">
+            <h1>Localização</h1>
+            <Maps address={`${hotel.street}, ${hotel.city}, ${hotel.state}`} />
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 };

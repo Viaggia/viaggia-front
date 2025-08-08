@@ -8,12 +8,14 @@ import MyHotels from '../../pages/MyHotels/MyHotels';
 import MyPackages from '../../pages/MyPackages/MyPackages';
 import { useAuth } from '../../context/AuthContext';
 import RequestsPanel from '../RequestsPanel/RequestsPanel';
+import Graphic from '../Graphic/Graphic';
 
 interface AdminPanelProps {
   userId: number;
 }
 
 const adminButtons = [
+  { value: 'dashboard', label: 'Dashboard' },
   { value: 'my-hotels', label: 'Meus Hotéis' },
   { value: 'my-packages', label: 'Meus Pacotes' },
   { value: 'create-admin', label: 'Cadastrar Admin' },
@@ -65,6 +67,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ userId }) => {
         ))}
       </div>
       <div>
+        {activePanel === 'dashboard' && role === 'ADMIN' && (
+          <div>
+            <div className="row mb-4">
+              <div className="col-12">
+                <h2 className="text-primary">
+                  <i className="fas fa-chart-line me-2"></i>
+                  Dashboard Administrativo
+                </h2>
+                <p className="text-muted">Visualize o balanço financeiro da plataforma</p>
+              </div>
+            </div>
+            <Graphic />
+          </div>
+        )}
         {activePanel === 'my-hotels' && <MyHotels userId={userId} />}
         {activePanel === 'my-packages' && <MyPackages userId={userId} />}
         {activePanel === 'create-admin' && <CreateAdminForm />}

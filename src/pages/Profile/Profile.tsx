@@ -1,8 +1,3 @@
-import CreateAdminForm from '../../components/forms/CreateAdminForm/CreateAdminForm';
-import CreateAttendantForm from '../../components/forms/CreateAttendantForm/CreateAttendantForm';
-import CreateHotelStepper from '../../components/forms/CreateHotelForm/CreateHotelStepper';
-import CreatePackageForm from '../../components/forms/CreatePackageForm/CreatePackageForm';
-import CreateServiceProviderForm from '../../components/forms/CreateServiceProviderForm/CreateServiceProviderForm';
 import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
 import MyReservations from '../MyReservations/MyReservations';
