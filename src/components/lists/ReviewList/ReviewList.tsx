@@ -9,8 +9,7 @@ interface ReviewListProps {
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({ reviews, loading, userMap }) => (
-  <div className="container mt-5">
-    <h3>Avaliações dos hóspedes</h3>
+  <div className="container mt-2">
     {loading && <p>Carregando avaliações...</p>}
     {!loading && reviews.length === 0 && (
       <div className="card border-0 shadow-sm my-4 text-center bg-light">

@@ -4,91 +4,113 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getReservationsByUserId } from '../../services/reserveService';
+import { getHotelById } from '../../services/hotelService';
+import { formatDateToBR } from '../../utils/formatMask';
+
+function formatDateUniversal(dateStr?: string) {
+  if (!dateStr) return '';
+  // ISO: yyyy-mm-dd ou yyyy-mm-ddTHH:mm:ss
+  const isoMatch = dateStr.match(/^\d{4}-\d{2}-\d{2}/);
+  if (isoMatch) {
+    const [year, month, day] = dateStr.substring(0, 10).split('-');
+    return `${day}/${month}/${year}`;
+  }
+  // BR: dd/mm/yyyy
+  if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) return dateStr;
+  // Fallback: tenta converter
+  try {
+    const d = new Date(dateStr);
+    return formatDateToBR(d);
+  } catch {
+    return dateStr;
+  }
+}
 
 function PaymentConfirmed() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [reservations, setReservations] = useState<any[]>([]);
+  const [reservation, setReservation] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hotelName, setHotelName] = useState<string>('');
 
   useEffect(() => {
     if (user?.id) {
       getReservationsByUserId(user.id)
-        .then(setReservations)
+        .then(async (reservas: any[]) => {
+          // Pega a reserva mais recente
+          const sorted = [...reservas].sort((a, b) => (b.reserveId || 0) - (a.reserveId || 0));
+          const latest = sorted[0];
+          setReservation(latest);
+          // Busca nome do hotel se não vier
+          if (latest) {
+            if (latest.hotelName) {
+              setHotelName(latest.hotelName);
+            } else if (typeof latest.hotelId === 'number') {
+              try {
+                const hotel = await getHotelById(latest.hotelId);
+                setHotelName(hotel.name);
+              } catch {
+                setHotelName(String(latest.hotelId));
+              }
+            }
+          }
+        })
         .finally(() => setLoading(false));
     }
   }, [user]);
 
   const handleGoToReservations = () => {
-    navigate('/my-reservations');
+    navigate('/profile', { state: { showReservations: true } });
   };
-
-  // Destaca a reserva mais recente (maior reserveId)
-  const sortedReservations = [...reservations].sort((a, b) => (b.reserveId || 0) - (a.reserveId || 0));
-  const latest = sortedReservations[0];
-  const others = sortedReservations.slice(1);
 
   return (
     <div className="container mt-5 pb-5">
       <div className="row justify-content-center">
         <div className="col-md-8">
           {/* Alerta de pagamento confirmado */}
-          <div className="alert alert-success d-flex align-items-center" role="alert">
-            <FaCheckCircle className="me-2" size={24} />
+          <div className="alert alert-success d-flex align-items-center mb-4" role="alert" style={{ fontSize: '1.2em' }}>
+            <FaCheckCircle className="me-3" size={32} />
             <div>
-              <h1 className="mb-0">Pagamento confirmado</h1>
-              <p className="mb-0">Obrigado! O pagamento foi processado com sucesso.</p>
+              <h2 className="mb-1 fw-bold">Pagamento confirmado!</h2>
+              <p className="mb-0">Obrigado pela sua reserva. Os detalhes estão abaixo:</p>
             </div>
           </div>
 
-          {/* Reserva mais recente em destaque */}
-          {latest && (
-            <div className="card shadow mb-4 border-primary">
-              <div className="card-header bg-primary text-white">
-                <h5 className="mb-0">Sua Reserva Mais Recente</h5>
-              </div>
-              <div className="card-body">
-                <p><strong>Reserva #</strong>{latest.reserveId}</p>
-                <p><strong>Hotel:</strong> {latest.hotelName || latest.hotelId}</p>
-                <p><strong>Check-in:</strong> {latest.checkInDate?.substring(0, 10)}</p>
-                <p><strong>Check-out:</strong> {latest.checkOutDate?.substring(0, 10)}</p>
-                <p><strong>Hóspedes:</strong> {latest.numberOfGuests}</p>
-                <p><strong>Status:</strong> {latest.status}</p>
-                <p><strong>Total:</strong> R$ {Number(latest.totalPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-              </div>
+          {/* Detalhes da reserva */}
+          <div className="card shadow-lg border-0 rounded-4">
+            <div className="card-header bg-primary text-white rounded-top-4">
+              <h4 className="mb-0 fw-semibold">
+                <i className="bi bi-file-earmark-check me-2"></i>
+                Detalhes da Reserva
+              </h4>
             </div>
-          )}
-
-          {/* Lista das outras reservas */}
-          <div className="mb-4">
-            <h5 className="text-primary">Minhas Outras Reservas</h5>
-            {loading ? (
-              <div>Carregando reservas...</div>
-            ) : sortedReservations.length === 0 ? (
-              <div>Nenhuma reserva encontrada.</div>
-            ) : others.length === 0 ? (
-              <div>Você não possui outras reservas.</div>
-            ) : (
-              <ul className="list-group">
-                {others.map((reserva, idx) => (
-                  <li key={reserva.reserveId || idx} className="list-group-item">
-                    <strong>Reserva #{reserva.reserveId}</strong> - Hotel: {reserva.hotelName || reserva.hotelId} - Check-in: {reserva.checkInDate?.substring(0, 10)}
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="card-body py-4 px-4">
+              {loading ? (
+                <div>Carregando detalhes da reserva...</div>
+              ) : !reservation ? (
+                <div>Nenhuma reserva encontrada.</div>
+              ) : (
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <p className="mb-2"><strong>Reserva #</strong> {reservation.reserveId}</p>
+                    <p className="mb-2"><strong>Hotel:</strong> {hotelName}</p>
+                    <p className="mb-2"><strong>Check-in:</strong> {formatDateUniversal(reservation.checkInDate)}</p>
+                    <p className="mb-2"><strong>Check-out:</strong> {formatDateUniversal(reservation.checkOutDate)}</p>
+                  </div>
+                  <div className="col-md-6">
+                    <p className="mb-2"><strong>Hóspedes:</strong> {reservation.numberOfPeople}</p>
+                    <p className="mb-2"><strong>Status:</strong> <span className={`badge ${reservation.status === 'Pendente' ? 'bg-warning text-dark' : 'bg-success'}`}>{reservation.status}</span></p>
+                    <p className="mb-2"><strong>Total:</strong> <span className="fw-bold text-success">R$ {Number(reservation.totalPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="card-footer text-end bg-light rounded-bottom-4">
+              <button className="btn btn-primary px-4 py-2 fw-semibold" onClick={handleGoToReservations}>
+                Ir para minhas reservas
+              </button>
+            </div>
           </div>
-
-          {/* Botões */}
-          <div className="text-end mt-3">
-            <a href="/recibo" className="btn btn-link me-2">
-              Ver recibo
-            </a>
-            <button className="btn btn-primary" onClick={handleGoToReservations}>
-              Ir para minhas reservas
-            </button>
-          </div>
-          <div className="mt-5" />
         </div>
       </div>
     </div>

@@ -105,3 +105,25 @@ export function brDateToISO(dateStr: string) {
   const [day, month, year] = dateStr.split('/');
   return `${year}-${month}-${day}T00:00:00.000Z`;
 }
+
+import { RoomTypeEnum } from '../types/Hotel';
+
+export const roomTypeLabels: Record<RoomTypeEnum, string> = {
+  Single: 'Solteiro',
+  Double: 'Duplo',
+  Suite: 'Suíte',
+  Deluxe: 'Deluxe',
+  Family: 'Família',
+};
+
+// Array para mapear índice numérico para enum
+const roomTypeEnumValues: RoomTypeEnum[] = ['Single', 'Double', 'Suite', 'Deluxe', 'Family'];
+
+export function getRoomTypeLabel(roomTypeName: string | RoomTypeEnum | number): string {
+  let key: RoomTypeEnum | string = roomTypeName as RoomTypeEnum;
+  // Se vier número, converte para enum
+  if (typeof roomTypeName === 'number') {
+    key = roomTypeEnumValues[roomTypeName] ?? String(roomTypeName);
+  }
+  return roomTypeLabels[key as RoomTypeEnum] || String(key);
+}

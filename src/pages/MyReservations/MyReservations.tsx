@@ -70,8 +70,8 @@ const MyReservations: React.FC = () => {
     setSelectedComplaintHotelId(null);
 
     setTimeout(() => {
-    setToast((prev) => ({ ...prev, show: false }));
-  }, 3000);
+      setToast((prev) => ({ ...prev, show: false }));
+    }, 3000);
   };
 
   const toggleDetalhes = (id: number) => {
@@ -125,7 +125,7 @@ const MyReservations: React.FC = () => {
               Explore nossos hotéis e pacotes para fazer sua primeira reserva!
             </div>
           ) : (
-            reservas.map((reserva) => (
+            [...reservas].reverse().map((reserva) => (
               <ReservationCard
                 key={reserva.reserveId}
                 reserva={reserva}

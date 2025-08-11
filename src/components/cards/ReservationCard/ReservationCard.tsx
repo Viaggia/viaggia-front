@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReserveDTO } from '../../../types/Reservation';
 import { getHotelById } from '../../../services/hotelService';
+import { formatDateToBR, parseLocalDate } from '../../../utils/formatMask';
 
 interface ReservationCardProps {
   reserva: ReserveDTO;
@@ -38,15 +39,16 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
       >
         <span>
           <strong>
+            <span className="ms-2 text-muted">Reserva #{reserva.reserveId} </span>
             {reserva.packageId && reserva.packageId !== 0
-              ? `Pacote #${reserva.packageId}`
+              ? `Reserva #${reserva.reserveId}`
               : reserva.hotelId
                 ? hotelName
-                  ? `Hotel: ${hotelName}`
+                  ? ` - ${hotelName}`
                   : `Hotel #${reserva.hotelId}`
                 : 'Reserva'}
           </strong>
-          <span className="ms-2 text-muted">ID: {reserva.reserveId}</span>
+          
         </span>
         <span className="reservepag-seta">
           {detalheAberto === reserva.reserveId ? '▲' : '▼'}
@@ -57,17 +59,15 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
           <div className="row mb-2">
             <div className="col-md-6">
               <p>
-                <strong>Check-in:</strong> {reserva.checkInDate?.substring(0, 10)}
-              </p>
-              <p>
-                <strong>Check-out:</strong> {reserva.checkOutDate?.substring(0, 10)}
-              </p>
-              <p>
-                <strong>Quarto:</strong> {reserva.roomTypeId || '-'}
-              </p>
-              <p>
-                <strong>Nº de Quartos:</strong> {reserva.numberOfRooms}
-              </p>
+              <strong>Check-in:</strong> {
+                formatDateToBR(parseLocalDate(reserva.checkInDate?.substring(0, 10)))
+              }
+            </p>
+            <p>
+              <strong>Check-out:</strong> {
+                formatDateToBR(parseLocalDate(reserva.checkOutDate?.substring(0, 10)))
+              }
+            </p>
               <p>
                 <strong>Hóspedes:</strong> {reserva.numberOfPeople}
               </p>
@@ -77,16 +77,10 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
                 <strong>Status:</strong> {reserva.status}
               </p>
               <p>
-                <strong>Ativa:</strong> {reserva.isActive ? 'Sim' : 'Não'}
-              </p>
-              <p>
                 <strong>Total:</strong> R$
                 {Number(totalCompra).toLocaleString('pt-BR', {
                   minimumFractionDigits: 2,
                 })}
-              </p>
-              <p>
-                <strong>Criada em:</strong> {reserva.createdAt?.substring(0, 10)}
               </p>
             </div>
           </div>

@@ -6,14 +6,18 @@ import ProfileMobileMenu from '../../components/Sidebars/ProfileMobileMenu';
 import ProfileUserInfoCard from '../../components/cards/ProfileUserInfoCard/ProfileUserInfoCard';
 import { updateUser } from '../../services/userService';
 import AdminPanel from '../../components/AdminPanel/AdminPanel';
+import { useLocation } from 'react-router-dom';
 
 function Profile() {
   const { user, role, setUser } = useAuth();
-  const [activeButton, setActiveButton] = useState('meu-perfil');
   const [hover, setHover] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  const location = useLocation();
+  const showReservations = location.state?.showReservations;
+  const [activeButton, setActiveButton] = useState(showReservations ? 'minhas-reservas' : 'meu-perfil');
 
   if (!user) {
     return (

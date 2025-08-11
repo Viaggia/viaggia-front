@@ -4,27 +4,34 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createPaymentIntent } from '../../services/paymentService';
 import { ReserveCreateDTO } from '../../types/Reservation';
 import { useAuth } from '../../context/AuthContext';
-import { brDateToISO } from '../../utils/formatMask';
+import {
+  brDateToISO,
+  getRoomTypeLabel,
+  formatPhone,
+  formatDateToBR,
+  formatCurrencyBRL
+} from '../../utils/formatMask';
 
 type SelectedRoom = { roomTypeId: number; quantity: number; name?: string; price?: number };
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { hotel, selectedRooms, pkg } = location.state as {
+  const { hotel, selectedRooms, pkg, totalPrice } = location.state as {
     hotel?: any;
     selectedRooms?: SelectedRoom[];
     pkg?: any;
+    totalPrice?: number;
   } || {};
+
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const isPackage = !!pkg;
-
   const total = isPackage
     ? pkg.basePrice
-    : Array.isArray(selectedRooms)
-      ? selectedRooms.reduce((sum: number, room: SelectedRoom) => sum + ((room.price ?? 0) * room.quantity), 0)
+    : typeof totalPrice === 'number'
+      ? totalPrice
       : 0;
 
   const checkInDate = isPackage
@@ -34,6 +41,30 @@ const Payment: React.FC = () => {
     ? pkg.packageDates?.[0]?.endDate
     : location.state?.checkOutDate;
 
+    console.log("total", total)
+
+  const formatDateUniversal = (dateStr?: string) => {
+    if (!dateStr) return '';
+    // Se já estiver no formato BR, retorna direto
+    if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) return dateStr;
+    // Se estiver no formato ISO, converte para BR
+    if (dateStr.match(/^\d{4}-\d{2}-\d{2}/)) {
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    }
+    // Se vier outro formato, tenta converter
+    try {
+      const d = new Date(dateStr);
+      return formatDateToBR(d);
+    } catch {
+      return dateStr;
+    }
+  };
+
+  // Formata datas para BR
+  const formattedCheckIn = formatDateUniversal(checkInDate);
+  const formattedCheckOut = formatDateUniversal(checkOutDate);
+
   const handleGoToPaymentPending = async () => {
     setLoading(true);
 
@@ -41,13 +72,12 @@ const Payment: React.FC = () => {
       let dto: ReserveCreateDTO | null = null;
 
       if (!user) {
-      navigate('/login', { state: { from: '/payment', paymentState: location.state } });
-      setLoading(false);
-      return;
-    }
+        navigate('/login', { state: { from: '/payment', paymentState: location.state } });
+        setLoading(false);
+        return;
+      }
 
       if (isPackage && pkg) {
-        // Converta as datas do pacote para ISO antes de enviar
         const checkInISO = checkInDate && checkInDate.includes('/') ? brDateToISO(checkInDate) : checkInDate;
         const checkOutISO = checkOutDate && checkOutDate.includes('/') ? brDateToISO(checkOutDate) : checkOutDate;
 
@@ -61,7 +91,7 @@ const Payment: React.FC = () => {
           numberOfGuests: Array.isArray(selectedRooms)
             ? selectedRooms.reduce((sum: number, r: SelectedRoom) => sum + r.quantity, 0)
             : 2,
-          status: 'Pendente',
+          status: 'Confirmado',
           isActive: true,
           reserveRooms: Array.isArray(selectedRooms)
             ? selectedRooms.map((room: SelectedRoom) => ({
@@ -79,7 +109,7 @@ const Payment: React.FC = () => {
           checkOutDate: checkOutDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           totalPrice: total,
           numberOfGuests: selectedRooms.reduce((sum: number, r: SelectedRoom) => sum + r.quantity, 0),
-          status: 'Pendente',
+          status: 'Confirmado',
           isActive: true,
           reserveRooms: selectedRooms.map((room: SelectedRoom) => ({
             roomTypeId: room.roomTypeId,
@@ -102,8 +132,6 @@ const Payment: React.FC = () => {
     }
   };
 
-  console.log("location", location.state)
-
   return (
     <div className="container py-5">
       <h2 className="text-center mb-5 fw-bold">Finalizar Pagamento</h2>
@@ -118,7 +146,7 @@ const Payment: React.FC = () => {
             <div className="card-body">
               <h6 className="mb-3 text-primary">Dados do Cliente</h6>
               <p><strong>Nome:</strong> {user?.name}</p>
-              <p><strong>Telefone:</strong> {user?.phoneNumber || '(00) 00000-0000'}</p>
+              <p><strong>Telefone:</strong> {user?.phoneNumber ? formatPhone(user.phoneNumber) : '(00) 00000-0000'}</p>
               <p><strong>Email:</strong> {user?.email}</p>
 
               <hr className="my-4" />
@@ -129,14 +157,16 @@ const Payment: React.FC = () => {
                   <p><strong>Pacote:</strong> {pkg.name}</p>
                   <p><strong>Destino:</strong> {pkg.destination}</p>
                   <p><strong>Hotel:</strong> {hotel?.name || pkg.hotelName}</p>
-                  <p><strong>Datas:</strong> {pkg.packageDates?.[0]?.startDate} até {pkg.packageDates?.[0]?.endDate}</p>
+                  <p><strong>Datas:</strong> {formattedCheckIn} até {formattedCheckOut}</p>
                 </>
               ) : (
                 <>
                   <p><strong>Hotel:</strong> {hotel?.name}</p>
-                  <p><strong>Cidade:</strong> {hotel?.city} - {hotel?.state}</p>
-                  <p><strong>Check-in:</strong> {checkInDate}</p>
-                  <p><strong>Check-out:</strong> {checkOutDate}</p>
+                  <p>
+                    <strong>Endereço:</strong> {hotel?.street}, {hotel?.city} - {hotel?.state}, CEP: {hotel?.zipCode}
+                  </p>
+                  <p><strong>Check-in:</strong> {formattedCheckIn}</p>
+                  <p><strong>Check-out:</strong> {formattedCheckOut}</p>
                 </>
               )}
             </div>
@@ -156,7 +186,7 @@ const Payment: React.FC = () => {
                   <ul className="list-group mb-3">
                     <li className="list-group-item d-flex justify-content-between">
                       <span>Pacote completo</span>
-                      <span>R$ {pkg.basePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                      <span>{formatCurrencyBRL(pkg.basePrice)}</span>
                     </li>
                   </ul>
                 </>
@@ -164,16 +194,42 @@ const Payment: React.FC = () => {
                 <>
                   <p><strong>Hotel:</strong> {hotel?.name}</p>
                   <ul className="list-group mb-3">
-                    {Array.isArray(selectedRooms) && selectedRooms.map((room) => (
-                      <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between">
-                        <span>{room.name || 'Quarto'} ({room.quantity}x)</span>
-                        <span>R$ {(room.price ?? 0 * room.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                      </li>
-                    ))}
-                  </ul>
+  {Array.isArray(selectedRooms) && selectedRooms.map((room) => {
+    const roomType = hotel?.roomTypes?.find((rt: any) => rt.roomTypeId === room.roomTypeId);
+    const roomName = roomType ? getRoomTypeLabel(roomType.name) : 'Quarto';
+    const unitPrice = room.price ?? roomType?.price ?? 0;
+
+    // Calcule o número de diárias
+    const getDays = (checkIn?: string, checkOut?: string) => {
+      if (!checkIn || !checkOut) return 1;
+      const d1 = new Date(checkIn);
+      const d2 = new Date(checkOut);
+      const diff = Math.ceil((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+      return diff > 0 ? diff : 1;
+    };
+    const numDays = getDays(checkInDate, checkOutDate);
+
+    // Valor total para este tipo de quarto
+    const totalRoom = unitPrice * room.quantity * numDays;
+
+    return (
+      <li key={room.roomTypeId} className="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <span>{roomName} ({room.quantity}x)</span>
+          <div className="text-muted small">
+            {formatCurrencyBRL(unitPrice)} por diária × {numDays} diária(s)
+          </div>
+        </div>
+        <span>
+          <strong>{formatCurrencyBRL(totalRoom)}</strong>
+        </span>
+      </li>
+    );
+  })}
+</ul>
                 </>
               )}
-              <h5 className="text-end mt-3">Total: R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h5>
+              <h5 className="text-end mt-3">Total: {formatCurrencyBRL(total)}</h5>
             </div>
             <div className="card-footer text-end">
               <button

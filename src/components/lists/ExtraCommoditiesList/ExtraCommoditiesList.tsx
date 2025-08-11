@@ -5,24 +5,90 @@ interface ExtraCommoditiesListProps {
   customCommodities: CustomCommodityDTO[];
 }
 
-const ExtraCommoditiesList: React.FC<ExtraCommoditiesListProps> = ({ 
+const ExtraCommoditiesList: React.FC<ExtraCommoditiesListProps> = ({
   customCommodities = []
 }) => {
+
   return (
     <div className="col">
-      <h6 className="mb-1">Comodidades Extras</h6>
-      <ul className="list-unstyled small mb-0">
+      <div
+        className="d-flex align-items-center mb-2"
+        style={{
+          gap: 8,
+          color: '#2563eb',
+          fontWeight: 700,
+          fontSize: '1.08em',
+          letterSpacing: '0.5px'
+        }}
+      >
+        <i className="bi bi-gift" style={{ fontSize: '1.2em' }} />
+        Comodidades Extras
+      </div>
+      <div className="d-flex flex-wrap gap-3">
         {customCommodities.length > 0 ? (
           customCommodities.map((cs, i) => (
-            <li key={i}>
-              {cs.name} {cs.isPaid ? '(Pago)' : '(Grátis)'}
-              {cs.description && ` - ${cs.description}`}
-            </li>
+            <div
+              key={i}
+              className="d-flex flex-column align-items-center justify-content-center shadow-sm"
+              style={{
+                minWidth: 110,
+                maxWidth: 220,
+                padding: '12px 10px',
+                borderRadius: '12px',
+                background: '#f8fafc',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                marginBottom: '8px',
+              }}
+            >
+              <div style={{ marginBottom: 6 }}>
+                <i className="bi bi-gift" style={{ fontSize: '1.3em', color: '#6366f1' }} />
+              </div>
+              <span
+                className="small text-center fw-semibold"
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  fontSize: '1em',
+                  maxWidth: 160,
+                }}
+                title={cs.name}
+              >
+                {cs.name}
+              </span>
+              <span
+                className="small text-center"
+                style={{
+                  color: cs.isPaid ? '#eab308' : '#22c55e',
+                  fontWeight: 500,
+                  fontSize: '0.95em',
+                  marginTop: 2,
+                }}
+              >
+                {cs.isPaid ? `${cs.price ? `R$ ${Number(cs.price).toFixed(2)}` : ''}` : 'Grátis'}
+              </span>
+              {cs.description && (
+                <span
+                  className="text-muted small text-center"
+                  style={{
+                    fontSize: '0.92em',
+                    marginTop: 2,
+                    maxWidth: 160,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                  title={cs.description}
+                >
+                  {cs.description}
+                </span>
+              )}
+            </div>
           ))
         ) : (
-          <li className="text-muted">Nenhuma comodidade extra disponível</li>
+          <span className="text-muted">Nenhuma comodidade extra disponível</span>
         )}
-      </ul>
+      </div>
     </div>
   );
 };

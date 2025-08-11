@@ -53,6 +53,10 @@ const Details: React.FC = () => {
     typeof searchState.numberOfRooms === 'number' ? searchState.numberOfRooms : 1
   );
 
+  const [mainImageIdx, setMainImageIdx] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalImg, setModalImg] = useState<string | null>(null);
+
   useEffect(() => {
     const state = location.state || {};
     setCheckIn(state.checkInDate || getTodayISO());
@@ -117,10 +121,17 @@ const Details: React.FC = () => {
 
   console.log("hotel", hotel)
 
+
+
+
+
+
+
+
+
   if (!hotel) return <div>Carregando...</div>;
 
   const images = hotel.medias.map(m => backendUrl + m.mediaUrl);
-
   const comodities = hotel.commodities[0] || {};
 
   const allServices = [
@@ -171,57 +182,247 @@ const Details: React.FC = () => {
     }
   };
 
+  const getNumberOfNights = (checkIn: string, checkOut: string) => {
+    const inDate = new Date(checkIn);
+    const outDate = new Date(checkOut);
+    return Math.max(1, Math.ceil((outDate.getTime() - inDate.getTime()) / (1000 * 60 * 60 * 24)));
+  };
+
+  const numberOfNights = getNumberOfNights(checkIn, checkOut);
+
+  const totalPrice = hotel.roomTypes
+    .filter(rt => selectedQuantities[rt.roomTypeId] > 0)
+    .reduce(
+      (sum, rt) => sum + (rt.price * selectedQuantities[rt.roomTypeId] * numberOfNights),
+      0
+    );
+
   return (
     <div className="container-fluid py-5">
-      <div className="m-3">
-        <h1 className="mb-2">{hotel.name}</h1>
-        <h3 className="mb-1">{hotel.city}, {hotel.state}</h3>
-        <div>
-          {Array.from({ length: hotel.starRating }).map((_, i) => (
-            <span key={i} style={{ color: '#FFD700', fontSize: '1.2em' }}>★</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Carrossel de imagens */}
-      <div className="row justify-content-around align-items-start">
-        <div className="col-lg-6 mb-4">
-          <Carousel images={images} />
-        </div>
-
-        {/* Card de serviços adicionais */}
-        <div className="col-lg-3 mt-0">
-          <div className="card p-3">
-            <h5>Contato</h5>
-            <div>Email: {hotel.contactEmail}</div>
-            <div>Telefone: {hotel.contactPhone}</div>
-            <div>Check-in: {hotel.checkInTime} | Check-out: {hotel.checkOutTime}</div>
+      {/* Container centralizado para cabeçalho, fotos e contato */}
+      <div className="container" style={{ maxWidth: 1200 }}>
+        <div className="m-3">
+          <h1 className="mb-2">{hotel.name}</h1>
+          <div className="mb-2" style={{ display: 'flex', alignItems: 'center' }}>
+            {Array.from({ length: hotel.starRating }).map((_, i) => (
+              <span key={i} style={{ color: '#FFD700', fontSize: '1.5em', marginRight: '4px' }}>★</span>
+            ))}
           </div>
-          <button className="btn btn-primary mt-4 w-100" onClick={() => navigate('/payment')}>
-            Ir para Pagamento
-          </button>
+          {/* Nota média abaixo das estrelas */}
+          <div className="mb-2 d-flex align-items-center" style={{ fontSize: '1.1em', fontWeight: 500 }}>
+            {(() => {
+              const nota = +(hotel.averageRating * 2).toFixed(1);
+              let cor = '#e74c3c';
+              let texto = 'Regular';
+              if (nota >= 9) {
+                cor = '#27ae60';
+                texto = 'Excelente';
+              } else if (nota >= 8) {
+                cor = '#2ecc40';
+                texto = 'Muito Bom';
+              } else if (nota >= 7) {
+                cor = '#f1c40f';
+                texto = 'Bom';
+              } else if (nota >= 6) {
+                cor = '#f39c12';
+                texto = 'Ok';
+              }
+              return (
+                <>
+                  <div
+                    style={{
+                      background: cor,
+                      color: '#fff',
+                      borderRadius: '8px',
+                      padding: '4px 14px',
+                      fontWeight: 700,
+                      fontSize: '1.2em',
+                      minWidth: 55,
+                      textAlign: 'center',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                      marginRight: 12,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6
+                    }}
+                  >
+                    <i className="bi bi-star-fill" style={{ fontSize: '1em', marginRight: 4 }} />
+                    {nota}
+                  </div>
+                  <span style={{ color: cor, fontWeight: 600, fontSize: '1.1em' }}>{texto}</span>
+                </>
+              );
+            })()}
+          </div>
+          <div className="mb-2 text-muted fw-semibold">
+            {hotel.street}, {hotel.city} - {hotel.state}, CEP: {hotel.zipCode}
+          </div>
+        </div>
+
+        {/* Imagens do hotel e card de contato */}
+        <div className="row mb-4 justify-content-between align-items-start">
+          {/* Bloco das imagens */}
+          <div className="col-lg-7 d-flex">
+            <div style={{ flex: 1 }}>
+              {images[mainImageIdx] && (
+                <img
+                  src={images[mainImageIdx]}
+                  alt="Imagem principal do hotel"
+                  className="img-fluid rounded shadow-sm"
+                  style={{ width: '100%', height: '350px', objectFit: 'cover', cursor: 'pointer' }}
+                  onClick={() => { setModalImg(images[mainImageIdx]); setModalOpen(true); }}
+                />
+              )}
+            </div>
+            <div className="d-flex flex-column gap-3 ms-3">
+              {images.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={img}
+                  alt={`Foto ${idx + 1} do hotel`}
+                  className={`img-fluid rounded ${mainImageIdx === idx ? 'border border-primary' : ''}`}
+                  style={{ width: '120px', height: '80px', objectFit: 'cover', cursor: 'pointer' }}
+                  onClick={() => setMainImageIdx(idx)}
+                  onDoubleClick={() => { setModalImg(img); setModalOpen(true); }}
+                />
+              ))}
+            </div>
+          </div>
+          {/* Card de contato encostado à direita */}
+          <div className="col-lg-4 d-flex flex-column align-items-end">
+            <div
+              className="card shadow-lg border-0 p-4 w-100"
+              style={{
+                minWidth: 260,
+                background: 'linear-gradient(135deg, #f8fafc 80%, #e3e7ed 100%)',
+                borderRadius: '18px'
+              }}
+            >
+              <h5 className="mb-3 text-primary" style={{ fontWeight: 700 }}>
+                <i className="bi bi-person-lines-fill me-2"></i>Contato
+              </h5>
+              <div className="mb-2 d-flex align-items-center">
+                <i className="bi bi-envelope-fill text-secondary me-2"></i>
+                <span className="fw-semibold">{hotel.contactEmail}</span>
+              </div>
+              <div className="mb-2 d-flex align-items-center">
+                <i className="bi bi-telephone-fill text-secondary me-2"></i>
+                <span className="fw-semibold">{hotel.contactPhone}</span>
+              </div>
+              <div className="mb-2 d-flex align-items-center">
+                <i className="bi bi-clock-fill text-secondary me-2"></i>
+                <span>
+                  <span className="fw-semibold">Check-in:</span> {hotel.checkInTime}
+                  <span className="mx-2">|</span>
+                  <span className="fw-semibold">Check-out:</span> {hotel.checkOutTime}
+                </span>
+              </div>
+            </div>
+            <button
+              className="btn btn-primary mt-4 w-100"
+              style={{ borderRadius: '10px', fontWeight: 600, fontSize: '1.1em' }}
+              onClick={() => {
+                if (totalSelected === 0) {
+                  setShowError(true);
+                  return;
+                }
+                const selectedRooms = hotel.roomTypes
+                  .filter(rt => selectedQuantities[rt.roomTypeId] > 0)
+                  .map(rt => ({
+                    ...rt,
+                    quantity: selectedQuantities[rt.roomTypeId]
+                  }));
+                navigate('/payment', {
+                  state: {
+                    hotel,
+                    selectedRooms,
+                    checkInDate: checkIn,
+                    checkOutDate: checkOut,
+                    totalPrice
+                  }
+                });
+              }}
+            >
+              <i className="bi bi-credit-card-2-front me-2"></i>
+              Ir para Pagamento
+            </button>
+            {showError && (
+              <div className="alert alert-danger mt-3 w-100" role="alert">
+                Selecione pelo menos um quarto para continuar.
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Descrição */}
-      <div className="col-md-8 m-3 mt-0">
-        <p className="fw-bold">{hotel.description}</p>
+      {/* Modal para imagem ampliada */}
+      {modalOpen && (
+        <div
+          className="modal fade show"
+          style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.7)' }}
+          tabIndex={-1}
+          role="dialog"
+          onClick={() => setModalOpen(false)}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div className="modal-content bg-transparent border-0">
+              <div className="modal-body p-0 text-center">
+                <img src={modalImg || ''} alt="Imagem ampliada" style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '8px' }} />
+              </div>
+              <button
+                type="button"
+                className="btn btn-light position-absolute top-0 end-0 m-3"
+                onClick={() => setModalOpen(false)}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Descrição destacada e centralizada */}
+      <div className="container" style={{ maxWidth: 1200 }}>
+        <div className="m-3 mt-0">
+          <div
+            className="card shadow-sm border-0"
+            style={{
+              background: 'linear-gradient(135deg, #f8fafc 80%, #e3e7ed 100%)',
+              borderRadius: '18px',
+              padding: '24px 32px 24px 0'
+            }}
+          >
+            <h5 className="mb-3 text-primary" style={{ fontWeight: 700 }}>
+              <i className="bi bi-info-circle me-2"></i>Sobre o Hotel
+            </h5>
+            <p
+              className="fw-bold"
+              style={{
+                textAlign: 'justify',
+                color: '#333',
+                fontSize: '1.08em',
+                marginBottom: 0
+              }}
+            >
+              {hotel.description}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Serviços e comodidades */}
-      <div className="container mt-3">
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 gx-3 gy-3">
+      <div className="container mt-3" style={{ maxWidth: 1200 }}>
+        <div className="d-flex flex-column gap-4">
           <ServiceList title="Serviços inclusos" items={inclusos} />
           <ServiceList title="Serviços pagos" items={pagos} />
-          <ServiceList title="Não ofertados" items={naoOfertados} />
           <ExtraCommoditiesList
-            customCommodities={hotel.commodities[0]?.customCommodities || []}
+            customCommodities={hotel.customCommodities || []}
           />
         </div>
       </div>
 
       {/* Listagem de quartos */}
-      <div className="container mt-5">
+      <div className="container mt-5" style={{ maxWidth: 1200 }}>
         <DateRangePicker
           checkIn={checkIn}
           checkOut={checkOut}
@@ -240,15 +441,9 @@ const Details: React.FC = () => {
           selectedQuantities={selectedQuantities}
           onQuantityChange={handleQuantityChange}
           showError={showError}
-        />
-        {showError && (
-          <div className="alert alert-danger mt-3" role="alert">
-            Selecione pelo menos um quarto para continuar.
-          </div>
-        )}
-        <button
-          className="btn btn-primary mt-4"
-          onClick={() => {
+          checkIn={checkIn}
+          checkOut={checkOut}
+          onGoToPayment={() => {
             if (totalSelected === 0) {
               setShowError(true);
               return;
@@ -265,26 +460,39 @@ const Details: React.FC = () => {
                 selectedRooms,
                 checkInDate: checkIn,
                 checkOutDate: checkOut,
+                totalPrice // <-- Adicione esta linha!
               }
             });
           }}
-        >
-          Ir para Pagamento
-        </button>
-      </div>
-      {/* Lista de avaliações dos hóspedes */}
-      <ReviewList reviews={reviews} loading={loadingReviews} userMap={userMap} />
-
-      <div>
-        {/* Descrição + Mapa */}
-        <div className="col-md-8 m-3 mt-0">
-          {/* Mapa com endereço do hotel */}
-          <div className="mt-4">
-            <h1>Localização</h1>
-            <Maps address={`${hotel.street}, ${hotel.city}, ${hotel.state}`} />
+        />
+        {showError && (
+          <div className="alert alert-danger mt-3" role="alert">
+            Selecione pelo menos um quarto para continuar.
           </div>
-        </div>
+        )}
+      </div>
 
+      {/* Lista de avaliações dos hóspedes */}
+      <div className="container mt-5" style={{ maxWidth: 1200 }}>
+        <div className="card shadow-sm border-0 p-4 mb-4">
+          <h5 className="mb-3 text-primary" style={{ fontWeight: 700 }}>
+            <i className="bi bi-chat-dots me-2"></i>Avaliações dos hóspedes
+          </h5>
+          <ReviewList reviews={reviews} loading={loadingReviews} userMap={userMap} />
+        </div>
+      </div>
+
+      {/* Descrição + Mapa */}
+      <div className="container mt-5" style={{ maxWidth: 1200 }}>
+        <div className="card shadow-sm border-0 p-4 mb-4">
+          <h5 className="mb-3 text-primary" style={{ fontWeight: 700 }}>
+            <i className="bi bi-geo-alt me-2"></i>Localização
+          </h5>
+          <div className="mb-2 fw-semibold text-secondary" style={{ fontSize: '1.1em' }}>
+            {hotel.street}, {hotel.city} - {hotel.state}, CEP: {hotel.zipCode}
+          </div>
+          <Maps address={`${hotel.street}, ${hotel.city}, ${hotel.state}`} />
+        </div>
       </div>
     </div>
   );
